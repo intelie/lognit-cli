@@ -9,7 +9,9 @@ import org.apache.commons.httpclient.HttpClient;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        HttpWrapper http = new HttpWrapper(new HttpClient(), new MethodFactory(), new Jsonizer(new Gson()));
+        HttpClient client = new HttpClient();
+
+        HttpWrapper http = new HttpWrapper(client, new MethodFactory(), new Jsonizer(new Gson()));
         http.authenticate(args[0], args[1]);
         Welcome welcome = http.request("http://localhost:9006/rest/users/welcome", Welcome.class);
         System.out.println(welcome.getMessage());
