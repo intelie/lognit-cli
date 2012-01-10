@@ -1,0 +1,11 @@
+*.iml
+*.ipr
+*.iws
+*.log
+*.versionsBackup
+.ideas
+.idea
+.DS_Store
+/target
+/*/target
+.jhw-cache
