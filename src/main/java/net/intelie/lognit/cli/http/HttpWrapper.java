@@ -35,7 +35,6 @@ public class HttpWrapper {
         method.setDoAuthentication(authenticated);
         if (client.executeMethod(method) != 200)
             throw new RequestFailedException(method.getStatusLine());
-        System.out.println(method.getResponseHeader("Set-Cookie").getValue());
         return jsonizer.from(method.getResponseBodyAsString(), responseClass);
     }
 
