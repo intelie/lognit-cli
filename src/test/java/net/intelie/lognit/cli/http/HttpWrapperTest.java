@@ -5,6 +5,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +14,6 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class HttpWrapperTest {
-
     private HttpClient client;
     private MethodFactory methodFactory;
     private Jsonizer jsonizer;
@@ -49,8 +49,39 @@ public class HttpWrapperTest {
         assertThat(result).isEqualTo("QWEQWE");
 
         verify(method, times(0)).getStatusLine();
-        verify(method).setDoAuthentication(true);
+        verify(method).setDoAuthentication(false);
         verify(client).executeMethod(methodFactory.get("abc"));
+    }
+
+    @Test
+    public void willExecuteSuccessfulRequestAuthenticating() throws Exception {
+        HttpMethod method = methodFactory.get("abc");
+
+        when(method.getResponseBodyAsString()).thenReturn("BLABLA");
+        when(client.executeMethod(method)).thenReturn(200);
+        when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
+
+        wrapper.authenticate("abc", "qwe");
+        String result = wrapper.request("abc", String.class);
+
+        assertThat(result).isEqualTo("QWEQWE");
+
+        verify(method, times(0)).getStatusLine();
+        verify(method, times(1)).setDoAuthentication(true);
+        verify(client).executeMethod(methodFactory.get("abc"));
+    }
+
+    @Test
+    public void willUseCompatibilityToHandleCookies() throws Exception {
+        HttpMethod method = methodFactory.get("abc");
+
+        when(method.getResponseBodyAsString()).thenReturn("BLABLA");
+        when(client.executeMethod(method)).thenReturn(200);
+        when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
+
+        wrapper.request("abc", String.class);
+
+        verify(method.getParams()).setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
     }
 
     @Test
