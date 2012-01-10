@@ -6,6 +6,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 
@@ -29,13 +30,36 @@ public class HttpWrapper {
         authenticated = true;
     }
 
+    public <T> T requestNoCookies(String uri, Class<T> responseClass) throws IOException {
+        return request(uri, responseClass, false);
+    }
+
     public <T> T request(String uri, Class<T> responseClass) throws IOException {
+        return request(uri, responseClass, true);
+    }
+
+    private <T> T request(String uri, Class<T> responseClass, boolean cookies) throws IOException {
+        HttpMethod method = execute(uri, cookies);
+
+        String body = IOUtils.toString(method.getResponseBodyAsStream());
+        return jsonizer.from(body, responseClass);
+    }
+
+    private HttpMethod execute(String uri, boolean cookies) throws IOException {
         HttpMethod method = methods.get(uri);
-        method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+
+        decideCookies(method, cookies);
+
         method.setDoAuthentication(authenticated);
         if (client.executeMethod(method) != 200)
             throw new RequestFailedException(method.getStatusLine());
-        return jsonizer.from(method.getResponseBodyAsString(), responseClass);
+        return method;
+    }
+
+    private void decideCookies(HttpMethod method, boolean cookies) {
+        method.getParams().setCookiePolicy(cookies ?
+                CookiePolicy.BROWSER_COMPATIBILITY :
+                CookiePolicy.IGNORE_COOKIES);
     }
 
 }

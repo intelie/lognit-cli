@@ -9,6 +9,8 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+
 import static junit.framework.Assert.fail;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -40,7 +42,7 @@ public class HttpWrapperTest {
     public void willExecuteSuccessfulRequest() throws Exception {
         HttpMethod method = methodFactory.get("abc");
 
-        when(method.getResponseBodyAsString()).thenReturn("BLABLA");
+        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
         when(client.executeMethod(method)).thenReturn(200);
         when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
 
@@ -53,11 +55,15 @@ public class HttpWrapperTest {
         verify(client).executeMethod(methodFactory.get("abc"));
     }
 
+    private ByteArrayInputStream getStream(String s) {
+        return new ByteArrayInputStream(s.getBytes());
+    }
+
     @Test
     public void willExecuteSuccessfulRequestAuthenticating() throws Exception {
         HttpMethod method = methodFactory.get("abc");
 
-        when(method.getResponseBodyAsString()).thenReturn("BLABLA");
+        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
         when(client.executeMethod(method)).thenReturn(200);
         when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
 
@@ -75,7 +81,7 @@ public class HttpWrapperTest {
     public void willUseCompatibilityToHandleCookies() throws Exception {
         HttpMethod method = methodFactory.get("abc");
 
-        when(method.getResponseBodyAsString()).thenReturn("BLABLA");
+        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
         when(client.executeMethod(method)).thenReturn(200);
         when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
 
@@ -85,10 +91,23 @@ public class HttpWrapperTest {
     }
 
     @Test
+    public void willUseNoCookiesNoCookies() throws Exception {
+        HttpMethod method = methodFactory.get("abc");
+
+        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
+        when(client.executeMethod(method)).thenReturn(200);
+        when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
+
+        wrapper.requestNoCookies("abc", String.class);
+
+        verify(method.getParams()).setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+    }
+
+    @Test
     public void willThrowOnUnsuccessfulRequest() throws Exception {
         HttpMethod method = methodFactory.get("abc");
 
-        when(method.getResponseBodyAsString()).thenReturn("BLABLA");
+        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
         when(method.getStatusLine()).thenReturn(new StatusLine("HTTP/1.0 401 OK"));
         when(client.executeMethod(method)).thenReturn(401);
         when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");

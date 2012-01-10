@@ -20,7 +20,7 @@ public class ArgsParser {
 
         try {
             wrapper.authenticate(args[0], args[1]);
-            Welcome welcome = wrapper.request("http://localhost:9006/rest/users/welcome", Welcome.class);
+            Welcome welcome = wrapper.requestNoCookies("http://localhost:9006/rest/users/welcome", Welcome.class);
             System.out.println(welcome.getMessage());
         } finally {
             state.end();
