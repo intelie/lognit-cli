@@ -67,54 +67,32 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
 
                 <configuration>
-                    <repositoryLayout>flat</repositoryLayout>
-                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
-                    <target>${project.build.directory}</target>
-                    <repoPath>lib</repoPath>
-                    <repositoryName>lib</repositoryName>
-                    <configurationDirectory>conf</configurationDirectory>
-                    <environmentSetupFileName>setup</environmentSetupFileName>
-                    <programs>
-                        <program>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
                             <mainClass>net.intelie.lognit.cli.Main</mainClass>
-                            <name>nit</name>
-                        </program>
-                    </programs>
+                        </manifest>
+                    </archive>
                 </configuration>
-
-                <executions>
-                    <execution>
-                        <id>generate-jsw-scripts</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>create-repository</goal>
-                            <goal>assemble</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2-beta-2</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>lognit-cli.xml</descriptor>
-                    </descriptors>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.5</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>shade</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
 
     </build>
