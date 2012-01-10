@@ -5,7 +5,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.fest.assertions.Assertions.assertThat;
+
 
 public class MethodFactoryTest {
     @Test
@@ -14,8 +15,10 @@ public class MethodFactoryTest {
         String uri = "http://test.com:8080/abc";
         HttpMethod method = factory.get(uri);
         
-        assertEquals(new URI(uri, false), method.getURI());
-        assertEquals("GET", method.getName());
-        assertEquals(GetMethod.class, method.getClass());
+        assertThat(method.getURI()).isEqualTo(new URI(uri, false));
+        assertThat(method.getName()).isEqualTo("GET");
+        assertThat(method).isInstanceOf(GetMethod.class);
     }
+
+
 }
