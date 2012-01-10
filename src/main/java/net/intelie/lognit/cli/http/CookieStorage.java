@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.http;
 
+import com.google.inject.Inject;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.io.FileUtils;

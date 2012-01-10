@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.http;
 
+import com.google.inject.Inject;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -12,6 +13,7 @@ public class HttpWrapper {
     private final MethodFactory methods;
     private final Jsonizer jsonizer;
 
+    @Inject
     public HttpWrapper(HttpClient client, MethodFactory methods, Jsonizer jsonizer) {
         this.client = client;
         this.methods = methods;

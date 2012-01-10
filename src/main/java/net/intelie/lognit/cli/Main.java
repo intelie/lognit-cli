@@ -1,19 +1,11 @@
 package net.intelie.lognit.cli;
 
-import com.google.gson.Gson;
-import net.intelie.lognit.cli.http.HttpWrapper;
-import net.intelie.lognit.cli.http.Jsonizer;
-import net.intelie.lognit.cli.http.MethodFactory;
-import net.intelie.lognit.cli.model.Welcome;
-import org.apache.commons.httpclient.HttpClient;
+import com.google.inject.Guice;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        HttpClient client = new HttpClient();
-
-        HttpWrapper http = new HttpWrapper(client, new MethodFactory(), new Jsonizer(new Gson()));
-        http.authenticate(args[0], args[1]);
-        Welcome welcome = http.request("http://localhost:9006/rest/users/welcome", Welcome.class);
-        System.out.println(welcome.getMessage());
+        Guice.createInjector(new MainModule())
+                .getInstance(ArgsParser.class)
+                .run(args);
     }
 }
