@@ -1,6 +1,7 @@
-package net.intelie.lognit.cli.json;
+package net.intelie.lognit.cli.http;
 
 import com.google.gson.Gson;
+import net.intelie.lognit.cli.http.Jsonizer;
 import net.intelie.lognit.cli.model.Welcome;
 import org.junit.Test;
 

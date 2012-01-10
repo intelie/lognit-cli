@@ -1,4 +1,4 @@
-package net.intelie.lognit.cli.json;
+package net.intelie.lognit.cli.http;
 
 import com.google.gson.Gson;
 

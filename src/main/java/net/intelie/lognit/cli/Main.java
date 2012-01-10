@@ -2,8 +2,8 @@ package net.intelie.lognit.cli;
 
 import com.google.gson.Gson;
 import net.intelie.lognit.cli.http.HttpWrapper;
+import net.intelie.lognit.cli.http.Jsonizer;
 import net.intelie.lognit.cli.http.MethodFactory;
-import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Welcome;
 import org.apache.commons.httpclient.HttpClient;
 

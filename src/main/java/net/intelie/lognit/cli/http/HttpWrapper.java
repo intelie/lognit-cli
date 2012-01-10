@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.http;
 
-import net.intelie.lognit.cli.json.Jsonizer;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
