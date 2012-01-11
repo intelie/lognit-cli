@@ -33,6 +33,7 @@ public class HttpWrapperTest {
     public void whenAuthenticating() {
         wrapper.authenticate("abc", "123");
 
+        verify(client.getState()).clearCookies();
         verify(client.getParams()).setAuthenticationPreemptive(true);
         verify(client.getState()).setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("abc", "123"));
         verifyNoMoreInteractions(client.getParams(), client.getState());
@@ -88,19 +89,6 @@ public class HttpWrapperTest {
         wrapper.request("abc", String.class);
 
         verify(method.getParams()).setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-    }
-
-    @Test
-    public void willUseNoCookiesNoCookies() throws Exception {
-        HttpMethod method = methodFactory.get("abc");
-
-        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
-        when(client.executeMethod(method)).thenReturn(200);
-        when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
-
-        wrapper.requestNoCookies("abc", String.class);
-
-        verify(method.getParams()).setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
     }
 
     @Test
