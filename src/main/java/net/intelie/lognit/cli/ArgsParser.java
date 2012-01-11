@@ -22,6 +22,9 @@ public class ArgsParser {
             wrapper.authenticate(args[0], args[1]);
             Welcome welcome = wrapper.requestNoCookies("http://localhost:9006/rest/users/welcome", Welcome.class);
             System.out.println(welcome.getMessage());
+        } catch (Exception ex) {
+            System.out.println(String.format("%s: %s",
+                    ex.getClass().getSimpleName(), ex.getMessage()));
         } finally {
             state.end();
         }
