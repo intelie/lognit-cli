@@ -100,10 +100,10 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <concat destfile="${pom.build.directory}/${build.finalName}.sh" binary="true">
+                                <concat destfile="${project.build.directory}/${project.build.finalName}.sh" binary="true">
                                     <fileset dir="${basedir}">
                                         <include name="src/shell/stub.sh" />
-                                        <include name="target/${build.finalName}.jar" />
+                                        <include name="target/${project.build.finalName}.jar" />
                                     </fileset>
                                 </concat>
                             </target>

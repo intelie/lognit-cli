@@ -1,5 +1,5 @@
 #!/bin/sh
-version=$(curl -s -B "http://cloud.github.com/downloads/intelie/lognit-cli/VERSIONS" 2>/dev/null)
+version=$(curl -s -B "http://cloud.github.com/downloads/intelie/lognit-cli/VERSIONS" 2>/dev/null | tail -n 1)
 echo Installing Lognit command-line interface v$version
 curl http://cloud.github.com/downloads/intelie/lognit-cli/lognit-cli-$version.sh > /usr/bin/nit
 chmod a+x /usr/bin/nit
