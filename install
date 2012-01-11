@@ -1,0 +1,3 @@
+#!/bin/sh
+curl http://cloud.github.com/downloads/intelie/lognit-cli/lognit-cli-0.3-SNAPSHOT.sh > /usr/bin/nit
+chmod a+x /usr/bin/nit
