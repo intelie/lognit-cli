@@ -1,4 +1,4 @@
-package net.intelie.lognit.cli.http;
+package net.intelie.lognit.cli.state;
 
 import com.google.inject.Inject;
 import org.apache.commons.httpclient.Cookie;

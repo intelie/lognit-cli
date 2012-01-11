@@ -2,8 +2,7 @@ package net.intelie.lognit.cli;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import net.intelie.lognit.cli.http.CookieStorage;
-import net.intelie.lognit.cli.http.HttpWrapper;
+import net.intelie.lognit.cli.state.CookieStorage;
 import org.apache.commons.httpclient.HttpClient;
 
 import java.io.File;

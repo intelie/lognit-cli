@@ -1,8 +1,6 @@
-package net.intelie.lognit.cli.commands;
+package net.intelie.lognit.cli.state;
 
 import com.google.inject.Inject;
-import net.intelie.lognit.cli.http.CookieStorage;
-import net.intelie.lognit.cli.http.HttpWrapper;
 import org.apache.commons.httpclient.HttpClient;
 
 public class StateKeeper {

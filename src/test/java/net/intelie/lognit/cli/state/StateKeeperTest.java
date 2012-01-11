@@ -1,6 +1,7 @@
-package net.intelie.lognit.cli.commands;
+package net.intelie.lognit.cli.state;
 
-import net.intelie.lognit.cli.http.CookieStorage;
+import net.intelie.lognit.cli.state.CookieStorage;
+import net.intelie.lognit.cli.state.StateKeeper;
 import org.apache.commons.httpclient.HttpClient;
 import org.junit.Before;
 import org.junit.Test;

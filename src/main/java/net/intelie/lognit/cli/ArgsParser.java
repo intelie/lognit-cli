@@ -1,7 +1,7 @@
 package net.intelie.lognit.cli;
 
 import com.google.inject.Inject;
-import net.intelie.lognit.cli.commands.StateKeeper;
+import net.intelie.lognit.cli.state.StateKeeper;
 import net.intelie.lognit.cli.http.HttpWrapper;
 import net.intelie.lognit.cli.model.Welcome;
 
