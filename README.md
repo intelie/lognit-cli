@@ -3,5 +3,5 @@
 Install with
 
 ``` sh
-sh < <(curl -s https://raw.github.com/intelie/lognit-cli/master/install)
+sudo sh < <(curl -s https://raw.github.com/intelie/lognit-cli/master/install)
 ```
