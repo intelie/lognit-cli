@@ -85,6 +85,6 @@ public class ArgsParserTest {
         verify(keeper).end();
         verify(console).printf(anyString(), anyObject(), anyObject());
 
-        verify(cmd1).execute(array("123", "456"));
+        verify(cmd1).execute("123", "456");
     }
 }
