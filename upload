@@ -1,5 +1,5 @@
 #!/bin/sh
-DATE=`/bin/date +%Y%m%d%k%M%S`
+DATE=`/bin/date +%Y%m%d%H%M%S`
 if [ -f target/lognit-cli-$1.sh ]; then
     curl -s http://cloud.github.com/downloads/intelie/lognit-cli/VERSIONS | grep -v -e "SNAPSHOT|<" > target/VERSIONS.2
     echo $1-$DATE >> target/VERSIONS.2
