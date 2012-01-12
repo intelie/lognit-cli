@@ -1,7 +1,6 @@
-package net.intelie.lognit.cli;
+package net.intelie.lognit.cli.input;
 
 import com.google.inject.Inject;
-import net.intelie.lognit.cli.commands.Command;
 import net.intelie.lognit.cli.state.StateKeeper;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;

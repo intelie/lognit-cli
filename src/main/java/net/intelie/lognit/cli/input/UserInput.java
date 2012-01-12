@@ -1,4 +1,4 @@
-package net.intelie.lognit.cli;
+package net.intelie.lognit.cli.input;
 
 import com.google.inject.Inject;
 import jline.ConsoleReader;

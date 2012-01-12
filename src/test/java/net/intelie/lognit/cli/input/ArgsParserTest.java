@@ -1,6 +1,8 @@
-package net.intelie.lognit.cli;
+package net.intelie.lognit.cli.input;
 
-import net.intelie.lognit.cli.commands.Command;
+import net.intelie.lognit.cli.input.ArgsParser;
+import net.intelie.lognit.cli.input.Command;
+import net.intelie.lognit.cli.input.UserInput;
 import net.intelie.lognit.cli.state.StateKeeper;
 import org.junit.Test;
 

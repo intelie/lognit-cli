@@ -1,4 +1,4 @@
-package net.intelie.lognit.cli.commands;
+package net.intelie.lognit.cli.input;
 
 public interface Command {
     String name();

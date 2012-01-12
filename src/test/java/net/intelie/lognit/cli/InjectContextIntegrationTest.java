@@ -2,9 +2,10 @@ package net.intelie.lognit.cli;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import net.intelie.lognit.cli.commands.Command;
-import net.intelie.lognit.cli.commands.Info;
-import net.intelie.lognit.cli.commands.Login;
+import net.intelie.lognit.cli.input.ArgsParser;
+import net.intelie.lognit.cli.input.Command;
+import net.intelie.lognit.cli.input.InfoCommand;
+import net.intelie.lognit.cli.input.LoginCommand;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class InjectContextIntegrationTest {
     @Test
     public void hasAllCommands() {
         Command[] commands = injector.getInstance(Command[].class);
-        assertThat(commands).hasAtLeastOneElementOfType(Login.class);
-        assertThat(commands).hasAtLeastOneElementOfType(Info.class);
+        assertThat(commands).hasAtLeastOneElementOfType(LoginCommand.class);
+        assertThat(commands).hasAtLeastOneElementOfType(InfoCommand.class);
     }
 }
