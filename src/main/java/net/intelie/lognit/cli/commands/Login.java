@@ -5,6 +5,8 @@ import net.intelie.lognit.cli.UserInput;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.model.Welcome;
 
+import java.net.MalformedURLException;
+
 public class Login implements Command {
     private final UserInput console;
     private final RestClient http;
@@ -24,17 +26,15 @@ public class Login implements Command {
     public void execute(String... args) throws Exception {
         String server = args[0];
 
-        authenticate();
+        authenticate(server);
 
-        Welcome welcome = http.request(String.format("http://%s/rest/users/welcome", server), Welcome.class);
-        console.printf("%s\n", welcome);
+        Welcome welcome = http.request("/rest/users/welcome", Welcome.class);
+        console.printf("%s\n", welcome.getMessage());
     }
 
-    private void authenticate() {
-        console.printf("login: ");
-        String login = console.readLine();
-        console.printf("password: ");
-        String password = console.readPassword();
-        http.authenticate(login, password);
+    private void authenticate(String server) throws MalformedURLException {
+        String login = console.readLine("login: ");
+        String password = console.readPassword("password: ");
+        http.authenticate(server,  login, password);
     }
 }

@@ -1,26 +1,46 @@
 package net.intelie.lognit.cli;
 
 import com.google.inject.Inject;
+import jline.ConsoleReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.Console;
+import java.io.IOException;
 
 public class UserInput {
-    private final Console console;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final ConsoleReader console;
 
     @Inject
-    public UserInput(Console console) {
+    public UserInput(ConsoleReader console) {
         this.console = console;
     }
 
     public void printf(String format, Object... args) {
-        console.printf(format, args);
+        try {
+            console.putString(String.format(format, args));
+            console.flushConsole();
+        } catch (IOException e) {
+            logger.warn("why fail printf?", e);
+        }
     }
 
-    public String readLine() {
-        return console.readLine();
+    public String readLine(String prompt) {
+        try {
+            return console.readLine(prompt);
+        } catch (IOException e) {
+            logger.warn("why fail readline?", e);
+            return "";
+        }
     }
 
-    public String readPassword() {
-        return new String(console.readPassword());
+    public String readPassword(String prompt) {
+        try {
+            return console.readLine(prompt, '\0');
+        } catch (IOException e) {
+            logger.warn("why fail readPassword?", e);
+
+            return "";
+        }
     }
 }

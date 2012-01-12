@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ArgsParser {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserInput console;
     private final StateKeeper state;

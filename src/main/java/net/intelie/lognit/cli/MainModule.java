@@ -7,6 +7,8 @@ import com.google.inject.Singleton;
 import net.intelie.lognit.cli.commands.Command;
 import net.intelie.lognit.cli.commands.Info;
 import net.intelie.lognit.cli.commands.Login;
+import net.intelie.lognit.cli.http.RestClient;
+import net.intelie.lognit.cli.http.RestClientImpl;
 import net.intelie.lognit.cli.state.HttpClientStorage;
 import org.apache.commons.httpclient.HttpClient;
 
@@ -16,7 +18,8 @@ public class MainModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(HttpClient.class).in(Singleton.class);
-        
+        bind(RestClient.class).to(RestClientImpl.class).in(Singleton.class);
+
         bind(Command[].class).toProvider(commands());
         
         bind(HttpClientStorage.class).toInstance(

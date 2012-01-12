@@ -2,7 +2,9 @@ package net.intelie.lognit.cli.http;
 
 import org.apache.commons.httpclient.Cookie;
 
-public class RestState {
+import java.io.Serializable;
+
+public class RestState implements Serializable {
     private final Cookie[] cookies;
     private final String server;
 

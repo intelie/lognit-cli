@@ -1,52 +1,14 @@
 package net.intelie.lognit.cli.http;
 
-import com.google.inject.Inject;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
+import java.net.MalformedURLException;
 
-public class RestClient {
-    private final HttpClient client;
-    private final MethodFactory methods;
-    private final Jsonizer jsonizer;
-    private boolean authenticated;
+public interface RestClient {
+    RestState getState();
 
-    @Inject
-    public RestClient(HttpClient client, MethodFactory methods, Jsonizer jsonizer) {
-        this.client = client;
-        this.methods = methods;
-        this.jsonizer = jsonizer;
-        this.authenticated = false;
-    }
+    void setState(RestState state);
 
-    public void authenticate(String username, String password) {
-        client.getState().clearCookies();
-        client.getState().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
-        client.getParams().setAuthenticationPreemptive(true);
-        authenticated = true;
-    }
+    void authenticate(String server, String username, String password) throws MalformedURLException;
 
-    public <T> T request(String uri, Class<T> responseClass) throws IOException {
-        HttpMethod method = execute(uri);
-
-        String body = IOUtils.toString(method.getResponseBodyAsStream());
-        return jsonizer.from(body, responseClass);
-    }
-
-    private HttpMethod execute(String uri) throws IOException {
-        HttpMethod method = methods.get(uri);
-
-        method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-
-        method.setDoAuthentication(authenticated);
-        if (client.executeMethod(method) != 200)
-            throw new RequestFailedException(method.getStatusLine());
-        return method;
-    }
-
+    <T> T request(String uri, Class<T> responseClass) throws IOException;
 }

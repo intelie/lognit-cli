@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 public class HttpClientStorage {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final File file;
 
