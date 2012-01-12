@@ -60,6 +60,7 @@ public class RestClientImpl implements RestClient {
         HttpMethod method = execute(uri);
 
         String body = IOUtils.toString(method.getResponseBodyAsStream());
+        System.out.println(body);
         return jsonizer.from(body, responseClass);
     }
 
