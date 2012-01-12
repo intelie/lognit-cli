@@ -10,14 +10,14 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 
-public class HttpWrapper {
+public class RestClient {
     private final HttpClient client;
     private final MethodFactory methods;
     private final Jsonizer jsonizer;
     private boolean authenticated;
 
     @Inject
-    public HttpWrapper(HttpClient client, MethodFactory methods, Jsonizer jsonizer) {
+    public RestClient(HttpClient client, MethodFactory methods, Jsonizer jsonizer) {
         this.client = client;
         this.methods = methods;
         this.jsonizer = jsonizer;

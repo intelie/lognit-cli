@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class CookieStorage {
+public class HttpClientStorage {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final File file;
 
-    public CookieStorage(File file) {
+    public HttpClientStorage(File file) {
         this.file = file;
     }
 

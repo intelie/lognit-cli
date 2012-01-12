@@ -10,23 +10,24 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import static junit.framework.Assert.fail;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class HttpWrapperTest {
+public class RestClientTest {
     private HttpClient client;
     private MethodFactory methodFactory;
     private Jsonizer jsonizer;
-    private HttpWrapper wrapper;
+    private RestClient wrapper;
 
     @Before
     public void setUp() throws Exception {
         client = mock(HttpClient.class, RETURNS_DEEP_STUBS);
         methodFactory = mock(MethodFactory.class, RETURNS_DEEP_STUBS);
         jsonizer = mock(Jsonizer.class);
-        wrapper = new HttpWrapper(client, methodFactory, jsonizer);
+        wrapper = new RestClient(client, methodFactory, jsonizer);
     }
 
     @Test
@@ -41,37 +42,25 @@ public class HttpWrapperTest {
 
     @Test
     public void willExecuteSuccessfulRequest() throws Exception {
-        HttpMethod method = methodFactory.get("abc");
+        HttpMethod method = mockReturn("abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
 
-        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
-        when(client.executeMethod(method)).thenReturn(200);
-        when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
-
-        String result = wrapper.request("abc", String.class);
-
-        assertThat(result).isEqualTo("QWEQWE");
+        assertThat(wrapper.request("abc", String.class)).isEqualTo("QWEQWE");
 
         verify(method, times(0)).getStatusLine();
         verify(method).setDoAuthentication(false);
         verify(client).executeMethod(methodFactory.get("abc"));
     }
 
-    private ByteArrayInputStream getStream(String s) {
-        return new ByteArrayInputStream(s.getBytes());
+    private ByteArrayInputStream getStream(byte[] bytes) {
+        return new ByteArrayInputStream(bytes);
     }
 
     @Test
     public void willExecuteSuccessfulRequestAuthenticating() throws Exception {
-        HttpMethod method = methodFactory.get("abc");
-
-        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
-        when(client.executeMethod(method)).thenReturn(200);
-        when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
+        HttpMethod method = mockReturn("abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
 
         wrapper.authenticate("abc", "qwe");
-        String result = wrapper.request("abc", String.class);
-
-        assertThat(result).isEqualTo("QWEQWE");
+        assertThat(wrapper.request("abc", String.class)).isEqualTo("QWEQWE");
 
         verify(method, times(0)).getStatusLine();
         verify(method, times(1)).setDoAuthentication(true);
@@ -80,11 +69,7 @@ public class HttpWrapperTest {
 
     @Test
     public void willUseCompatibilityToHandleCookies() throws Exception {
-        HttpMethod method = methodFactory.get("abc");
-
-        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
-        when(client.executeMethod(method)).thenReturn(200);
-        when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
+        HttpMethod method = mockReturn("abc", "HTTP/1.0 200 OK", String.class, "BLABLA");
 
         wrapper.request("abc", String.class);
 
@@ -93,12 +78,7 @@ public class HttpWrapperTest {
 
     @Test
     public void willThrowOnUnsuccessfulRequest() throws Exception {
-        HttpMethod method = methodFactory.get("abc");
-
-        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA"));
-        when(method.getStatusLine()).thenReturn(new StatusLine("HTTP/1.0 401 OK"));
-        when(client.executeMethod(method)).thenReturn(401);
-        when(jsonizer.from("BLABLA", String.class)).thenReturn("QWEQWE");
+        mockReturn("abc", "HTTP/1.0 401 OK", String.class, "BLABLA");
 
         try {
             wrapper.request("abc", String.class);
@@ -106,5 +86,15 @@ public class HttpWrapperTest {
         } catch (RequestFailedException ex) {
             assertThat(ex.getMessage()).isEqualTo("HTTP/1.0 401 OK");
         }
+    }
+
+    private <T> HttpMethod mockReturn(String url, String line, Class<T> type, T object) throws IOException {
+        HttpMethod method = methodFactory.get(url);
+        when(method.getResponseBodyAsStream()).thenReturn(getStream("BLABLA".getBytes()));
+        StatusLine statusLine = new StatusLine(line);
+        when(method.getStatusLine()).thenReturn(statusLine);
+        when(client.executeMethod(method)).thenReturn(statusLine.getStatusCode());
+        when(jsonizer.from("BLABLA", type)).thenReturn(object);
+        return method;
     }
 }

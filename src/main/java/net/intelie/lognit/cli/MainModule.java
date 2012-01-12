@@ -7,12 +7,10 @@ import com.google.inject.Singleton;
 import net.intelie.lognit.cli.commands.Command;
 import net.intelie.lognit.cli.commands.Info;
 import net.intelie.lognit.cli.commands.Login;
-import net.intelie.lognit.cli.state.CookieStorage;
+import net.intelie.lognit.cli.state.HttpClientStorage;
 import org.apache.commons.httpclient.HttpClient;
 
 import java.io.File;
-
-import static com.google.inject.name.Names.named;
 
 public class MainModule extends AbstractModule {
     @Override
@@ -21,8 +19,8 @@ public class MainModule extends AbstractModule {
         
         bind(Command[].class).toProvider(commands());
         
-        bind(CookieStorage.class).toInstance(
-                new CookieStorage(new File(System.getProperty("user.home"), ".lognit/cookies")));
+        bind(HttpClientStorage.class).toInstance(
+                new HttpClientStorage(new File(System.getProperty("user.home"), ".lognit/cookies")));
 
     }
 

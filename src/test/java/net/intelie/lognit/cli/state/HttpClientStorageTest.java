@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.state;
 
-import net.intelie.lognit.cli.state.CookieStorage;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.io.FileUtils;
@@ -12,7 +11,7 @@ import java.io.File;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class CookieStorageTest {
+public class HttpClientStorageTest {
     @Test
     public void whenStoringFromClientVerifyIfTheArrayWasSaved() throws Exception {
         HttpClient client = mock(HttpClient.class, RETURNS_DEEP_STUBS);
@@ -20,7 +19,7 @@ public class CookieStorageTest {
 
         File file = File.createTempFile("test", "tmp");
 
-        CookieStorage storage = new CookieStorage(file);
+        HttpClientStorage storage = new HttpClientStorage(file);
         storage.storeFrom(client);
 
         assertThat(FileUtils.readFileToByteArray(file))
@@ -35,7 +34,7 @@ public class CookieStorageTest {
         File file = spy(File.createTempFile("test", "tmp"));
         when(file.getParentFile()).thenThrow(new RuntimeException());
 
-        CookieStorage storage = new CookieStorage(file);
+        HttpClientStorage storage = new HttpClientStorage(file);
         storage.storeFrom(client);
 
         assertThat(FileUtils.readFileToByteArray(file)).isEmpty();
@@ -48,7 +47,7 @@ public class CookieStorageTest {
 
         File file = new File(File.createTempFile("test", "tmp").getAbsolutePath() + ".dir", "test/dir");
 
-        CookieStorage storage = new CookieStorage(file);
+        HttpClientStorage storage = new HttpClientStorage(file);
         storage.storeFrom(client);
 
         assertThat(FileUtils.readFileToByteArray(file))
@@ -62,7 +61,7 @@ public class CookieStorageTest {
         
         HttpClient client = mock(HttpClient.class, RETURNS_DEEP_STUBS);
 
-        CookieStorage storage = new CookieStorage(file);
+        HttpClientStorage storage = new HttpClientStorage(file);
         storage.recoverTo(client);
 
         verify(client.getState()).addCookies(newCookies());
@@ -74,7 +73,7 @@ public class CookieStorageTest {
 
         HttpClient client = mock(HttpClient.class, RETURNS_DEEP_STUBS);
 
-        CookieStorage storage = new CookieStorage(file);
+        HttpClientStorage storage = new HttpClientStorage(file);
         storage.recoverTo(client);
 
         verifyZeroInteractions(client.getState());
@@ -87,7 +86,7 @@ public class CookieStorageTest {
 
         HttpClient client = mock(HttpClient.class, RETURNS_DEEP_STUBS);
 
-        CookieStorage storage = new CookieStorage(file);
+        HttpClientStorage storage = new HttpClientStorage(file);
         storage.recoverTo(client);
 
         verifyZeroInteractions(client.getState());

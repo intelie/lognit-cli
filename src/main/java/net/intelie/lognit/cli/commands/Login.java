@@ -2,15 +2,15 @@ package net.intelie.lognit.cli.commands;
 
 import com.google.inject.Inject;
 import net.intelie.lognit.cli.UserInput;
-import net.intelie.lognit.cli.http.HttpWrapper;
+import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.model.Welcome;
 
 public class Login implements Command {
     private final UserInput console;
-    private final HttpWrapper http;
+    private final RestClient http;
 
     @Inject
-    public Login(UserInput console, HttpWrapper http) {
+    public Login(UserInput console, RestClient http) {
         this.console = console;
         this.http = http;
     }

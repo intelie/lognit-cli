@@ -5,10 +5,10 @@ import org.apache.commons.httpclient.HttpClient;
 
 public class StateKeeper {
     private final HttpClient client;
-    private final CookieStorage storage;
+    private final HttpClientStorage storage;
 
     @Inject
-    public StateKeeper(HttpClient client, CookieStorage storage) {
+    public StateKeeper(HttpClient client, HttpClientStorage storage) {
         this.client = client;
         this.storage = storage;
     }
