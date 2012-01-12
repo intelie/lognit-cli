@@ -16,12 +16,12 @@ public class InfoCommandTest {
 
     @Test
     public void willCallWelcomeUrl() throws Exception {
-        RestClient client = mock(RestClient.class, RETURNS_DEEP_STUBS);
+        Lognit lognit = mock(Lognit.class);
         UserInput input = mock(UserInput.class);
 
-        when(client.request(Lognit.welcome(), Welcome.class)).thenReturn(new Welcome("abc"));
+        when(lognit.info()).thenReturn(new Welcome("abc"));
 
-        InfoCommand info =  new InfoCommand(input, client);
+        InfoCommand info =  new InfoCommand(input, lognit);
         info.execute();
 
         verify(input).printf("%s\n", "abc");

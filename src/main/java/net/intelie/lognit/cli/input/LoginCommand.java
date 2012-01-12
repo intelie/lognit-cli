@@ -9,12 +9,12 @@ import java.net.MalformedURLException;
 
 public class LoginCommand implements Command {
     private final UserInput console;
-    private final RestClient http;
+    private final Lognit lognit;
 
     @Inject
-    public LoginCommand(UserInput console, RestClient http) {
+    public LoginCommand(UserInput console, Lognit lognit) {
         this.console = console;
-        this.http = http;
+        this.lognit = lognit;
     }
 
     @Override
@@ -25,16 +25,10 @@ public class LoginCommand implements Command {
     @Override
     public void execute(String... args) throws Exception {
         String server = args[0];
-
-        authenticate(server);
-
-        Welcome welcome = http.request(Lognit.welcome(), Welcome.class);
-        console.printf("%s\n", welcome.getMessage());
-    }
-
-    private void authenticate(String server) throws MalformedURLException {
         String login = console.readLine("login: ");
         String password = console.readPassword("password: ");
-        http.authenticate(server,  login, password);
+
+        Welcome welcome = lognit.login(server, login, password);
+        console.printf("%s\n", welcome.getMessage());
     }
 }

@@ -7,12 +7,12 @@ import net.intelie.lognit.cli.model.Welcome;
 
 public class InfoCommand implements Command {
     private final UserInput console;
-    private final RestClient http;
+    private final Lognit lognit;
 
     @Inject
-    public InfoCommand(UserInput console, RestClient http) {
+    public InfoCommand(UserInput console, Lognit lognit) {
         this.console = console;
-        this.http = http;
+        this.lognit = lognit;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class InfoCommand implements Command {
 
     @Override
     public void execute(String... args) throws Exception {
-        Welcome welcome = http.request(Lognit.welcome(), Welcome.class);
+        Welcome welcome = lognit.info();
         console.printf("%s\n", welcome.getMessage());
     }
 }
