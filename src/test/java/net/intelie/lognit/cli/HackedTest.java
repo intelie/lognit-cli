@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class InjectContextIntegrationTest {
+public class HackedTest {
 
     private Injector injector;
 
@@ -21,9 +21,8 @@ public class InjectContextIntegrationTest {
     }
 
     @Test
-    public void canCreateContext() {
-        ArgsParser parser = injector.getInstance(ArgsParser.class);
-        assertThat(parser).isInstanceOf(ArgsParser.class);
+    public void callingWithoutParamsWontBreakTheWorld()  {
+        Main.main();
     }
 
     @Test

@@ -15,7 +15,7 @@ public class InfoCommandTest {
     }
 
     @Test
-    public void willCallWelcomeUrl() throws Exception {
+    public void willCallLognitInfo() throws Exception {
         Lognit lognit = mock(Lognit.class);
         UserInput input = mock(UserInput.class);
 

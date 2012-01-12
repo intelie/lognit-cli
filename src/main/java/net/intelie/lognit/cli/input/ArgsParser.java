@@ -31,7 +31,7 @@ public class ArgsParser {
         return map;
     }
 
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         state.begin();
 
         try {
