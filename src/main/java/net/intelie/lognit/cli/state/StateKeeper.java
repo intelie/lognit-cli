@@ -1,14 +1,15 @@
 package net.intelie.lognit.cli.state;
 
 import com.google.inject.Inject;
+import net.intelie.lognit.cli.http.RestClient;
 import org.apache.commons.httpclient.HttpClient;
 
 public class StateKeeper {
-    private final HttpClient client;
-    private final HttpClientStorage storage;
+    private final RestClient client;
+    private final RestStateStorage storage;
 
     @Inject
-    public StateKeeper(HttpClient client, HttpClientStorage storage) {
+    public StateKeeper(RestClient client, RestStateStorage storage) {
         this.client = client;
         this.storage = storage;
     }
