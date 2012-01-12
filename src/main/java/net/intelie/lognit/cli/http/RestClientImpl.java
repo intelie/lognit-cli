@@ -55,7 +55,7 @@ public class RestClientImpl implements RestClient {
 
     @Override
     public <T> T request(String uri, Class<T> responseClass) throws IOException {
-        uri = prependServerIfApplicable(uri);
+        uri = prependServer(uri);
 
         HttpMethod method = execute(uri);
 
@@ -64,11 +64,10 @@ public class RestClientImpl implements RestClient {
         return jsonizer.from(body, responseClass);
     }
 
-    private String prependServerIfApplicable(String uri) throws MalformedURLException {
-        if (server != null) {
-            String safeUri = uri.startsWith("/") ? uri : "/" + uri;
-            uri = String.format("http://%s%s", server, safeUri);
-        }
+    private String prependServer(String uri) throws MalformedURLException {
+        String safeUri = uri.startsWith("/") ? uri : "/" + uri;
+        uri = String.format("http://%s%s", server, safeUri);
+
         return uri;
     }
 
