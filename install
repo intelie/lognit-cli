@@ -2,5 +2,6 @@
 echo Installing Lognit command-line interface...
 file=$(curl -s "https://api.github.com/repos/intelie/lognit-cli/downloads" | grep "https://github.com/downloads/intelie/lognit-cli/lognit-cli-" | sed 's/    "html_url": "//' | sed 's/",//' | sort | tail -n 1)
 echo $file
-curl -L $file > /usr/bin/nit
+curl -L $file > /tmp/nit
+mv /tmp/nit /usr/bin/nit
 chmod a+x /usr/bin/nit
