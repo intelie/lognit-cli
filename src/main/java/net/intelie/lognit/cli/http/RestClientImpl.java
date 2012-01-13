@@ -1,6 +1,7 @@
 package net.intelie.lognit.cli.http;
 
 import com.google.inject.Inject;
+import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -47,6 +48,7 @@ public class RestClientImpl implements RestClient {
     public void setState(RestState state) {
         client.getState().addCookies(state.getCookies());
         server = state.getServer();
+        System.out.printf("server: %s\n", server);
     }
 
     @Override
@@ -72,8 +74,11 @@ public class RestClientImpl implements RestClient {
     @Override
     public <T> void listen(String channel, final Class<T> type, final RestListener<T> listener) throws IOException {
         String url = prependServer("cometd");
-        System.out.println(url);
-        BayeuxClient cometd = bayeux.create(url, client.getState().getCookies());
+        BayeuxClient cometd = bayeux.create(url);
+
+        for (Cookie cookie : client.getState().getCookies())
+            cometd.setCookie(cookie.getName(), cookie.getValue());
+
         cometd.handshake();
         cometd.getChannel(channel).subscribe(new ClientSessionChannel.MessageListener() {
             @Override
@@ -84,7 +89,6 @@ public class RestClientImpl implements RestClient {
     }
 
     private String prependServer(String uri) throws MalformedURLException {
-        System.out.printf("server: %s\n", server);
         String safeUri = uri.startsWith("/") ? uri : "/" + uri;
         uri = String.format("http://%s%s", server, safeUri);
 

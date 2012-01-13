@@ -9,6 +9,6 @@ public class BayeuxFactoryTest {
     @Test
     public void testCreate() throws Exception {
         BayeuxFactory factory = new BayeuxFactory();
-        BayeuxClient session = (BayeuxClient)factory.create("http://localhost/cometd", new Cookie[0]);
+        BayeuxClient session = (BayeuxClient)factory.create("http://localhost/cometd");
     }
 }
