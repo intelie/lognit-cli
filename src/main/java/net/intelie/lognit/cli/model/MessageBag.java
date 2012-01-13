@@ -10,4 +10,12 @@ public class MessageBag {
         this.items = items;
         this.message = message;
     }
+
+    public List<Message> getItems() {
+        return items;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

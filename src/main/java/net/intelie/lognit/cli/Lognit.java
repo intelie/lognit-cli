@@ -2,8 +2,9 @@ package net.intelie.lognit.cli;
 
 import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestClient;
+import net.intelie.lognit.cli.http.RestListener;
+import net.intelie.lognit.cli.model.MessageBag;
 import net.intelie.lognit.cli.model.SearchChannel;
-import net.intelie.lognit.cli.model.SearchListener;
 import net.intelie.lognit.cli.model.Welcome;
 
 import java.io.IOException;
@@ -29,8 +30,10 @@ public class Lognit {
         return client.request(URL_WELCOME, Welcome.class);
     }
 
-    public SearchChannel beginSearch(String query, SearchListener listener) throws IOException {
-        return client.request(make(URL_SEARCH, encode(query)), SearchChannel.class);
+    public SearchChannel beginSearch(String query, RestListener<MessageBag> listener) throws IOException {
+        SearchChannel channel = client.request(make(URL_SEARCH, encode(query)), SearchChannel.class);
+        client.listen(channel.getChannel(), MessageBag.class, listener);
+        return channel;
     }
 
     public void logout() throws IOException {
@@ -40,7 +43,7 @@ public class Lognit {
     private String encode(String value) throws UnsupportedEncodingException {
         return URLEncoder.encode(value, "UTF-8");
     }
-    
+
     private String make(String url, Object... args) {
         return String.format(url, args);
     }

@@ -10,5 +10,7 @@ public interface RestClient {
 
     void authenticate(String server, String username, String password) throws MalformedURLException;
 
-    <T> T request(String uri, Class<T> responseClass) throws IOException;
+    <T> T request(String uri, Class<T> type) throws IOException;
+
+    <T> void listen(String uri, Class<T> type, RestListener<T> listener) throws IOException;
 }

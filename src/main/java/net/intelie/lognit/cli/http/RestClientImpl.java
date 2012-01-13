@@ -7,6 +7,10 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.io.IOUtils;
+import org.cometd.bayeux.Message;
+import org.cometd.bayeux.client.ClientSession;
+import org.cometd.bayeux.client.ClientSessionChannel;
+import org.cometd.client.BayeuxClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,15 +22,17 @@ public class RestClientImpl implements RestClient {
 
     private final HttpClient client;
     private final MethodFactory methods;
+    private final BayeuxFactory bayeux;
     private final Jsonizer jsonizer;
 
     private String server;
     private boolean authenticated;
 
     @Inject
-    public RestClientImpl(HttpClient client, MethodFactory methods, Jsonizer jsonizer) {
+    public RestClientImpl(HttpClient client, MethodFactory methods, BayeuxFactory bayeux, Jsonizer jsonizer) {
         this.client = client;
         this.methods = methods;
+        this.bayeux = bayeux;
         this.jsonizer = jsonizer;
         this.server = "localhost";
         this.authenticated = false;
@@ -61,6 +67,20 @@ public class RestClientImpl implements RestClient {
 
         String body = IOUtils.toString(method.getResponseBodyAsStream());
         return jsonizer.from(body, responseClass);
+    }
+
+    @Override
+    public <T> void listen(String channel, final Class<T> type, final RestListener<T> listener) throws IOException {
+        String url = prependServer("cometd");
+        System.out.println(url);
+        BayeuxClient cometd = bayeux.create(url, client.getState().getCookies());
+        cometd.handshake();
+        cometd.getChannel(channel).subscribe(new ClientSessionChannel.MessageListener() {
+            @Override
+            public void onMessage(ClientSessionChannel clientSessionChannel, Message message) {
+                listener.receive(jsonizer.from((String) message.getData(), type));
+            }
+        });
     }
 
     private String prependServer(String uri) throws MalformedURLException {

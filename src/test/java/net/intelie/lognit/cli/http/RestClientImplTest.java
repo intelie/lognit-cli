@@ -24,7 +24,7 @@ public class RestClientImplTest {
         client = mock(HttpClient.class, RETURNS_DEEP_STUBS);
         methodFactory = mock(MethodFactory.class, RETURNS_DEEP_STUBS);
         jsonizer = mock(Jsonizer.class);
-        wrapper = new RestClientImpl(client, methodFactory, jsonizer);
+        wrapper = new RestClientImpl(client, methodFactory, null, jsonizer);
     }
 
     @Test
