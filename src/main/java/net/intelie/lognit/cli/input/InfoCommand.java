@@ -2,7 +2,6 @@ package net.intelie.lognit.cli.input;
 
 import com.google.inject.Inject;
 import net.intelie.lognit.cli.Lognit;
-import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.model.Welcome;
 
 public class InfoCommand implements Command {

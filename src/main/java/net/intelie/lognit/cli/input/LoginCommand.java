@@ -2,10 +2,7 @@ package net.intelie.lognit.cli.input;
 
 import com.google.inject.Inject;
 import net.intelie.lognit.cli.Lognit;
-import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.model.Welcome;
-
-import java.net.MalformedURLException;
 
 public class LoginCommand implements Command {
     private final UserInput console;

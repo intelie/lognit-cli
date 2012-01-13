@@ -15,7 +15,7 @@ import net.intelie.lognit.cli.state.RestStateStorage;
 
 import java.io.File;
 
-public class Main extends AbstractModule{
+public class Main extends AbstractModule {
     public static void main(String... args) {
         Guice.createInjector(new Main())
                 .getInstance(ArgsParser.class)
@@ -29,12 +29,15 @@ public class Main extends AbstractModule{
 
     @Provides
     private Command[] commands(LoginCommand login, InfoCommand info) {
-        return new Command[] { login, info };
+        return new Command[]{login, info};
     }
 
     @Provides
     private RestStateStorage restStateStorage(Jsonizer jsonizer) {
-        return new RestStateStorage(
-                new File(System.getProperty("user.home"), ".lognit/state"), jsonizer);
+        return new RestStateStorage(local("state"), jsonizer);
+    }
+
+    private File local(String file) {
+        return new File(new File(System.getProperty("user.home"), ".lognit"), file);
     }
 }
