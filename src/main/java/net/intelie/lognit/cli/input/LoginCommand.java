@@ -3,6 +3,10 @@ package net.intelie.lognit.cli.input;
 import com.google.inject.Inject;
 import net.intelie.lognit.cli.Lognit;
 import net.intelie.lognit.cli.model.Welcome;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Options;
 
 public class LoginCommand implements Command {
     private final UserInput console;
@@ -29,3 +33,4 @@ public class LoginCommand implements Command {
         console.printf("%s\n", welcome.getMessage());
     }
 }
+

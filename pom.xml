@@ -84,6 +84,11 @@
             <version>1.9.0-rc1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r08</version>
+        </dependency>
 
     </dependencies>
     <build>
