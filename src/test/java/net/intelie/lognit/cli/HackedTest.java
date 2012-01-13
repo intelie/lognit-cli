@@ -22,6 +22,7 @@ public class HackedTest {
 
     @Test
     public void callingWithoutParamsWontBreakTheWorld()  {
+        new Main();
         Main.main();
     }
 

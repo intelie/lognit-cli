@@ -37,7 +37,7 @@ public class UserInputTest {
         assertThat(input.readLine("field2: ")).isEqualTo("qwe");
         verify(console).readLine("field1: ");
         verify(console).readLine("field2: ");
-        assertThat(out.toString()).isEqualTo("field1: abc\nfield2: qwe\n");
+        assertThat(out.toString()).isEqualTo(safe("field1: abc\nfield2: qwe\n"));
 
     }
 
@@ -49,7 +49,7 @@ public class UserInputTest {
         assertThat(input.readPassword("field2: ")).isEqualTo("qwe");
         verify(console).readLine("field1: ", '\0');
         verify(console).readLine("field2: ", '\0');
-        assertThat(out.toString()).isEqualTo("field1: \nfield2: \n");
+        assertThat(out.toString()).isEqualTo(safe("field1: \nfield2: \n"));
     }
 
     @Test
@@ -76,6 +76,10 @@ public class UserInputTest {
 
     private InputStream mockIn(String text) {
         return spy(new ByteArrayInputStream(text.getBytes()));
+    }
+    
+    private String safe(String str) {
+        return str.replace("\n", System.getProperty("line.separator"));
     }
     
 }
