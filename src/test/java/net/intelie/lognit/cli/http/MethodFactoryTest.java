@@ -17,6 +17,7 @@ public class MethodFactoryTest {
         
         assertThat(method.getURI()).isEqualTo(new URI(uri, false));
         assertThat(method.getName()).isEqualTo("GET");
+        assertThat(method.getFollowRedirects()).isEqualTo(false);
         assertThat(method).isInstanceOf(GetMethod.class);
     }
 

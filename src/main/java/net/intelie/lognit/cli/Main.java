@@ -25,8 +25,8 @@ public class Main extends AbstractModule {
     }
 
     @Provides
-    private Command[] commands(LoginCommand login, InfoCommand info, LogoutCommand logout) {
-        return new Command[]{login, info, logout};
+    private Command[] commands(LoginCommand login, InfoCommand info, LogoutCommand logout, SearchCommand search) {
+        return new Command[]{login, info, logout, search};
     }
 
     @Provides

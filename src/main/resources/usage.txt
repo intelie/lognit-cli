@@ -5,6 +5,7 @@ Commands:
 
   login -s <server> [-u <user>]    logs into <server>
   info                             shows welcome message again
+  search <query>                   starts a search at lognit
   logout                           logs out from current logged server
 
 Global Options:

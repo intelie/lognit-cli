@@ -43,8 +43,16 @@ public class ArgsParserTest {
     @Test
     public void willGetRequiredValue() throws Exception {
         ArgsParser args = new ArgsParser("-a", "abc", "-e", "123");
-        assertThat(args.required(Integer.class, "e")).isEqualTo(123);
+        assertThat(args.required("e", Integer.class)).isEqualTo(123);
         assertThat(args).containsOnly("-a", "abc");
+    }
+
+
+    @Test
+    public void willGetRequiredValueWithoutKey() throws Exception {
+        ArgsParser args = new ArgsParser("123", "-e", "abc");
+        assertThat(args.required(Integer.class)).isEqualTo(123);
+        assertThat(args).containsOnly("-e", "abc");
     }
 
     @Test
@@ -52,10 +60,22 @@ public class ArgsParserTest {
         ArgsParser args = new ArgsParser();
 
         try {
-            args.required(Integer.class, "e");
+            args.required("e", Integer.class);
             fail("should throw");
         } catch (ArgsParseException e) {
             assertThat(e.getMessage()).isEqualTo(ArgsParseException.optionRequired("e").getMessage());
+        }
+    }
+
+    @Test
+    public void whenRequiredDoesntExistWithoutKey() throws Exception {
+        ArgsParser args = new ArgsParser();
+
+        try {
+            args.required(Integer.class);
+            fail("should throw");
+        } catch (ArgsParseException e) {
+            assertThat(e.getMessage()).isEqualTo(ArgsParseException.optionRequired(null).getMessage());
         }
     }
 
@@ -64,7 +84,7 @@ public class ArgsParserTest {
         ArgsParser args = new ArgsParser("-e");
 
         try {
-            args.required(Integer.class, "e");
+            args.required("e", Integer.class);
             fail("should throw");
         } catch (ArgsParseException e) {
             assertThat(e.getMessage()).isEqualTo(ArgsParseException.optionRequired("e").getMessage());
@@ -76,7 +96,7 @@ public class ArgsParserTest {
         ArgsParser args = new ArgsParser("-e", "abc");
 
         try {
-            args.required(Integer.class, "e");
+            args.required("e", Integer.class);
             fail("should throw");
         } catch (ArgsParseException e) {
             assertThat(e.getMessage()).isEqualTo(
@@ -85,9 +105,17 @@ public class ArgsParserTest {
     }
 
     @Test
+    public void willGetOptionalValueWithoutKey() throws Exception {
+        ArgsParser args = new ArgsParser("123", "-e", "abc");
+        assertThat(args.optional(Integer.class, 42)).isEqualTo(123);
+        assertThat(args).containsOnly("-e", "abc");
+    }
+
+
+    @Test
     public void willGetOptionalValue() throws Exception {
         ArgsParser args = new ArgsParser("-a", "abc", "-e", "123");
-        assertThat(args.optional(Integer.class, "e", 42)).isEqualTo(123);
+        assertThat(args.optional("e", Integer.class, 42)).isEqualTo(123);
         assertThat(args).containsOnly("-a", "abc");
     }
 
@@ -95,14 +123,21 @@ public class ArgsParserTest {
     public void whenOptionalDoesntExist() throws Exception {
         ArgsParser args = new ArgsParser();
 
-        assertThat(args.optional(Integer.class, "e", 42)).isEqualTo(42);
+        assertThat(args.optional("e", Integer.class, 42)).isEqualTo(42);
+    }
+
+    @Test
+    public void whenOptionalDoesntExistWithoutKey() throws Exception {
+        ArgsParser args = new ArgsParser();
+
+        assertThat(args.optional(Integer.class, 42)).isEqualTo(42);
     }
 
     @Test
     public void whenOptionalExistsWithNoValue() throws Exception {
         ArgsParser args = new ArgsParser("-e");
 
-        assertThat(args.optional(Integer.class, "e", 42)).isEqualTo(42);
+        assertThat(args.optional("e", Integer.class, 42)).isEqualTo(42);
 
     }
 
@@ -111,7 +146,7 @@ public class ArgsParserTest {
         ArgsParser args = new ArgsParser("-e", "abc");
 
         try {
-            args.optional(Integer.class, "e", 42);
+            args.optional("e", Integer.class, 42);
             fail("should throw");
         } catch (ArgsParseException e) {
             assertThat(e.getMessage()).isEqualTo(
@@ -152,7 +187,7 @@ public class ArgsParserTest {
         ArgsParser args1 = new ArgsParser("-e", "-a");
         ArgsParser args2 = new ArgsParser("-e", "-a");
 
-        assertThat((Object)args1).isEqualTo(args2);
+        assertThat((Object) args1).isEqualTo(args2);
         assertThat(args1.hashCode()).isEqualTo(args2.hashCode());
     }
 
@@ -161,8 +196,8 @@ public class ArgsParserTest {
         ArgsParser args1 = new ArgsParser("-e", "-a");
         ArgsParser args2 = new ArgsParser("-e", "-b");
 
-        assertThat((Object)args1).isNotEqualTo(args2);
-        assertThat((Object)args1).isNotEqualTo(new Object());
+        assertThat((Object) args1).isNotEqualTo(args2);
+        assertThat((Object) args1).isNotEqualTo(new Object());
 
         assertThat(args1.hashCode()).isNotEqualTo(args2.hashCode());
         assertThat(args1.hashCode()).isNotEqualTo(new Object().hashCode());

@@ -21,8 +21,8 @@ public class LoginCommand implements Command {
 
     @Override
     public void execute(ArgsParser parser) throws Exception {
-        String server = parser.required(String.class, "s");
-        String login = parser.optional(String.class, "u", null);
+        String server = parser.required("s", String.class);
+        String login = parser.optional("u", String.class, null);
         if (login == null)
             login = console.readLine("login: ");
         String password = console.readPassword("password: ");

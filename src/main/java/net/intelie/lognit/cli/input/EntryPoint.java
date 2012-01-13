@@ -42,7 +42,7 @@ public class EntryPoint {
                 throw ArgsParseException.commandNotFound(commandName);
             command.execute(parser);
         } catch (ArgsParseException ex) {
-            console.println("args:" + ex.getMessage());
+            console.println("args: " + ex.getMessage());
             printUsage();
         } catch (Exception ex) {
             logger.warn("An error has ocurred. Sad.", ex);

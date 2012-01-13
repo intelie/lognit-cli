@@ -5,6 +5,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 
 public class MethodFactory {
     public HttpMethod get(String uri) {
-        return new GetMethod(uri);
+        GetMethod method = new GetMethod(uri);
+        method.setFollowRedirects(false);
+        return method;
     }
 }

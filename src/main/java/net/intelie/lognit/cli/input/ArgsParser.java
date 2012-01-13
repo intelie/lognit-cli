@@ -21,15 +21,23 @@ public class ArgsParser implements Iterable<String> {
             throw ArgsParseException.commandNameRequired();
         return cmd;
     }
+
+    public <T> T required(Class<T> type) throws ArgsParseException {
+        return required(null, type);
+    }
+
+    public <T> T optional(Class<T> type, T defaultValue) throws ArgsParseException {
+        return optional(null, type, defaultValue);
+    }
     
-    public <T> T required(Class<T> type, String option) throws ArgsParseException {
+    public <T> T required(String option, Class<T> type) throws ArgsParseException {
         String value = findValue(option);
         if (value == null)
             throw ArgsParseException.optionRequired(option);
         return convert(type, value);
     }
 
-    public <T> T optional(Class<T> type, String option, T defaultValue) throws ArgsParseException {
+    public <T> T optional(String option, Class<T> type, T defaultValue) throws ArgsParseException {
         String value = findValue(option);
         if (value == null)
             return defaultValue;
@@ -45,6 +53,8 @@ public class ArgsParser implements Iterable<String> {
     }
 
     private String findValue(String option) throws ArgsParseException {
+        if (option == null)
+            return removeNext(args.listIterator());
         int index = args.indexOf("-" + option);
         if (index == -1) return null;
 

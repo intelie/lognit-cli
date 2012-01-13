@@ -2,10 +2,7 @@ package net.intelie.lognit.cli;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import net.intelie.lognit.cli.input.Command;
-import net.intelie.lognit.cli.input.InfoCommand;
-import net.intelie.lognit.cli.input.LoginCommand;
-import net.intelie.lognit.cli.input.LogoutCommand;
+import net.intelie.lognit.cli.input.*;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,5 +29,6 @@ public class MainTest {
         assertThat(commands).hasAtLeastOneElementOfType(LoginCommand.class);
         assertThat(commands).hasAtLeastOneElementOfType(InfoCommand.class);
         assertThat(commands).hasAtLeastOneElementOfType(LogoutCommand.class);
+        assertThat(commands).hasAtLeastOneElementOfType(SearchCommand.class);
     }
 }
