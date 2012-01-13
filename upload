@@ -1,10 +1,5 @@
 #!/bin/sh
-DATE=`/bin/date +%Y%m%d%H%M%S`
-if [ -f target/lognit-cli-$1.sh ]; then
-    curl -s http://cloud.github.com/downloads/intelie/lognit-cli/VERSIONS | grep -v -E "SNAPSHOT|<" > target/VERSIONS.2
-    echo $1-$DATE >> target/VERSIONS.2
-    sort < target/VERSIONS.2 > target/VERSIONS
-    cat target/VERSIONS
-    tools/upload.rb target/lognit-cli-$1.sh intelie/lognit-cli lognit-cli-$1-$DATE.sh
-    tools/upload.rb target/VERSIONS intelie/lognit-cli VERSIONS
-fi
+read -p "github login: " GHUSER
+read -s -p "$GHUSER's password: " GHPASS
+echo ""
+mvn clean install ghDownloads:upload -Dgithub.global.userName=$GHUSER -Dgithub.global.password=$GHPASS
