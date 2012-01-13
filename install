@@ -1,5 +1,6 @@
 #!/bin/sh
-version=$(curl -s -B "http://cloud.github.com/downloads/intelie/lognit-cli/VERSIONS" 2>/dev/null | tail -n 1)
-echo Installing Lognit command-line interface v$version
-curl http://cloud.github.com/downloads/intelie/lognit-cli/lognit-cli-$version.sh > /usr/bin/nit
+echo Installing Lognit command-line interface...
+file=$(curl -s "https://api.github.com/repos/intelie/lognit-cli/downloads" | grep "https://github.com/downloads/intelie/lognit-cli/lognit-cli-" | sed 's/    "html_url": "//' | sed 's/",//' | sort | tail -n 1)
+echo $file
+curl -L $file > /usr/bin/nit
 chmod a+x /usr/bin/nit

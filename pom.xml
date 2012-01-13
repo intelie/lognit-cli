@@ -147,6 +147,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>downloads-maven-plugin</artifactId>
+                <version>0.4</version>
+                <configuration>
+                    <description>${project.version} release of ${project.name}</description>
+                    <override>true</override>
+                    <repositoryName>lognit-cli</repositoryName>
+                    <repositoryOwner>intelie</repositoryOwner>
+                    <includes>
+                        <include>${project.build.finalName}.sh</include>
+                    </includes>
+                </configuration>
+            </plugin>
         </plugins>
 
     </build>
