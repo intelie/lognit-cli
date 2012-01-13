@@ -34,4 +34,12 @@ public class LognitTest {
         Lognit lognit = new Lognit(client);
         assertThat(lognit.info()).isEqualTo(welcome);
     }
+
+    @Test
+    public void testLogout() throws Exception {
+        RestClient client = mock(RestClient.class);
+        Lognit lognit = new Lognit(client);
+        lognit.logout();
+        verify(client).authenticate("", "", "");
+    }
 }

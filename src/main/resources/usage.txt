@@ -1,0 +1,12 @@
+
+Usage: nit <COMMAND> [OPTIONS]
+
+Commands:
+
+  login -s <server> [-u <user>]    logs into <server>
+  info                             shows welcome message again
+  logout                           logs out from current logged server
+
+Global Options:
+
+  -v                               verbose mode

@@ -5,7 +5,9 @@ import com.google.inject.Injector;
 import net.intelie.lognit.cli.input.Command;
 import net.intelie.lognit.cli.input.InfoCommand;
 import net.intelie.lognit.cli.input.LoginCommand;
+import net.intelie.lognit.cli.input.LogoutCommand;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -29,5 +31,6 @@ public class MainTest {
         Command[] commands = injector.getInstance(Command[].class);
         assertThat(commands).hasAtLeastOneElementOfType(LoginCommand.class);
         assertThat(commands).hasAtLeastOneElementOfType(InfoCommand.class);
+        assertThat(commands).hasAtLeastOneElementOfType(LogoutCommand.class);
     }
 }

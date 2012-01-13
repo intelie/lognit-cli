@@ -1,7 +1,6 @@
 package net.intelie.lognit.cli.input;
 
 import jline.ConsoleReader;
-import net.intelie.lognit.cli.input.UserInput;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,9 +23,9 @@ public class UserInputTest {
     @Test
     public void willPrintToStdout() throws Exception {
         UserInput input = new UserInput(console);
-        input.printf("abc%d\nqwe%s\n", 1, "r");
+        input.println("abc%d", 1);
 
-        assertThat(out.toString()).isEqualTo("abc1\nqwer\n");
+        assertThat(out.toString()).isEqualTo(safe("abc1\n"));
     }
 
     @Test
@@ -69,7 +68,7 @@ public class UserInputTest {
         doThrow(new IOException()).when(out).write(any(char[].class));
 
         UserInput input = new UserInput(new ConsoleReader(null, out));
-        input.printf("abc");
+        input.println("abc");
         
         verify(out).write(any(char[].class));
     }

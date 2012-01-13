@@ -3,10 +3,6 @@ package net.intelie.lognit.cli.input;
 import com.google.inject.Inject;
 import net.intelie.lognit.cli.Lognit;
 import net.intelie.lognit.cli.model.Welcome;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.Options;
 
 public class LoginCommand implements Command {
     private final UserInput console;
@@ -24,13 +20,15 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public void execute(String... args) throws Exception {
-        String server = args[0];
-        String login = console.readLine("login: ");
+    public void execute(ArgsParser parser) throws Exception {
+        String server = parser.required(String.class, "s");
+        String login = parser.optional(String.class, "u", null);
+        if (login == null)
+            login = console.readLine("login: ");
         String password = console.readPassword("password: ");
 
         Welcome welcome = lognit.login(server, login, password);
-        console.printf("%s\n", welcome.getMessage());
+        console.println(welcome.getMessage());
     }
 }
 

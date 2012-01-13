@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 read -p "github login: " GHUSER
 read -s -p "$GHUSER's password: " GHPASS
 echo ""

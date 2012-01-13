@@ -16,12 +16,13 @@ public class UserInput {
         this.console = console;
     }
 
-    public void printf(String format, Object... args) {
+    public void println(String format, Object... args) {
         try {
             console.putString(String.format(format, args));
+            console.printNewline();
             console.flushConsole();
         } catch (IOException e) {
-            logger.warn("why fail printf?", e);
+            logger.warn("why fail println?", e);
         }
     }
 

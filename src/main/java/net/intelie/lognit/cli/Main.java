@@ -7,10 +7,7 @@ import com.google.inject.Singleton;
 import net.intelie.lognit.cli.http.Jsonizer;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestClientImpl;
-import net.intelie.lognit.cli.input.ArgsParser;
-import net.intelie.lognit.cli.input.Command;
-import net.intelie.lognit.cli.input.InfoCommand;
-import net.intelie.lognit.cli.input.LoginCommand;
+import net.intelie.lognit.cli.input.*;
 import net.intelie.lognit.cli.state.RestStateStorage;
 
 import java.io.File;
@@ -18,7 +15,7 @@ import java.io.File;
 public class Main extends AbstractModule {
     public static void main(String... args) {
         Guice.createInjector(new Main())
-                .getInstance(ArgsParser.class)
+                .getInstance(EntryPoint.class)
                 .run(args);
     }
 
@@ -28,8 +25,8 @@ public class Main extends AbstractModule {
     }
 
     @Provides
-    private Command[] commands(LoginCommand login, InfoCommand info) {
-        return new Command[]{login, info};
+    private Command[] commands(LoginCommand login, InfoCommand info, LogoutCommand logout) {
+        return new Command[]{login, info, logout};
     }
 
     @Provides

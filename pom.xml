@@ -140,7 +140,7 @@
                                 <concat destfile="${project.build.directory}/${project.build.finalName}.sh"
                                         binary="true">
                                     <fileset dir="${basedir}">
-                                        <include name="src/shell/stub.sh"/>
+                                        <include name="src/misc/stub.sh"/>
                                         <include name="target/${project.build.finalName}.jar"/>
                                     </fileset>
                                 </concat>

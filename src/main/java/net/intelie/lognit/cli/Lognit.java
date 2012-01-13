@@ -23,4 +23,8 @@ public class Lognit {
     public Welcome info() throws IOException {
         return client.request(URL_WELCOME, Welcome.class);
     }
+
+    public void logout() throws IOException {
+        client.authenticate("", "", "");
+    }
 }

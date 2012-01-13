@@ -60,11 +60,11 @@ public class RestClientImpl implements RestClient {
         HttpMethod method = execute(uri);
 
         String body = IOUtils.toString(method.getResponseBodyAsStream());
-        System.out.println(body);
         return jsonizer.from(body, responseClass);
     }
 
     private String prependServer(String uri) throws MalformedURLException {
+        System.out.printf("server: %s\n", server);
         String safeUri = uri.startsWith("/") ? uri : "/" + uri;
         uri = String.format("http://%s%s", server, safeUri);
 

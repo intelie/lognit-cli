@@ -7,10 +7,10 @@ import org.junit.Test;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class InfoCommandTest {
+public class LogoutCommandTest {
     @Test
-    public void nameIsInfo() {
-        assertThat(new InfoCommand(null, null).name()).isEqualTo("info");
+    public void nameIsLogout() {
+        assertThat(new LogoutCommand(null, null).name()).isEqualTo("logout");
     }
 
     @Test
@@ -18,12 +18,10 @@ public class InfoCommandTest {
         Lognit lognit = mock(Lognit.class);
         UserInput input = mock(UserInput.class);
 
-        when(lognit.info()).thenReturn(new Welcome("abc"));
+        LogoutCommand logout = new LogoutCommand(input, lognit);
+        logout.execute(new ArgsParser());
 
-        InfoCommand info =  new InfoCommand(input, lognit);
-        info.execute(new ArgsParser());
-
-        verify(input).println("abc");
+        verify(lognit).logout();
     }
 
 }

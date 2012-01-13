@@ -23,9 +23,23 @@ public class LoginCommandTest {
         when(lognit.login("A", "B", "C")).thenReturn(new Welcome("abc"));
 
         LoginCommand info =  new LoginCommand(input, lognit);
-        info.execute("A");
+        info.execute(new ArgsParser("-s", "A"));
 
-        verify(input).printf("%s\n", "abc");
+        verify(input).println("abc");
+    }
+
+    @Test
+    public void willCallLognitLoginWithoutAskingUser() throws Exception {
+        Lognit lognit = mock(Lognit.class);
+        UserInput input = mock(UserInput.class);
+
+        when(input.readPassword(anyString())).thenReturn("C");
+        when(lognit.login("A", "B", "C")).thenReturn(new Welcome("abc"));
+
+        LoginCommand info =  new LoginCommand(input, lognit);
+        info.execute(new ArgsParser("-s", "A", "-u", "B"));
+
+        verify(input).println("abc");
     }
 
 }

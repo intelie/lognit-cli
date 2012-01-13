@@ -1,90 +1,170 @@
 package net.intelie.lognit.cli.input;
 
-import net.intelie.lognit.cli.input.ArgsParser;
-import net.intelie.lognit.cli.input.Command;
-import net.intelie.lognit.cli.input.UserInput;
-import net.intelie.lognit.cli.state.StateKeeper;
 import org.junit.Test;
 
-import static org.fest.util.Arrays.array;
-import static org.mockito.Mockito.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+
+import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 public class ArgsParserTest {
     @Test
-    public void willRunCommandByItsName() throws Exception {
-        StateKeeper keeper = mock(StateKeeper.class);
-
-        Command cmd1 = mock(Command.class), cmd2 = mock(Command.class);
-        when(cmd1.name()).thenReturn("abc");
-        when(cmd2.name()).thenReturn("qwe");
-
-        ArgsParser parser = new ArgsParser(null, keeper, cmd1, cmd2);
-        reset(cmd1, cmd2);
-        parser.run(array("qwe", "123", "456"));
-        verify(keeper).begin();
-        verify(keeper).end();
-
-        verify(cmd2).execute("123", "456");
-        verifyZeroInteractions(cmd1);
+    public void commandNameIsTheFirstString() throws Exception {
+        ArgsParser args = new ArgsParser("abc", "-e");
+        assertThat(args.commandName()).isEqualTo("abc");
+        assertThat(args).containsOnly("-e");
     }
 
     @Test
-    public void wontRunIfNoCommandFound() throws Exception {
-        StateKeeper keeper = mock(StateKeeper.class);
-        UserInput console = mock(UserInput.class);
+    public void commandNameIsRequiredAndMustBeFirst() throws Exception {
+        ArgsParser args = new ArgsParser("-e");
 
-        Command cmd1 = mock(Command.class), cmd2 = mock(Command.class);
-        when(cmd1.name()).thenReturn("abc");
-        when(cmd2.name()).thenReturn("qwe");
-
-        ArgsParser parser = new ArgsParser(console, keeper, cmd1, cmd2);
-        reset(cmd1, cmd2);
-
-        parser.run("aaa", "123", "456");
-        verify(keeper).begin();
-        verify(keeper).end();
-        verify(console).printf(any(String.class));
-        verify(console).printf(any(String.class), any(String.class));
-
-        verifyZeroInteractions(cmd1, cmd2);
+        try {
+            args.commandName();
+            fail("should throw");
+        } catch (ArgsParseException e) {
+            assertThat(e.getMessage()).isEqualTo(ArgsParseException.commandNameRequired().getMessage());
+        }
     }
 
     @Test
-    public void wontRunIfNoCommandLineIsPassed() throws Exception {
-        StateKeeper keeper = mock(StateKeeper.class);
-        UserInput console = mock(UserInput.class);
+    public void commandNameIsRequired() throws Exception {
+        ArgsParser args = new ArgsParser();
 
-        Command cmd1 = mock(Command.class), cmd2 = mock(Command.class);
-        when(cmd1.name()).thenReturn("abc");
-        when(cmd2.name()).thenReturn("qwe");
-
-        ArgsParser parser = new ArgsParser(console, keeper, cmd1, cmd2);
-        reset(cmd1, cmd2);
-
-        parser.run();
-        verify(keeper).begin();
-        verify(keeper).end();
-        verify(console).printf(any(String.class));
-        verify(console).printf(any(String.class), any(String.class));
-
-        verifyZeroInteractions(cmd1, cmd2);
+        try {
+            args.commandName();
+            fail("should throw");
+        } catch (ArgsParseException e) {
+            assertThat(e.getMessage()).isEqualTo(ArgsParseException.commandNameRequired().getMessage());
+        }
     }
 
     @Test
-    public void willRunAndNotRethrow() throws Exception {
-        StateKeeper keeper = mock(StateKeeper.class);
-        UserInput console = mock(UserInput.class);
+    public void willGetRequiredValue() throws Exception {
+        ArgsParser args = new ArgsParser("-a", "abc", "-e", "123");
+        assertThat(args.required(Integer.class, "e")).isEqualTo(123);
+        assertThat(args).containsOnly("-a", "abc");
+    }
 
-        Command cmd1 = mock(Command.class);
-        when(cmd1.name()).thenReturn("abc");
-        doThrow(new RuntimeException()).when(cmd1).execute("123", "456");
+    @Test
+    public void whenRequiredDoesntExist() throws Exception {
+        ArgsParser args = new ArgsParser();
 
-        ArgsParser parser = new ArgsParser(console, keeper, cmd1);
-        parser.run("abc", "123", "456");
-        verify(keeper).begin();
-        verify(keeper).end();
-        verify(console).printf(anyString(), anyObject(), anyObject());
+        try {
+            args.required(Integer.class, "e");
+            fail("should throw");
+        } catch (ArgsParseException e) {
+            assertThat(e.getMessage()).isEqualTo(ArgsParseException.optionRequired("e").getMessage());
+        }
+    }
 
-        verify(cmd1).execute("123", "456");
+    @Test
+    public void whenRequiredExistsWithNoValue() throws Exception {
+        ArgsParser args = new ArgsParser("-e");
+
+        try {
+            args.required(Integer.class, "e");
+            fail("should throw");
+        } catch (ArgsParseException e) {
+            assertThat(e.getMessage()).isEqualTo(ArgsParseException.optionRequired("e").getMessage());
+        }
+    }
+
+    @Test
+    public void whenRequiredExistsWithWrongValue() throws Exception {
+        ArgsParser args = new ArgsParser("-e", "abc");
+
+        try {
+            args.required(Integer.class, "e");
+            fail("should throw");
+        } catch (ArgsParseException e) {
+            assertThat(e.getMessage()).isEqualTo(
+                    ArgsParseException.optionNotConvertible(new InvocationTargetException(null)).getMessage());
+        }
+    }
+
+    @Test
+    public void willGetOptionalValue() throws Exception {
+        ArgsParser args = new ArgsParser("-a", "abc", "-e", "123");
+        assertThat(args.optional(Integer.class, "e", 42)).isEqualTo(123);
+        assertThat(args).containsOnly("-a", "abc");
+    }
+
+    @Test
+    public void whenOptionalDoesntExist() throws Exception {
+        ArgsParser args = new ArgsParser();
+
+        assertThat(args.optional(Integer.class, "e", 42)).isEqualTo(42);
+    }
+
+    @Test
+    public void whenOptionalExistsWithNoValue() throws Exception {
+        ArgsParser args = new ArgsParser("-e");
+
+        assertThat(args.optional(Integer.class, "e", 42)).isEqualTo(42);
+
+    }
+
+    @Test
+    public void whenOptionalExistsWithWrongValue() throws Exception {
+        ArgsParser args = new ArgsParser("-e", "abc");
+
+        try {
+            args.optional(Integer.class, "e", 42);
+            fail("should throw");
+        } catch (ArgsParseException e) {
+            assertThat(e.getMessage()).isEqualTo(
+                    ArgsParseException.optionNotConvertible(new InvocationTargetException(null)).getMessage());
+        }
+    }
+
+    @Test
+    public void checkingEmptyOnEmptyParser() throws Exception {
+        ArgsParser args = new ArgsParser();
+        args.checkEmpty();
+    }
+
+    @Test
+    public void checkingEmptyOnNonEmptyParser() throws Exception {
+        ArgsParser args = new ArgsParser("-a", "123");
+        try {
+            args.checkEmpty();
+            fail("should throw");
+        } catch (ArgsParseException e) {
+            assertThat(e.getMessage()).isEqualTo(
+                    ArgsParseException.unexpectedParameters(Arrays.asList("-a", "123")).getMessage());
+        }
+    }
+
+    @Test
+    public void canConsumeFlag() throws Exception {
+        ArgsParser args = new ArgsParser("-e", "-a");
+
+        assertThat(args.flag("e")).isEqualTo(true);
+        assertThat(args).containsOnly("-a");
+        assertThat(args.flag("c")).isEqualTo(false);
+        assertThat(args).containsOnly("-a");
+    }
+
+    @Test
+    public void whenAreEqual() throws Exception {
+        ArgsParser args1 = new ArgsParser("-e", "-a");
+        ArgsParser args2 = new ArgsParser("-e", "-a");
+
+        assertThat((Object)args1).isEqualTo(args2);
+        assertThat(args1.hashCode()).isEqualTo(args2.hashCode());
+    }
+
+    @Test
+    public void whenAreDifferent() throws Exception {
+        ArgsParser args1 = new ArgsParser("-e", "-a");
+        ArgsParser args2 = new ArgsParser("-e", "-b");
+
+        assertThat((Object)args1).isNotEqualTo(args2);
+        assertThat((Object)args1).isNotEqualTo(new Object());
+
+        assertThat(args1.hashCode()).isNotEqualTo(args2.hashCode());
+        assertThat(args1.hashCode()).isNotEqualTo(new Object().hashCode());
     }
 }
