@@ -2,7 +2,6 @@ package net.intelie.lognit.cli;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import net.intelie.lognit.cli.input.ArgsParser;
 import net.intelie.lognit.cli.input.Command;
 import net.intelie.lognit.cli.input.InfoCommand;
 import net.intelie.lognit.cli.input.LoginCommand;
@@ -17,12 +16,11 @@ public class HackedTest {
 
     @Before
     public void setUp() throws Exception {
-        injector = Guice.createInjector(new MainModule());
+        injector = Guice.createInjector(new Main());
     }
 
     @Test
     public void callingWithoutParamsWontBreakTheWorld()  {
-        new Main();
         Main.main();
     }
 
