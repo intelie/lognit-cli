@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.http;
 
-import org.apache.commons.httpclient.Cookie;
 import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.LongPollingTransport;
 

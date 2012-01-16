@@ -1,13 +1,11 @@
 package net.intelie.lognit.cli.input;
 
 import com.google.common.base.Objects;
+import org.apache.commons.lang.StringUtils;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
+import java.util.*;
 
-public class ArgsParser implements Iterable<String> {
+public class ArgsParser {
     private final LinkedList<String> args;
 
     public ArgsParser(String... args) {
@@ -15,53 +13,42 @@ public class ArgsParser implements Iterable<String> {
         Collections.addAll(this.args, args);
     }
 
-    public String commandName() throws ArgsParseException {
-        String cmd = args.pollFirst();
-        if (cmd == null || cmd.startsWith("-"))
-            throw ArgsParseException.commandNameRequired();
-        return cmd;
+    public boolean flag(String... flag) {
+        return findIterator(flag) != null;
     }
 
-    public <T> T required(Class<T> type) throws ArgsParseException {
-        return required(null, type);
+    public <T> T option(Class<T> type, String... options) {
+        String value = findValue(options);
+        if (value == null) return null;
+        return convert(type, value, options);
     }
 
-    public <T> T optional(Class<T> type, T defaultValue) throws ArgsParseException {
-        return optional(null, type, defaultValue);
-    }
-    
-    public <T> T required(String option, Class<T> type) throws ArgsParseException {
-        String value = findValue(option);
-        if (value == null)
-            throw ArgsParseException.optionRequired(option);
-        return convert(type, value);
-    }
-
-    public <T> T optional(String option, Class<T> type, T defaultValue) throws ArgsParseException {
-        String value = findValue(option);
-        if (value == null)
-            return defaultValue;
-        return convert(type, value);
-    }
-
-    private <T> T convert(Class<T> type, String value) throws ArgsParseException {
+    private <T> T convert(Class<T> type, String value, String... options) {
         try {
             return type.getConstructor(String.class).newInstance(value);
         } catch (Exception e) {
-            throw ArgsParseException.optionNotConvertible(e);
+            return null;
         }
     }
 
-    private String findValue(String option) throws ArgsParseException {
-        if (option == null)
-            return removeNext(args.listIterator());
-        int index = args.indexOf("-" + option);
-        if (index == -1) return null;
-
-        ListIterator<String> it = args.listIterator();
-        while (index-- > 0) it.next();
-        removeNext(it);
+    private String findValue(String... options) {
+        ListIterator<String> it = findIterator(options);
+        if (it == null || !it.hasNext())
+            return null;
         return removeNext(it);
+    }
+
+    private ListIterator<String> findIterator(String... options) {
+        List<String> optionList = Arrays.asList(options);
+        ListIterator<String> it = args.listIterator();
+        while (it.hasNext()) {
+            String key = it.next();
+            if (optionList.contains(key)) {
+                it.remove();
+                return it;
+            }
+        }
+        return null;
     }
 
     private String removeNext(ListIterator<String> it) {
@@ -72,29 +59,19 @@ public class ArgsParser implements Iterable<String> {
     }
 
     @Override
-    public Iterator<String> iterator() {
-        return args.iterator();
-    }
-
-    public boolean flag(String flag) {
-        return args.remove("-" + flag);
-    }
-
-    public void checkEmpty() throws ArgsParseException {
-        if (!args.isEmpty())
-            throw ArgsParseException.unexpectedParameters(args);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (!(o instanceof ArgsParser)) return false;
-        ArgsParser that = (ArgsParser)o;
-        
+        ArgsParser that = (ArgsParser) o;
+
         return Objects.equal(this.args, that.args);
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(args);
+    }
+
+    public String text() {
+        return StringUtils.join(args, " ").trim();
     }
 }

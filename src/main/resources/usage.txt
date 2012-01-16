@@ -1,13 +1,9 @@
+Usage:
+  nit [<query>] [<options>]
 
-Usage: nit <COMMAND> [OPTIONS]
+Options:
 
-Commands:
-
-  login -s <server> [-u <user>]    logs into <server>
-  info                             shows welcome message again
-  search <query>                   starts a search at lognit
-  logout                           logs out from current logged server
-
-Global Options:
-
-  -v                               verbose mode
+  -s, --server <server>                  logs into <server>
+  -u, --user <user>                      authenticates with <user>
+  -p, --pass <password>                  authenticates with <password>
+  -?, --help                             shows this help

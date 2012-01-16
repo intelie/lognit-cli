@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 import net.intelie.lognit.cli.http.Jsonizer;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestClientImpl;
-import net.intelie.lognit.cli.input.*;
+import net.intelie.lognit.cli.input.EntryPoint;
 import net.intelie.lognit.cli.state.RestStateStorage;
 
 import java.io.File;
@@ -22,11 +22,6 @@ public class Main extends AbstractModule {
     @Override
     protected void configure() {
         bind(RestClient.class).to(RestClientImpl.class).in(Singleton.class);
-    }
-
-    @Provides
-    private Command[] commands(LoginCommand login, InfoCommand info, LogoutCommand logout, SearchCommand search) {
-        return new Command[]{login, info, logout, search};
     }
 
     @Provides

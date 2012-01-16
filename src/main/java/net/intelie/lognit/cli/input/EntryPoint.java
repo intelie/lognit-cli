@@ -7,43 +7,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 
 public class EntryPoint {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserInput console;
+    private final UserOptions options;
     private final StateKeeper state;
-    private final Map<String, Command> commands;
 
     @Inject
-    public EntryPoint(UserInput console, StateKeeper state, Command... commands) {
+    public EntryPoint(UserInput console, UserOptions options, StateKeeper state) {
         this.console = console;
+        this.options = options;
         this.state = state;
-        this.commands = makeCommands(commands);
-    }
-
-    private HashMap<String, Command> makeCommands(Command[] commands) {
-        HashMap<String, Command> map = new HashMap<String, Command>();
-        for (Command command : commands)
-            map.put(command.name(), command);
-        return map;
     }
 
     public void run(String... args) {
-        ArgsParser parser = new ArgsParser(args);
         state.begin();
 
         try {
-            String commandName = parser.commandName();
-            Command command = commands.get(commandName);
-            if (command == null)
-                throw ArgsParseException.commandNotFound(commandName);
-            command.execute(parser);
-        } catch (ArgsParseException ex) {
-            console.println("args: " + ex.getMessage());
-            printUsage();
+            if (options.isHelp()) {
+                printUsage();
+                return;
+            }
         } catch (Exception ex) {
             logger.warn("An error has ocurred. Sad.", ex);
             console.println("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());

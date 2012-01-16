@@ -9,7 +9,6 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.io.IOUtils;
 import org.cometd.bayeux.Message;
-import org.cometd.bayeux.client.ClientSession;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 import org.slf4j.Logger;
@@ -52,12 +51,15 @@ public class RestClientImpl implements RestClient {
     }
 
     @Override
-    public void authenticate(String server, String username, String password) throws MalformedURLException {
+    public void setServer(String server) {
         client.getState().clearCookies();
+        this.server = server;
+    }
+
+    @Override
+    public void authenticate(String username, String password) {
         client.getState().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
         client.getParams().setAuthenticationPreemptive(true);
-
-        this.server = server;
         this.authenticated = true;
     }
 
@@ -76,8 +78,10 @@ public class RestClientImpl implements RestClient {
         String url = prependServer("cometd");
         BayeuxClient cometd = bayeux.create(url);
 
-        for (Cookie cookie : client.getState().getCookies())
-            cometd.setCookie(cookie.getName(), cookie.getValue());
+        Cookie[] cookies = client.getState().getCookies();
+        if (cookies != null)
+            for (Cookie cookie : cookies)
+                cometd.setCookie(cookie.getName(), cookie.getValue());
 
         cometd.handshake();
         cometd.getChannel(channel).subscribe(new ClientSessionChannel.MessageListener() {
@@ -101,9 +105,15 @@ public class RestClientImpl implements RestClient {
         method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 
         method.setDoAuthentication(authenticated);
-        if (client.executeMethod(method) != 200)
-            throw new RequestFailedException(method.getStatusLine());
-        return method;
+
+        int response = client.executeMethod(method);
+        if (response == 200)
+            return method;
+
+        if (response < 500)
+            throw new UnauthorizedException(method.getStatusLine());
+
+        throw new RequestFailedException(method.getStatusLine());
     }
 
 }

@@ -8,7 +8,9 @@ public interface RestClient {
 
     void setState(RestState state);
 
-    void authenticate(String server, String username, String password) throws MalformedURLException;
+    void setServer(String server);
+    
+    void authenticate(String username, String password);
 
     <T> T request(String uri, Class<T> type) throws IOException;
 

@@ -2,142 +2,49 @@ package net.intelie.lognit.cli.input;
 
 import org.junit.Test;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-
 import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 public class ArgsParserTest {
     @Test
-    public void commandNameIsTheFirstString() throws Exception {
-        ArgsParser args = new ArgsParser("abc", "-e");
-        assertThat(args.commandName()).isEqualTo("abc");
-        assertThat(args).containsOnly("-e");
-    }
-
-    @Test
-    public void commandNameIsRequiredAndMustBeFirst() throws Exception {
-        ArgsParser args = new ArgsParser("-e");
-
-        try {
-            args.commandName();
-            fail("should throw");
-        } catch (ArgsParseException e) {
-            assertThat(e.getMessage()).isEqualTo(ArgsParseException.commandNameRequired().getMessage());
-        }
-    }
-
-    @Test
-    public void commandNameIsRequired() throws Exception {
-        ArgsParser args = new ArgsParser();
-
-        try {
-            args.commandName();
-            fail("should throw");
-        } catch (ArgsParseException e) {
-            assertThat(e.getMessage()).isEqualTo(ArgsParseException.commandNameRequired().getMessage());
-        }
-    }
-
-    @Test
-    public void willGetRequiredValue() throws Exception {
-        ArgsParser args = new ArgsParser("-a", "abc", "-e", "123");
-        assertThat(args.required("e", Integer.class)).isEqualTo(123);
-        assertThat(args).containsOnly("-a", "abc");
-    }
-
-
-    @Test
-    public void willGetRequiredValueWithoutKey() throws Exception {
-        ArgsParser args = new ArgsParser("123", "-e", "abc");
-        assertThat(args.required(Integer.class)).isEqualTo(123);
-        assertThat(args).containsOnly("-e", "abc");
-    }
-
-    @Test
-    public void whenRequiredDoesntExist() throws Exception {
-        ArgsParser args = new ArgsParser();
-
-        try {
-            args.required("e", Integer.class);
-            fail("should throw");
-        } catch (ArgsParseException e) {
-            assertThat(e.getMessage()).isEqualTo(ArgsParseException.optionRequired("e").getMessage());
-        }
-    }
-
-    @Test
-    public void whenRequiredDoesntExistWithoutKey() throws Exception {
-        ArgsParser args = new ArgsParser();
-
-        try {
-            args.required(Integer.class);
-            fail("should throw");
-        } catch (ArgsParseException e) {
-            assertThat(e.getMessage()).isEqualTo(ArgsParseException.optionRequired(null).getMessage());
-        }
-    }
-
-    @Test
-    public void whenRequiredExistsWithNoValue() throws Exception {
-        ArgsParser args = new ArgsParser("-e");
-
-        try {
-            args.required("e", Integer.class);
-            fail("should throw");
-        } catch (ArgsParseException e) {
-            assertThat(e.getMessage()).isEqualTo(ArgsParseException.optionRequired("e").getMessage());
-        }
-    }
-
-    @Test
-    public void whenRequiredExistsWithWrongValue() throws Exception {
-        ArgsParser args = new ArgsParser("-e", "abc");
-
-        try {
-            args.required("e", Integer.class);
-            fail("should throw");
-        } catch (ArgsParseException e) {
-            assertThat(e.getMessage()).isEqualTo(
-                    ArgsParseException.optionNotConvertible(new InvocationTargetException(null)).getMessage());
-        }
-    }
-
-    @Test
-    public void willGetOptionalValueWithoutKey() throws Exception {
-        ArgsParser args = new ArgsParser("123", "-e", "abc");
-        assertThat(args.optional(Integer.class, 42)).isEqualTo(123);
-        assertThat(args).containsOnly("-e", "abc");
-    }
-
-
-    @Test
     public void willGetOptionalValue() throws Exception {
         ArgsParser args = new ArgsParser("-a", "abc", "-e", "123");
-        assertThat(args.optional("e", Integer.class, 42)).isEqualTo(123);
-        assertThat(args).containsOnly("-a", "abc");
+        assertThat(args.option(Integer.class, "-e")).isEqualTo(123);
+        assertThat(args).isEqualTo(new ArgsParser("-a", "abc"));
+    }
+
+    @Test
+    public void willGetTheFirstOneOfOptionalValues() throws Exception {
+        ArgsParser args = new ArgsParser("-a", "abc", "-e", "123", "--ew", "234");
+        assertThat(args.option(Integer.class, "--ew", "-e")).isEqualTo(123);
+        assertThat(args).isEqualTo(new ArgsParser("-a", "abc", "--ew", "234"));
+    }
+
+    @Test
+    public void willGetText() throws Exception {
+        ArgsParser args = new ArgsParser("-a", "abc", "-e", "123");
+        assertThat(args.option(Integer.class, "-e")).isEqualTo(123);
+        assertThat(args.text()).isEqualTo("-a abc");
+    }
+
+    @Test
+    public void willGetTextWithEmptyEntries() throws Exception {
+        ArgsParser args = new ArgsParser("", " ", "   ", null);
+        assertThat(args.text()).isEqualTo("");
     }
 
     @Test
     public void whenOptionalDoesntExist() throws Exception {
         ArgsParser args = new ArgsParser();
 
-        assertThat(args.optional("e", Integer.class, 42)).isEqualTo(42);
-    }
-
-    @Test
-    public void whenOptionalDoesntExistWithoutKey() throws Exception {
-        ArgsParser args = new ArgsParser();
-
-        assertThat(args.optional(Integer.class, 42)).isEqualTo(42);
+        assertThat(args.option(Integer.class, "-e")).isEqualTo(null);
     }
 
     @Test
     public void whenOptionalExistsWithNoValue() throws Exception {
         ArgsParser args = new ArgsParser("-e");
 
-        assertThat(args.optional("e", Integer.class, 42)).isEqualTo(42);
+        assertThat(args.option(Integer.class, "-e")).isEqualTo(null);
 
     }
 
@@ -145,42 +52,31 @@ public class ArgsParserTest {
     public void whenOptionalExistsWithWrongValue() throws Exception {
         ArgsParser args = new ArgsParser("-e", "abc");
 
-        try {
-            args.optional("e", Integer.class, 42);
-            fail("should throw");
-        } catch (ArgsParseException e) {
-            assertThat(e.getMessage()).isEqualTo(
-                    ArgsParseException.optionNotConvertible(new InvocationTargetException(null)).getMessage());
-        }
-    }
-
-    @Test
-    public void checkingEmptyOnEmptyParser() throws Exception {
-        ArgsParser args = new ArgsParser();
-        args.checkEmpty();
-    }
-
-    @Test
-    public void checkingEmptyOnNonEmptyParser() throws Exception {
-        ArgsParser args = new ArgsParser("-a", "123");
-        try {
-            args.checkEmpty();
-            fail("should throw");
-        } catch (ArgsParseException e) {
-            assertThat(e.getMessage()).isEqualTo(
-                    ArgsParseException.unexpectedParameters(Arrays.asList("-a", "123")).getMessage());
-        }
+        assertThat(args.option(Integer.class, "-e")).isEqualTo(null);
     }
 
     @Test
     public void canConsumeFlag() throws Exception {
         ArgsParser args = new ArgsParser("-e", "-a");
 
-        assertThat(args.flag("e")).isEqualTo(true);
-        assertThat(args).containsOnly("-a");
-        assertThat(args.flag("c")).isEqualTo(false);
-        assertThat(args).containsOnly("-a");
+        assertThat(args.flag("-e")).isEqualTo(true);
+        assertThat(args).isEqualTo(new ArgsParser("-a"));
+        assertThat(args.flag("-c")).isEqualTo(false);
+        assertThat(args).isEqualTo(new ArgsParser("-a"));
     }
+
+    @Test
+    public void canConsumeOneOfFlags() throws Exception {
+        ArgsParser args = new ArgsParser("-e", "-a", "-c");
+
+        assertThat(args.flag("-a", "-c")).isEqualTo(true);
+        assertThat(args).isEqualTo(new ArgsParser("-e", "-c"));
+        assertThat(args.flag("-a", "-c")).isEqualTo(true);
+        assertThat(args).isEqualTo(new ArgsParser("-e"));
+        assertThat(args.flag("-a", "-c")).isEqualTo(false);
+        assertThat(args).isEqualTo(new ArgsParser("-e"));
+    }
+
 
     @Test
     public void whenAreEqual() throws Exception {
