@@ -8,15 +8,16 @@ import net.intelie.lognit.cli.http.Jsonizer;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestClientImpl;
 import net.intelie.lognit.cli.input.EntryPoint;
+import net.intelie.lognit.cli.input.UsagePrinter;
+import net.intelie.lognit.cli.input.UserOptions;
 import net.intelie.lognit.cli.state.RestStateStorage;
 
 import java.io.File;
 
 public class Main extends AbstractModule {
-    public static void main(String... args) {
-        Guice.createInjector(new Main())
-                .getInstance(EntryPoint.class)
-                .run(args);
+    private final String[] args;
+    public Main(String... args) {
+        this.args = args;
     }
 
     @Override
@@ -25,11 +26,18 @@ public class Main extends AbstractModule {
     }
 
     @Provides
-    private RestStateStorage restStateStorage(Jsonizer jsonizer) {
-        return new RestStateStorage(local("state"), jsonizer);
+    private UserOptions options(UsagePrinter usage) {
+        return new UserOptions(usage, args);
     }
 
-    private File local(String file) {
-        return new File(new File(System.getProperty("user.home"), ".lognit"), file);
+    @Provides
+    private RestStateStorage storage(Jsonizer jsonizer) {
+        return new RestStateStorage(new File(new File(System.getProperty("user.home"), ".lognit"), "state"), jsonizer);
+    }
+
+    public static void main(String... args) {
+        Guice.createInjector(new Main())
+                .getInstance(EntryPoint.class)
+                .run();
     }
 }

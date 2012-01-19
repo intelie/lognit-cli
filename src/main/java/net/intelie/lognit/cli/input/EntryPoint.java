@@ -22,14 +22,11 @@ public class EntryPoint {
         this.state = state;
     }
 
-    public void run(String... args) {
+    public void run() {
         state.begin();
 
         try {
-            if (options.isHelp()) {
-                printUsage();
-                return;
-            }
+            options.run();
         } catch (Exception ex) {
             logger.warn("An error has ocurred. Sad.", ex);
             console.println("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());
@@ -38,11 +35,4 @@ public class EntryPoint {
         }
     }
 
-    private void printUsage() {
-        try {
-            console.println(Resources.toString(Resources.getResource("usage.txt"), Charset.defaultCharset()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

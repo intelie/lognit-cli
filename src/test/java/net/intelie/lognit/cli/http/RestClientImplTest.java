@@ -185,4 +185,16 @@ public class RestClientImplTest {
         verify(bayeux).handshake();
         verify(bayeux.getChannel("testChannel")).subscribe(any(ClientSessionChannel.MessageListener.class));
     }
+
+    @Test
+    public void willRegisterAListenerThatDeserializesJSON() throws Exception {
+        BayeuxClient bayeux = mock(BayeuxClient.class, RETURNS_DEEP_STUBS);
+        when(bayeuxFactory.create("http://server/cometd")).thenReturn(bayeux);
+
+        wrapper.setServer("server");
+        wrapper.listen("testChannel", Object.class, null);
+
+        verify(bayeux).handshake();
+        verify(bayeux.getChannel("testChannel")).subscribe(any(ClientSessionChannel.MessageListener.class));
+    }
 }
