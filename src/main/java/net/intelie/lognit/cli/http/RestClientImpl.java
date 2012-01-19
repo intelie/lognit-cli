@@ -82,6 +82,7 @@ public class RestClientImpl implements RestClient {
                 cometd.setCookie(cookie.getName(), cookie.getValue());
 
         cometd.handshake();
+        cometd.waitFor(1000, BayeuxClient.State.CONNECTED);
         cometd.getChannel(channel).subscribe(new JsonMessageListener<T>(listener, type, jsonizer));
     }
 

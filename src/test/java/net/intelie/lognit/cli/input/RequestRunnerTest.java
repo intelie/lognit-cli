@@ -2,6 +2,7 @@ package net.intelie.lognit.cli.input;
 
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
+import net.intelie.lognit.cli.model.SearchChannel;
 import net.intelie.lognit.cli.model.Welcome;
 import org.apache.commons.httpclient.StatusLine;
 import org.junit.Before;
@@ -14,12 +15,14 @@ public class RequestRunnerTest {
     private UserInput console;
     private Lognit lognit;
     private RequestRunner runner;
+    private BufferListener listener;
 
     @Before
     public void setUp() throws Exception {
         console = mock(UserInput.class);
         lognit = mock(Lognit.class);
-        runner = new RequestRunner(console, lognit);
+        listener = mock(BufferListener.class);
+        runner = new RequestRunner(console, lognit, listener);
     }
 
     @Test
@@ -29,6 +32,12 @@ public class RequestRunnerTest {
         verify(lognit).welcome();
         verify(console).println("blablabla");
         verifyNoMoreInteractions(console, lognit);
+    }
+
+    @Test
+    public void whenHasQueryExecutesSearch() throws Exception {
+        runner.run(null, null, null, "blablabla");
+        verify(lognit).search("blablabla", listener);
     }
 
     @Test
