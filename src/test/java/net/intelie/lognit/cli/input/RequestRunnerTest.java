@@ -30,8 +30,7 @@ public class RequestRunnerTest {
     }
 
     @Test
-    public void whenHasServerAlsoSetsTheServer() throws Exception {
-        fail("test");
+    public void whenH asServerAlsoSetsTheServer() throws Exception {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
         runner.run("someserver", null, null, "");
 
