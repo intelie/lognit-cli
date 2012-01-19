@@ -10,6 +10,7 @@ import net.intelie.lognit.cli.http.RestClientImpl;
 import net.intelie.lognit.cli.input.EntryPoint;
 import net.intelie.lognit.cli.input.UsagePrinter;
 import net.intelie.lognit.cli.input.UserOptions;
+import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.state.RestStateStorage;
 
 import java.io.File;
@@ -26,8 +27,8 @@ public class Main extends AbstractModule {
     }
 
     @Provides
-    private UserOptions options(UsagePrinter usage) {
-        return new UserOptions(usage, args);
+    private UserOptions options(UsagePrinter usage, Lognit lognit) {
+        return new UserOptions(usage, lognit, args);
     }
 
     @Provides
