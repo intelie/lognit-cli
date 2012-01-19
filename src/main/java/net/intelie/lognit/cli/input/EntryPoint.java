@@ -22,11 +22,11 @@ public class EntryPoint {
         this.state = state;
     }
 
-    public void run() {
+    public void run(String... args) {
         state.begin();
 
         try {
-            options.run();
+            options.run(args);
         } catch (Exception ex) {
             logger.warn("An error has ocurred. Sad.", ex);
             console.println("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());

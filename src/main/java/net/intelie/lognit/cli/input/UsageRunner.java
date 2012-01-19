@@ -5,11 +5,11 @@ import com.google.inject.Inject;
 
 import java.nio.charset.Charset;
 
-public class UsagePrinter {
+public class UsageRunner {
     private final UserInput console;
 
     @Inject
-    public UsagePrinter(UserInput console) {
+    public UsageRunner(UserInput console) {
         this.console = console;
     }
 

@@ -6,30 +6,32 @@ import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 public class UserOptionsTest {
 
-    private UsagePrinter usage;
-    private Lognit lognit;
+    private UsageRunner usage;
+    private RequestRunner request;
+    private UserOptions options;
 
     @Before
     public void setUp() throws Exception {
-        usage = mock(UsagePrinter.class);
-        lognit = mock(Lognit.class);
+        usage = mock(UsageRunner.class);
+        request = mock(RequestRunner.class);
+        options = new UserOptions(usage, request);
     }
 
     @Test
     public void whenParsingHelp() throws Exception {
-        UserOptions options = new UserOptions(usage, lognit, "-?");
-        options.run();
+        options.run("-?", "-s", "test");
         verify(usage).run();
+        verifyZeroInteractions(request);
     }
 
     @Test
     public void whenParsingServer() throws Exception {
-        UserOptions options = new UserOptions(usage, lognit, "-s", "test");
-        options.run();
-        verify(lognit).setServer("test");
+        options.run("-s", "test");
+        verify(request).run("test", null, null, "");
     }
 
 }

@@ -5,11 +5,11 @@ import org.junit.Test;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class UsagePrinterTest {
+public class UsageRunnerTest {
     @Test
     public void willPrintToConsole() {
         UserInput console = mock(UserInput.class);
-        UsagePrinter printer = new UsagePrinter(console);
+        UsageRunner printer = new UsageRunner(console);
         printer.run();
         verify(console).println(anyString());
     }
@@ -18,7 +18,7 @@ public class UsagePrinterTest {
     public void willPrintToConsoleWithException() {
         UserInput console = mock(UserInput.class);
         doThrow(new RuntimeException()).when(console).println(anyString());
-        UsagePrinter printer = new UsagePrinter(console);
+        UsageRunner printer = new UsageRunner(console);
         printer.run();
         verify(console).println(anyString());
     }

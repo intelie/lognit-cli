@@ -1,34 +1,30 @@
 package net.intelie.lognit.cli.input;
 
-import net.intelie.lognit.cli.model.Lognit;
+import com.google.inject.Inject;
+
+import java.io.IOException;
 
 public class UserOptions {
-    private final UsagePrinter usage;
-    private final Lognit lognit;
-    private final String[] args;
+    private final UsageRunner usage;
+    private final RequestRunner runner;
 
-    public UserOptions(UsagePrinter usage, Lognit lognit, String... args) {
+    @Inject
+    public UserOptions(UsageRunner usage, RequestRunner runner) {
         this.usage = usage;
-        this.lognit = lognit;
-        this.args = args;
+        this.runner = runner;
     }
 
-    public void run() {
+    public void run(String... args) throws IOException {
         ArgsParser parser = new ArgsParser(args);
-        parseHelp(parser);
-        parseServer(parser);
-
-    }
-
-    private void parseServer(ArgsParser parser) {
-        String server = parser.option(String.class, "-s", "--server");
-        if (server != null)
-            lognit.setServer(server);
-    }
-
-    private void parseHelp(ArgsParser parser) {
-        if (parser.flag("-?", "--help"))
+        if (parser.flag("-?", "--help")) {
             usage.run();
-    }
+            return;
+        }
+        String server = parser.option(String.class, "-s", "--server");
+        String username = parser.option(String.class, "-u", "--user");
+        String password = parser.option(String.class, "-p", "--pass", "--password");
+        String query = parser.text();
 
+        runner.run(server, username, password, query);
+    }
 }

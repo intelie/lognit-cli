@@ -20,6 +20,6 @@ public class MainTest {
 
     @Test
     public void callingWithoutParamsWontBreakTheWorld()  {
-        Main.main();
+        Main.main("--help");
     }
 }
