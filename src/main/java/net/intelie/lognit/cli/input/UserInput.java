@@ -26,18 +26,18 @@ public class UserInput {
         }
     }
 
-    public String readLine(String prompt) {
+    public String readLine(String format, Object... args) {
         try {
-            return console.readLine(prompt);
+            return console.readLine(String.format(format, args));
         } catch (IOException e) {
             logger.warn("why fail readline?", e);
             return "";
         }
     }
 
-    public String readPassword(String prompt) {
+    public String readPassword(String format, Object... args) {
         try {
-            return console.readLine(prompt, '\0');
+            return console.readLine(String.format(format, args), '\0');
         } catch (IOException e) {
             logger.warn("why fail readPassword?", e);
 

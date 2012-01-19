@@ -1,6 +1,7 @@
 package net.intelie.lognit.cli.input;
 
 import com.google.inject.Inject;
+import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
 
 import java.io.IOException;
@@ -16,8 +17,27 @@ public class RequestRunner {
     }
 
     public void run(String server, String user, String password, String query) throws IOException {
+        boolean askPassword = user == null || password == null;
+
         if (server != null)
             lognit.setServer(server);
-        console.println(lognit.welcome().getMessage());
+        if (!askPassword)
+            lognit.authenticate(user, password);
+
+        boolean success = false;
+        int retries = askPassword ? 3 : 1;
+        while (!success && retries-- > 0) {
+            try {
+                console.println(lognit.welcome().getMessage());
+                success = true;
+            } catch (UnauthorizedException ex) {
+                console.println(ex.getMessage());
+                if (askPassword) {
+                    String newUser = user == null ? console.readLine("login: ") : user;
+                    String newPass = console.readPassword("%s's password: ", newUser);
+                    lognit.authenticate(newUser, newPass);
+                }
+            }
+        }
     }
 }
