@@ -8,8 +8,6 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.io.IOUtils;
-import org.cometd.bayeux.Message;
-import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,12 +82,7 @@ public class RestClientImpl implements RestClient {
                 cometd.setCookie(cookie.getName(), cookie.getValue());
 
         cometd.handshake();
-        cometd.getChannel(channel).subscribe(new ClientSessionChannel.MessageListener() {
-            @Override
-            public void onMessage(ClientSessionChannel clientSessionChannel, Message message) {
-                listener.receive(jsonizer.from((String) message.getData(), type));
-            }
-        });
+        cometd.getChannel(channel).subscribe(new JsonMessageListener<T>(listener, type, jsonizer));
     }
 
     private String prependServer(String uri) throws MalformedURLException {

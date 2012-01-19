@@ -195,6 +195,6 @@ public class RestClientImplTest {
         wrapper.listen("testChannel", Object.class, null);
 
         verify(bayeux).handshake();
-        verify(bayeux.getChannel("testChannel")).subscribe(any(ClientSessionChannel.MessageListener.class));
+        verify(bayeux.getChannel("testChannel")).subscribe(any(JsonMessageListener.class));
     }
 }
