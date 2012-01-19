@@ -115,7 +115,8 @@ public class RequestRunnerTest {
 
         runner.run(null, null, null, "");
 
-        verify(lognit, times(3)).welcome();
+        verify(lognit, times(4)).welcome();
+        verify(console, times(3)) .readLine(anyString());
     }
 
     @Test

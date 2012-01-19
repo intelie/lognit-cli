@@ -3,7 +3,7 @@ Usage:
 
 Options:
 
-  -s, --server <server>                  logs into <server>
-  -u, --user <user>                      authenticates with <user>
-  -p, --pass <password>                  authenticates with <password>
-  -?, --help                             shows this help
+  -s, --server <server>       logs into <server>
+  -u, --user <user>           authenticates with <user>
+  -p, --pass <password>       authenticates with <password>
+  -?, --help                  shows this help

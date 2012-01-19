@@ -18,7 +18,7 @@ public class UserInput {
 
     public void println(String format, Object... args) {
         try {
-            console.putString(String.format(format, args));
+            console.printString(String.format(format, args));
             console.printNewline();
             console.flushConsole();
         } catch (IOException e) {

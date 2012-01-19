@@ -25,14 +25,14 @@ public class RequestRunner {
             lognit.authenticate(user, password);
 
         boolean success = false;
-        int retries = askPassword ? 3 : 1;
+        int retries = askPassword ? 4 : 1;
         while (!success && retries-- > 0) {
             try {
                 console.println(lognit.welcome().getMessage());
                 success = true;
             } catch (UnauthorizedException ex) {
                 console.println(ex.getMessage());
-                if (askPassword) {
+                if (retries > 0) {
                     String newUser = user == null ? console.readLine("login: ") : user;
                     String newPass = console.readPassword("%s's password: ", newUser);
                     lognit.authenticate(newUser, newPass);
