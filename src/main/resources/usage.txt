@@ -1,5 +1,4 @@
-Usage:
-  nit [QUERY] [OPTIONS]
+Usage: nit [QUERY] [OPTIONS]
 
 Options:
 
@@ -8,5 +7,15 @@ Options:
   -p, --pass <password>       authenticates with <password>
   -n, --lines <number>        outputs last <number> lines (default: 100)
   -w, --wait <seconds>        timeout for history search (default: 10)
-  -f, --follow                outputs new messages as they arrive (default: NO)
+  -f, --follow                outputs new messages as they arrive
   -?, --help                  shows this help
+
+Examples:
+
+  nit '*'                     searches everything
+  nit '*'                     searches everything, follows new messages
+  nit -s your-lognit-server   logs into your-lognit-server
+  nit 'abcd' -n 50 -f         searches for 'abcd', last 50 messages,
+                              following new messages
+  nit 'abcd' -w 1             searches for 'abcd', but waits only 1
+                              second to all lognit nodes to respond.
