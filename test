@@ -1,1 +1,1 @@
-sh target/lognit-*.sh "$@"
+mvn compile exec:java -Dexec.args="$@"

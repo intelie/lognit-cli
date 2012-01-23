@@ -3,6 +3,7 @@ package net.intelie.lognit.cli.model;
 import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestListener;
+import net.intelie.lognit.cli.http.RestListenerHandle;
 import net.intelie.lognit.cli.model.MessageBag;
 import net.intelie.lognit.cli.model.SearchChannel;
 import net.intelie.lognit.cli.model.Welcome;
@@ -29,10 +30,9 @@ public class Lognit {
         client.authenticate(username, password);
     }
 
-    public SearchChannel search(String query, RestListener<MessageBag> listener) throws IOException {
+    public RestListenerHandle search(String query, RestListener<MessageBag> listener) throws IOException {
         SearchChannel channel = client.request(make(URL_SEARCH, encode(query)), SearchChannel.class);
-        client.listen(channel.getChannel(), MessageBag.class, listener);
-        return channel;
+        return client.listen(channel.getChannel(), MessageBag.class, listener);
     }
 
     public Welcome welcome() throws IOException {

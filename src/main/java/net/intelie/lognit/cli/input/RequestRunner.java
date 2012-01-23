@@ -2,6 +2,7 @@ package net.intelie.lognit.cli.input;
 
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
+import net.intelie.lognit.cli.http.RestListenerHandle;
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
 
@@ -36,10 +37,11 @@ public class RequestRunner {
     }
 
     private void execute(String query) throws IOException {
-        if (Strings.isNullOrEmpty(query))
+        if (Strings.isNullOrEmpty(query)) {
             console.println(lognit.welcome().getMessage());
-        else
-            lognit.search(query, listener);
+        } else {
+            RestListenerHandle handle = lognit.search(query, listener);
+        }
     }
 
     private void askPassword(String user) {

@@ -1,9 +1,12 @@
 Usage:
-  nit [<query>] [<options>]
+  nit [QUERY] [OPTIONS]
 
 Options:
 
   -s, --server <server>       logs into <server>
   -u, --user <user>           authenticates with <user>
   -p, --pass <password>       authenticates with <password>
+  -n, --lines <number>        outputs last <number> lines (default: 100)
+  -w, --wait <seconds>        timeout for history search (default: 10)
+  -f, --follow                outputs new messages as they arrive (default: NO)
   -?, --help                  shows this help

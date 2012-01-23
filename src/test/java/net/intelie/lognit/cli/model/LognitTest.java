@@ -1,7 +1,9 @@
 package net.intelie.lognit.cli.model;
 
+import net.intelie.lognit.cli.http.BayeuxHandle;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestListener;
+import net.intelie.lognit.cli.http.RestListenerHandle;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,11 +43,12 @@ public class LognitTest {
     @Test
     public void testSearch() throws Exception {
         SearchChannel channel = new SearchChannel("lalala");
+        RestListenerHandle handle = mock(RestListenerHandle.class);
         RestListener<MessageBag> listener = mock(RestListener.class);
 
         when(client.request("/rest/search?expression=qwe+asd", SearchChannel.class)).thenReturn(channel);
-        assertThat(lognit.search("qwe asd", listener)).isEqualTo(channel);
+        when(client.listen("lalala", MessageBag.class, listener)).thenReturn(handle);
 
-        verify(client).listen("lalala", MessageBag.class, listener);
+        assertThat(lognit.search("qwe asd", listener)).isEqualTo(handle);
     }
 }
