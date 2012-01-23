@@ -198,4 +198,15 @@ public class RestClientImplTest {
         verify(bayeux).handshake();
         verify(bayeux.getChannel("testChannel")).subscribe(any(JsonMessageListener.class));
     }
+
+    @Test
+    public void willReturnBayeuxListenerHandleWhenListening() throws Exception {
+        BayeuxClient bayeux = mock(BayeuxClient.class, RETURNS_DEEP_STUBS);
+        when(bayeuxFactory.create("http://server/cometd")).thenReturn(bayeux);
+
+        wrapper.setServer("server");
+        RestListenerHandle handle = wrapper.listen("testChannel", Object.class, null);
+
+        assertThat(handle).isInstanceOf(BayeuxHandle.class);
+    }
 }

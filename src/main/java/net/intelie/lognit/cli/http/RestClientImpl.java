@@ -72,7 +72,7 @@ public class RestClientImpl implements RestClient {
     }
 
     @Override
-    public <T> void listen(String channel, final Class<T> type, final RestListener<T> listener) throws IOException {
+    public <T> RestListenerHandle listen(String channel, final Class<T> type, final RestListener<T> listener) throws IOException {
         String url = prependServer("cometd");
         BayeuxClient cometd = bayeux.create(url);
 
@@ -84,6 +84,7 @@ public class RestClientImpl implements RestClient {
         cometd.handshake();
         cometd.waitFor(1000, BayeuxClient.State.CONNECTED);
         cometd.getChannel(channel).subscribe(new JsonMessageListener<T>(listener, type, jsonizer));
+        return new BayeuxHandle(cometd);
     }
 
     private String prependServer(String uri) throws MalformedURLException {

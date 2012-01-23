@@ -14,5 +14,5 @@ public interface RestClient {
 
     <T> T request(String uri, Class<T> type) throws IOException;
 
-    <T> void listen(String uri, Class<T> type, RestListener<T> listener) throws IOException;
+    <T> RestListenerHandle listen(String uri, Class<T> type, RestListener<T> listener) throws IOException;
 }
