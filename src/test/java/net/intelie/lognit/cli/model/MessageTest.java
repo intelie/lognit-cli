@@ -27,6 +27,22 @@ public class MessageTest {
     }
 
     @Test
+    public void whenComparing() {
+        Message m1 = new Message("A", null);
+        Message m2 = new Message("a", null);
+        Message m3 = new Message("B", null);
+        Message m4 = new Message(null, null);
+
+        assertThat(m1.compareTo(m2)).isZero();
+
+        assertThat(m1.compareTo(m3)).isPositive();
+        assertThat(m3.compareTo(m1)).isNegative();
+
+        assertThat(m1.compareTo(m4)).isNegative();
+        assertThat(m4.compareTo(m1)).isPositive();
+    }
+
+    @Test
     public void fullTest() {
         JsonElement actual = jsonPrepare("{message:'42', id:'123', will_ignore:true}", Message.class);
         assertThat(actual).isEqualTo(jsonExpected("{message:'42', id:'123'}"));

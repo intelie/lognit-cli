@@ -13,7 +13,7 @@ Options:
 Examples:
 
   nit '*'                     searches everything
-  nit '*'                     searches everything, follows new messages
+  nit '*' -f                  searches everything, follows new messages
   nit -s your-lognit-server   logs into your-lognit-server
   nit 'abcd' -n 50 -f         searches for 'abcd', last 50 messages,
                               following new messages

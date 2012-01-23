@@ -41,6 +41,7 @@ public class RequestRunner {
             console.println(lognit.welcome().getMessage());
         } else {
             RestListenerHandle handle = lognit.search(query, listener);
+            listener.waitHistoric(1000, 10);
         }
     }
 

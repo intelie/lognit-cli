@@ -11,6 +11,10 @@ public class MessagePrinter {
         this.console = console;
     }
 
+    public void printStatus(String format, Object... args) {
+        console.println(format, args);
+    }
+    
     public void printMessage(Message message) {
         console.printOut(message.getMessage());
     }
