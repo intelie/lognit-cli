@@ -6,16 +6,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class UserInput {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ConsoleReader console;
+    private final PrintWriter stdout;
 
     @Inject
-    public UserInput(ConsoleReader console) {
+    public UserInput(ConsoleReader console, PrintWriter stdout) {
         this.console = console;
+        this.stdout = stdout;
     }
 
+    public void printOut(String format, Object... args) {
+        stdout.println(String.format(format, args));
+        stdout.flush();
+    }
+    
     public void println(String format, Object... args) {
         try {
             console.printString(String.format(format, args));

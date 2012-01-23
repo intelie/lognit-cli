@@ -45,7 +45,7 @@ public class RestClientImpl implements RestClient {
     public void setState(RestState state) {
         client.getState().addCookies(state.getCookies());
         server = state.getServer();
-        System.out.printf("server: %s\n", server);
+        System.err.printf("server: %s\n", server);
     }
 
     @Override
