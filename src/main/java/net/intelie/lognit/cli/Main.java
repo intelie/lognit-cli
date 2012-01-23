@@ -9,10 +9,7 @@ import net.intelie.lognit.cli.http.Jsonizer;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestClientImpl;
 import net.intelie.lognit.cli.input.EntryPoint;
-import net.intelie.lognit.cli.input.UsageRunner;
-import net.intelie.lognit.cli.input.UserInput;
-import net.intelie.lognit.cli.input.UserOptions;
-import net.intelie.lognit.cli.model.Lognit;
+import net.intelie.lognit.cli.input.UserConsole;
 import net.intelie.lognit.cli.state.RestStateStorage;
 
 import java.io.*;
@@ -32,8 +29,8 @@ public class Main extends AbstractModule {
     }
 
     @Provides
-    private UserInput input(ConsoleReader console) {
-        return new UserInput(console, new PrintWriter(System.out));
+    private UserConsole userConsole(ConsoleReader console) {
+        return new UserConsole(console, new PrintWriter(System.out));
     }
     
     @Provides

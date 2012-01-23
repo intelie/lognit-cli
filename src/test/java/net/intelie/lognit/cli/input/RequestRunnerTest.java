@@ -2,7 +2,6 @@ package net.intelie.lognit.cli.input;
 
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
-import net.intelie.lognit.cli.model.SearchChannel;
 import net.intelie.lognit.cli.model.Welcome;
 import org.apache.commons.httpclient.StatusLine;
 import org.junit.Before;
@@ -12,14 +11,14 @@ import org.mockito.InOrder;
 import static org.mockito.Mockito.*;
 
 public class RequestRunnerTest {
-    private UserInput console;
+    private UserConsole console;
     private Lognit lognit;
     private RequestRunner runner;
     private BufferListener listener;
 
     @Before
     public void setUp() throws Exception {
-        console = mock(UserInput.class);
+        console = mock(UserConsole.class);
         lognit = mock(Lognit.class);
         listener = mock(BufferListener.class);
         runner = new RequestRunner(console, lognit, listener);

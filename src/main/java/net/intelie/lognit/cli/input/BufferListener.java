@@ -12,12 +12,12 @@ import java.util.concurrent.TimeUnit;
 public class BufferListener implements RestListener<MessageBag> {
     private final Deque<MessageBag> historic;
     private final Deque<MessageBag> other;
-    private final UserInput console;
     private final Semaphore semaphore;
+    private final MessagePrinter printer;
 
     @Inject
-    public BufferListener(UserInput console) {
-        this.console = console;
+    public BufferListener(MessagePrinter printer) {
+        this.printer = printer;
         this.historic = new LinkedList<MessageBag>();
         this.other = new LinkedList<MessageBag>();
         this.semaphore = new Semaphore(0);
@@ -34,7 +34,7 @@ public class BufferListener implements RestListener<MessageBag> {
         }
     }
 
-    public boolean waitAll(int timeout) {
+    public boolean waitHistoric(int timeout, int releaseMax) {
         boolean success = false;
         try {
             if (!semaphore.tryAcquire(1, timeout, TimeUnit.MILLISECONDS)) return false;

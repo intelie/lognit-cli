@@ -10,7 +10,7 @@ import static org.mockito.Mockito.*;
 public class EntryPointTest {
 
     private UserOptions options;
-    private UserInput console;
+    private UserConsole console;
     private StateKeeper state;
     private EntryPoint entry;
     private InOrder orderly;
@@ -18,7 +18,7 @@ public class EntryPointTest {
     @Before
     public void setUp() throws Exception {
         options = mock(UserOptions.class);
-        console = mock(UserInput.class);
+        console = mock(UserConsole.class);
         state = mock(StateKeeper.class);
         entry = new EntryPoint(console, options, state);
         orderly = inOrder(options, console, state);

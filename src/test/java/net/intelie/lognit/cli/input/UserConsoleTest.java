@@ -9,7 +9,7 @@ import java.io.*;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class UserInputTest {
+public class UserConsoleTest {
 
     private ByteArrayOutputStream err;
     private ByteArrayOutputStream out;
@@ -24,7 +24,7 @@ public class UserInputTest {
 
     @Test
     public void willPrintMessageToStdout() throws Exception {
-        UserInput input = new UserInput(console, new PrintWriter(out));
+        UserConsole input = new UserConsole(console, new PrintWriter(out));
         input.printOut("abc%d", 1);
 
         assertThat(out.toString()).isEqualTo(safe("abc1\n"));
@@ -33,7 +33,7 @@ public class UserInputTest {
 
     @Test
     public void willPrintToStderr() throws Exception {
-        UserInput input = new UserInput(console, null);
+        UserConsole input = new UserConsole(console, null);
         input.println("abc%d", 1);
 
         assertThat(err.toString()).isEqualTo(safe("abc1\n"));
@@ -42,7 +42,7 @@ public class UserInputTest {
     @Test
     public void willReadFromStdin() throws Exception {
         console.setInput(mockIn("abc\nqwe\n"));
-        UserInput input = new UserInput(console, null);
+        UserConsole input = new UserConsole(console, null);
         assertThat(input.readLine("field1: ")).isEqualTo("abc");
         assertThat(input.readLine("field2: ")).isEqualTo("qwe");
         verify(console).readLine("field1: ");
@@ -54,7 +54,7 @@ public class UserInputTest {
     @Test
     public void willReadPasswordFromStdin() throws Exception {
         console.setInput(mockIn("abc\nqwe\n"));
-        UserInput input = new UserInput(console, null);
+        UserConsole input = new UserConsole(console, null);
         assertThat(input.readPassword("field1: ")).isEqualTo("abc");
         assertThat(input.readPassword("field2: ")).isEqualTo("qwe");
         verify(console).readLine("field1: ", '\0');
@@ -68,7 +68,7 @@ public class UserInputTest {
         OutputStreamWriter out = mock(OutputStreamWriter.class);
         when(in.read()).thenThrow(new IOException());
 
-        UserInput input = new UserInput(new ConsoleReader(in, out), null);
+        UserConsole input = new UserConsole(new ConsoleReader(in, out), null);
         assertThat(input.readPassword("abc")).isEqualTo("");
         assertThat(input.readLine("qwe")).isEqualTo("");
     }
@@ -78,7 +78,7 @@ public class UserInputTest {
         OutputStreamWriter out = mock(OutputStreamWriter.class);
         doThrow(new IOException()).when(out).write(any(char[].class));
 
-        UserInput input = new UserInput(new ConsoleReader(null, out), null);
+        UserConsole input = new UserConsole(new ConsoleReader(null, out), null);
         input.println("abc");
         
         verify(out).write(any(char[].class));

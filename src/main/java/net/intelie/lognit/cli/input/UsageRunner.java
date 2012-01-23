@@ -6,10 +6,10 @@ import com.google.inject.Inject;
 import java.nio.charset.Charset;
 
 public class UsageRunner {
-    private final UserInput console;
+    private final UserConsole console;
 
     @Inject
-    public UsageRunner(UserInput console) {
+    public UsageRunner(UserConsole console) {
         this.console = console;
     }
 

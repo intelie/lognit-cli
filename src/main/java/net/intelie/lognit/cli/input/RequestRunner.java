@@ -9,12 +9,12 @@ import net.intelie.lognit.cli.model.Lognit;
 import java.io.IOException;
 
 public class RequestRunner {
-    private final UserInput console;
+    private final UserConsole console;
     private final Lognit lognit;
     private final BufferListener listener;
 
     @Inject
-    public RequestRunner(UserInput console, Lognit lognit, BufferListener listener) {
+    public RequestRunner(UserConsole console, Lognit lognit, BufferListener listener) {
         this.console = console;
         this.lognit = lognit;
         this.listener = listener;

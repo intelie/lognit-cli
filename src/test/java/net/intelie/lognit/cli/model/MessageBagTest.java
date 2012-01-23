@@ -33,7 +33,7 @@ public class MessageBagTest {
 
     @Test
     public void whenSerializing() {
-        MessageBag messages = new MessageBag(Arrays.asList(new Message("abc1"), new Message("abc2")),
+        MessageBag messages = new MessageBag(Arrays.asList(new Message(null, "abc1"), new Message(null, "abc2")),
                 "some message", true, true, 42, 200);
         JsonElement actual = jsonElement(messages);
 

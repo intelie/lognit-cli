@@ -8,7 +8,7 @@ import static org.mockito.Mockito.*;
 public class UsageRunnerTest {
     @Test
     public void willPrintToConsole() {
-        UserInput console = mock(UserInput.class);
+        UserConsole console = mock(UserConsole.class);
         UsageRunner printer = new UsageRunner(console);
         printer.run();
         verify(console).println(anyString());
@@ -16,7 +16,7 @@ public class UsageRunnerTest {
 
     @Test
     public void willPrintToConsoleWithException() {
-        UserInput console = mock(UserInput.class);
+        UserConsole console = mock(UserConsole.class);
         doThrow(new RuntimeException()).when(console).println(anyString());
         UsageRunner printer = new UsageRunner(console);
         printer.run();

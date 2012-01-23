@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class UserInput {
+public class UserConsole {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ConsoleReader console;
     private final PrintWriter stdout;
 
     @Inject
-    public UserInput(ConsoleReader console, PrintWriter stdout) {
+    public UserConsole(ConsoleReader console, PrintWriter stdout) {
         this.console = console;
         this.stdout = stdout;
     }
