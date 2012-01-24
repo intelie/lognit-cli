@@ -76,6 +76,36 @@ public class BufferListenerTest {
     }
 
     @Test(timeout = 1000)
+    public void afterReleasePrintsAllOthers() {
+        Message mA = m("A"), mB = m("B"), mC = m("C");
+        listener.receive(ms(true, true, 2, mA, mC));
+        listener.receive(ms(false, false, 2, mB));
+        listener.releaseAll();
+
+        verify(printer).printMessage(mC);
+        verify(printer).printMessage(mA);
+        verify(printer).printMessage(mB);
+        verifyNoMoreInteractions(printer);
+        listener.releaseAll();
+        verifyNoMoreInteractions(printer);
+    }
+
+    @Test(timeout = 1000)
+    public void willNotHoldAnymoreAfterFirstReleaseAll() {
+        Message mA = m("A"), mB = m("B"), mC = m("C");
+        listener.releaseAll();
+        listener.receive(ms(false, true, 2, mA, mC));
+        listener.receive(ms(true, true, 2, mB));
+
+        verify(printer).printMessage(mC);
+        verify(printer).printMessage(mA);
+        verify(printer).printMessage(mB);
+        verifyNoMoreInteractions(printer);
+        listener.releaseAll();
+        verifyNoMoreInteractions(printer);
+    }
+
+    @Test(timeout = 1000)
     public void whenOneOfOneMessagesAriveOnTime() {
         Message mA = m("A"), mB = m("B");
         listener.receive(ms(false, true, 1, mB, mA));
@@ -126,7 +156,7 @@ public class BufferListenerTest {
     }
 
     private Message m(String id) {
-        return new Message(id, null);
+        return new Message(id, null, null);
     }
 
 }

@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestListenerHandle;
 import net.intelie.lognit.cli.http.UnauthorizedException;
@@ -42,8 +41,11 @@ public class RequestRunner {
         } else {
             RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
             listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
-            if (!options.isFollow())
-                handle.close();
+            if (options.isFollow()) {
+                listener.releaseAll();
+                console.waitChar('q');
+            }
+            handle.close();
         }
     }
 

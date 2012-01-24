@@ -36,6 +36,10 @@ public class BufferListener implements RestListener<MessageBag> {
 
     @Override
     public synchronized void receive(MessageBag messages) {
+        if (releasing) {
+            printBag(messages);
+            return;
+        }
         if (messages.isHistoric()) {
             historic.add(messages);
             semaphore.release();
@@ -82,5 +86,18 @@ public class BufferListener implements RestListener<MessageBag> {
         Iterable<Message> limited = Iterables.limit(queue, releaseMax);
         LinkedList<Message> list = Lists.newLinkedList(limited);
         return Lists.reverse(list);
+    }
+
+    public synchronized void releaseAll() {
+        releasing = true;
+        while(!other.isEmpty()) {
+            MessageBag bag = other.pop();
+            printBag(bag);
+        }
+    }
+
+    private void printBag(MessageBag bag) {
+        for(Message message : Lists.reverse(bag.getItems()))
+            printer.printMessage(message);
     }
 }

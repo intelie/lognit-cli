@@ -16,6 +16,6 @@ public class MessagePrinter {
     }
     
     public void printMessage(Message message) {
-        console.printOut(message.getMessage());
+        console.printOut("%s %s", message.getSeverity(), message.getMessage());
     }
 }

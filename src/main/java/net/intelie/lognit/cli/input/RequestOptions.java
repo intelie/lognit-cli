@@ -18,7 +18,7 @@ public class RequestOptions {
         this.password = password;
         this.query = query;
         this.follow = follow;
-        this.lines = lines != null ? lines : 100;
+        this.lines = lines != null ? lines : 20;
         this.timeout = timeout != null ? timeout : 10;
     }
 
@@ -70,8 +70,6 @@ public class RequestOptions {
                 Objects.equal(this.follow, that.follow) &&
                 Objects.equal(this.timeout, that.timeout) &&
                 Objects.equal(this.lines, that.lines);
-
-
     }
 
     @Override

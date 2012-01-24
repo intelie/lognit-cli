@@ -40,6 +40,15 @@ public class UserConsoleTest {
     }
 
     @Test
+    public void willReadCharFromStdin() throws Exception {
+        console.setInput(mockIn("abdq"));
+        UserConsole input = new UserConsole(console, null);
+        assertThat(input.waitChar('q', 'd')).isEqualTo('d');
+        assertThat(input.waitChar('q')).isEqualTo('q');
+    }
+
+
+    @Test
     public void willReadFromStdin() throws Exception {
         console.setInput(mockIn("abc\nqwe\n"));
         UserConsole input = new UserConsole(console, null);
@@ -71,6 +80,7 @@ public class UserConsoleTest {
         UserConsole input = new UserConsole(new ConsoleReader(in, out), null);
         assertThat(input.readPassword("abc")).isEqualTo("");
         assertThat(input.readLine("qwe")).isEqualTo("");
+        assertThat(input.waitChar('a', 'b')).isEqualTo('\0');
     }
 
     @Test

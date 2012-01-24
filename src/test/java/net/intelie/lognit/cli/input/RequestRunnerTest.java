@@ -35,10 +35,19 @@ public class RequestRunnerTest {
     }
 
     @Test
-    public void whenHasQueryExecutesSearch() throws Exception {
-        runner.run(new RequestOptions(null, null, null, "blablabla", null, null, false));
-        verify(lognit).search("blablabla", 100, listener);
-        verify(lognit.search("blablabla", 100, listener)).close();
+    public void whenHasQueryExecutesSearchAndClose() throws Exception {
+        runner.run(new RequestOptions(null, null, null, "blablabla", null, 42, false));
+        verify(lognit).search("blablabla", 42, listener);
+        verify(lognit.search("blablabla", 42, listener)).close();
+    }
+
+    @Test
+    public void whenHasQueryToFollowExecutesReleasesAndWait() throws Exception {
+        runner.run(new RequestOptions(null, null, null, "blablabla", null, 42, true));
+        verify(lognit).search("blablabla", 42, listener);
+        verify(listener).releaseAll();
+        verify(console).waitChar('q');
+        verify(lognit.search("blablabla", 42, listener)).close();
     }
 
     @Test

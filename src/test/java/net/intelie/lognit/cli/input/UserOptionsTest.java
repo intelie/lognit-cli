@@ -33,4 +33,11 @@ public class UserOptionsTest {
         verify(request).run(new RequestOptions("test", null, null, "", null, null, false));
     }
 
+    @Test
+    public void whenParsingAllOptions() throws Exception {
+        options.run("-s", "test", "-u", "user", "-p", "pass", "qqq", "-n", "42", "-t", "43", "-f");
+        verify(request).run(new RequestOptions("test", "user", "pass", "qqq", 43, 42, true));
+    }
+
+
 }

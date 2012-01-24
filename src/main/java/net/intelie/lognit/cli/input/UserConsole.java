@@ -23,7 +23,16 @@ public class UserConsole {
         stdout.println(String.format(format, args));
         stdout.flush();
     }
-    
+
+    public char waitChar(char... allowed) {
+        try {
+            return (char)console.readCharacter(allowed);
+        } catch (IOException e) {
+            logger.warn("why fail readchar?", e);
+            return '\0';
+        }
+    }
+
     public void println(String format, Object... args) {
         try {
             console.printString(String.format(format, args));
