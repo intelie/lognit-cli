@@ -14,8 +14,9 @@ public class MessagePrinter {
     public void printStatus(String format, Object... args) {
         console.println(format, args);
     }
-    
+
     public void printMessage(Message message) {
-        console.printOut("%s %s", message.getSeverity(), message.getMessage());
+        console.printOut("%s %s%s %s %s %s %s", message.getHost(), message.getDate(), message.getTime(),
+                message.getFacility(), message.getSeverity(), message.getApp(), message.getMessage());
     }
 }

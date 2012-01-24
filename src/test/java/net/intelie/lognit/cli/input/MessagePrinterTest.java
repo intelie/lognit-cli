@@ -20,9 +20,9 @@ public class MessagePrinterTest {
 
     @Test
     public void testPrintStatus() throws Exception {
-        Message message = new Message("abc", "blabla", "qwe");
+        Message message = new Message("123", "A", "B", "C", "D", "E", "F", "abc");
         printer.printMessage(message);
-        verify(console).printOut("%s %s", "blabla", "qwe");
+        verify(console).printOut("%s %s%s %s %s %s %s", "A", "B", "C", "D", "E", "F", "abc");
     }
 
     @Test

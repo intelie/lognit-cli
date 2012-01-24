@@ -147,7 +147,7 @@ public class BufferListenerTest {
     }
 
     private Message m(String id) {
-        return new Message(id, null, null);
+        return new Message(id);
     }
 
 }

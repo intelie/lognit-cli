@@ -16,7 +16,7 @@ public class MessageBagTest {
             "message:'some message', " +
             "total_items:200, " +
             "total_nodes:42, " +
-            "items:[{message:'abc1'}, {message:'abc2'}]}";
+            "items:[{id:'abc1'}, {id:'abc2'}]}";
 
     @Test
     public void whenDeserializing() {
@@ -33,7 +33,7 @@ public class MessageBagTest {
 
     @Test
     public void whenSerializing() {
-        MessageBag messages = new MessageBag(Arrays.asList(new Message(null, null, "abc1"), new Message(null, null, "abc2")),
+        MessageBag messages = new MessageBag(Arrays.asList(new Message("abc1"), new Message("abc2")),
                 "some message", true, true, 42, 200);
         JsonElement actual = jsonElement(messages);
 
