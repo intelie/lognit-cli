@@ -72,7 +72,7 @@ public class UserOptions {
     }
     
     public boolean isInfo() {
-        return info || hasServer();
+        return info || (hasServer() && !hasQuery());
     }
 
     public boolean isHelp() {

@@ -43,6 +43,7 @@ public class UserOptionsTest {
     @Test
     public void testUsageCombinations() {
         assertThat(new UserOptions("-s", "someserver").isUsage()).isEqualTo(false);
+        assertThat(new UserOptions("-s", "someserver", "*").isUsage()).isEqualTo(false);
         assertThat(new UserOptions("-s", "someserver", "-?").isUsage()).isEqualTo(true);
         assertThat(new UserOptions("-i").isUsage()).isEqualTo(false);
         assertThat(new UserOptions("-u", "user", "-p", "pass").isUsage()).isEqualTo(true);
@@ -54,6 +55,7 @@ public class UserOptionsTest {
     public void testInfoCombinations() {
         assertThat(new UserOptions("-i").isInfo()).isEqualTo(true);
         assertThat(new UserOptions("-s", "someserver").isInfo()).isEqualTo(true);
+        assertThat(new UserOptions("-s", "someserver", "*").isInfo()).isEqualTo(false);
         assertThat(new UserOptions("-s", "someserver", "-?").isInfo()).isEqualTo(true);
         assertThat(new UserOptions("-u", "user", "-p", "pass").isInfo()).isEqualTo(false);
     }
