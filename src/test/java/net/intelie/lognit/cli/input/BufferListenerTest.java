@@ -76,7 +76,7 @@ public class BufferListenerTest {
     public void afterReleasePrintsAllOthers() {
         Message mA = m("A"), mB = m("B"), mC = m("C");
         listener.receive(ms(true, true, 2, mA, mC));
-        listener.receive(ms(false, false, 2, mB));
+        listener.receive(ms(true, true, 2, mB));
         listener.releaseAll();
 
         verify(printer).printMessage(mC);
@@ -86,6 +86,19 @@ public class BufferListenerTest {
         listener.releaseAll();
         verifyNoMoreInteractions(printer);
     }
+
+    @Test(timeout = 1000)
+    public void willShowWarningWhenQueryFails() {
+        Message mA = m("A"), mB = m("B"), mC = m("C");
+        listener.receive(ms(false, false, 2, mB));
+        listener.releaseAll();
+
+        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, null);
+        verifyNoMoreInteractions(printer);
+        listener.releaseAll();
+        verifyNoMoreInteractions(printer);
+    }
+
 
     @Test(timeout = 1000)
     public void willNotHoldAnymoreAfterFirstReleaseAll() {
