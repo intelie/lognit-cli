@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestListener;
@@ -82,15 +81,14 @@ public class BufferListener implements RestListener<MessageBag> {
 
     private List<Message> pickValidHistory(int releaseMax) {
         PriorityQueue<Message> queue = new PriorityQueue<Message>();
+        while (!historic.isEmpty())
+            queue.addAll(historic.pop().getItems());
 
-        while (!historic.isEmpty()) {
-            MessageBag bag = historic.pop();
-            queue.addAll(bag.getItems());
-        }
+        LinkedList<Message> list = new LinkedList<Message>();
+        while (!queue.isEmpty() && list.size() < releaseMax)
+            list.addFirst(queue.poll());
 
-        Iterable<Message> limited = Iterables.limit(queue, releaseMax);
-        LinkedList<Message> list = Lists.newLinkedList(limited);
-        return Lists.reverse(list);
+        return list;
     }
 
     public synchronized void releaseAll() {
