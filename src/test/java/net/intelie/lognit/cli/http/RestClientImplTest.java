@@ -19,7 +19,7 @@ public class RestClientImplTest {
     private HttpClient client;
     private MethodFactory methodFactory;
     private Jsonizer jsonizer;
-    private RestClient wrapper;
+    private RestClient rest;
     private BayeuxFactory bayeuxFactory;
 
     @Before
@@ -28,21 +28,22 @@ public class RestClientImplTest {
         methodFactory = mock(MethodFactory.class, RETURNS_DEEP_STUBS);
         jsonizer = mock(Jsonizer.class);
         bayeuxFactory = mock(BayeuxFactory.class);
-        wrapper = new RestClientImpl(client, methodFactory, bayeuxFactory, jsonizer);
+        rest = new RestClientImpl(client, methodFactory, bayeuxFactory, jsonizer);
     }
 
     @Test
     public void whenSettingServer() throws Exception {
-        wrapper.setServer("localhost:9000");
+        rest.setServer("localhost:9000");
 
         verify(client.getState()).clearCookies();
+        assertThat(rest.getServer()).isEqualTo("localhost:9000");
         verifyNoMoreInteractions(client.getParams(), client.getState());
     }
 
 
     @Test
     public void whenAuthenticating() throws Exception {
-        wrapper.authenticate("abc", "123");
+        rest.authenticate("abc", "123");
 
         verify(client.getParams()).setAuthenticationPreemptive(true);
         verify(client.getState()).setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("abc", "123"));
@@ -53,7 +54,7 @@ public class RestClientImplTest {
     public void willExecuteSuccessfulRequest() throws Exception {
         HttpMethod method = mockReturn("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
 
-        assertThat(wrapper.request("abc", String.class)).isEqualTo("QWEQWE");
+        assertThat(rest.request("abc", String.class)).isEqualTo("QWEQWE");
 
         verify(method, times(0)).getStatusLine();
         verify(method).setDoAuthentication(false);
@@ -65,9 +66,9 @@ public class RestClientImplTest {
     public void willExecuteSuccessfulRequestAuthenticating() throws Exception {
         HttpMethod method = mockReturn("http://someserver:9000/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
 
-        wrapper.setServer("someserver:9000");
-        wrapper.authenticate("abc", "qwe");
-        assertThat(wrapper.request("abc", String.class)).isEqualTo("QWEQWE");
+        rest.setServer("someserver:9000");
+        rest.authenticate("abc", "qwe");
+        assertThat(rest.request("abc", String.class)).isEqualTo("QWEQWE");
 
         verify(method, times(0)).getStatusLine();
         verify(method, times(1)).setDoAuthentication(true);
@@ -78,9 +79,9 @@ public class RestClientImplTest {
     public void willIgnoreExtraSlash() throws Exception {
         HttpMethod method = mockReturn("http://someserver:9000/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
 
-        wrapper.setServer("someserver:9000");
-        wrapper.authenticate("abc", "qwe");
-        assertThat(wrapper.request("/abc", String.class)).isEqualTo("QWEQWE");
+        rest.setServer("someserver:9000");
+        rest.authenticate("abc", "qwe");
+        assertThat(rest.request("/abc", String.class)).isEqualTo("QWEQWE");
 
         verify(method, times(0)).getStatusLine();
         verify(method, times(1)).setDoAuthentication(true);
@@ -91,9 +92,9 @@ public class RestClientImplTest {
     public void canSaveAuthenticationStatus() throws Exception {
         Cookie[] cookies = new Cookie[0];
         when(client.getState().getCookies()).thenReturn(cookies);
-        wrapper.setServer("someserver:9000");
+        rest.setServer("someserver:9000");
 
-        RestState state = wrapper.getState();
+        RestState state = rest.getState();
 
         assertThat(state.getCookies()).isSameAs(cookies);
         assertThat(state.getServer()).isSameAs("someserver:9000");
@@ -104,18 +105,18 @@ public class RestClientImplTest {
         Cookie[] cookies = new Cookie[0];
         RestState state = new RestState(cookies, "abcabc:1211");
 
-        wrapper.setState(state);
+        rest.setState(state);
         verify(client.getState()).addCookies(cookies);
 
         HttpMethod method = mockReturn("http://abcabc:1211/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
-        assertThat(wrapper.request("abc", String.class)).isEqualTo("QWEQWE");
+        assertThat(rest.request("abc", String.class)).isEqualTo("QWEQWE");
     }
 
     @Test
     public void willUseCompatibilityToHandleCookies() throws Exception {
         HttpMethod method = mockReturn("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "BLABLA");
 
-        wrapper.request("abc", String.class);
+        rest.request("abc", String.class);
 
         verify(method.getParams()).setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
     }
@@ -125,7 +126,7 @@ public class RestClientImplTest {
         mockReturn("http://localhost/abc", "HTTP/1.0 401 OK", String.class, "BLABLA");
 
         try {
-            wrapper.request("abc", String.class);
+            rest.request("abc", String.class);
             fail("should throw");
         } catch (UnauthorizedException ex) {
             assertThat(ex).isExactlyInstanceOf(UnauthorizedException.class);
@@ -138,7 +139,7 @@ public class RestClientImplTest {
         mockReturn("http://localhost/abc", "HTTP/1.0 501 OK", String.class, "BLABLA");
 
         try {
-            wrapper.request("abc", String.class);
+            rest.request("abc", String.class);
             fail("should throw");
         } catch (RequestFailedException ex) {
             assertThat(ex).isExactlyInstanceOf(RequestFailedException.class);
@@ -167,8 +168,8 @@ public class RestClientImplTest {
         when(client.getState().getCookies()).thenReturn(new Cookie[]{
                 new Cookie("A", "B", "C"), new Cookie("D", "E", "F")});
 
-        wrapper.setServer("server");
-        wrapper.listen("", Object.class, null);
+        rest.setServer("server");
+        rest.listen("", Object.class, null);
 
         verify(bayeux).setCookie("B", "C");
         verify(bayeux).setCookie("E", "F");
@@ -179,8 +180,8 @@ public class RestClientImplTest {
         BayeuxClient bayeux = mock(BayeuxClient.class, RETURNS_DEEP_STUBS);
         when(bayeuxFactory.create("http://server/cometd")).thenReturn(bayeux);
 
-        wrapper.setServer("server");
-        wrapper.listen("testChannel", Object.class, null);
+        rest.setServer("server");
+        rest.listen("testChannel", Object.class, null);
 
         verify(bayeux).handshake();
         verify(bayeux).waitFor(1000, BayeuxClient.State.CONNECTED);
@@ -192,8 +193,8 @@ public class RestClientImplTest {
         BayeuxClient bayeux = mock(BayeuxClient.class, RETURNS_DEEP_STUBS);
         when(bayeuxFactory.create("http://server/cometd")).thenReturn(bayeux);
 
-        wrapper.setServer("server");
-        wrapper.listen("testChannel", Object.class, null);
+        rest.setServer("server");
+        rest.listen("testChannel", Object.class, null);
 
         verify(bayeux).handshake();
         verify(bayeux.getChannel("testChannel")).subscribe(any(JsonMessageListener.class));
@@ -204,8 +205,8 @@ public class RestClientImplTest {
         BayeuxClient bayeux = mock(BayeuxClient.class, RETURNS_DEEP_STUBS);
         when(bayeuxFactory.create("http://server/cometd")).thenReturn(bayeux);
 
-        wrapper.setServer("server");
-        RestListenerHandle handle = wrapper.listen("testChannel", Object.class, null);
+        rest.setServer("server");
+        RestListenerHandle handle = rest.listen("testChannel", Object.class, null);
 
         assertThat(handle).isInstanceOf(BayeuxHandle.class);
     }

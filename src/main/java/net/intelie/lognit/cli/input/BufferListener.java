@@ -15,15 +15,14 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class BufferListener implements RestListener<MessageBag> {
-    public static final String NO_CLUSTER_INFO = "seems there is a bug in server response, no cluster info";
-    public static final String WAITING_FIRST = "waiting for first cluster response...";
-    public static final String WAITING_MORE = "waiting %d more responses...";
+    public static final String NO_CLUSTER_INFO = "WARN: seems there is a bug in server response, no cluster info";
+    public static final String MISSING_NODES_RESPONSE = "WARN: missing some cluster responses, check nodes status";
     private final Deque<MessageBag> historic;
     private final Deque<MessageBag> other;
     private final Semaphore semaphore;
     private final MessagePrinter printer;
     private boolean releasing;
-    
+
     @Inject
     public BufferListener(MessagePrinter printer) {
         this.printer = printer;
@@ -51,18 +50,23 @@ public class BufferListener implements RestListener<MessageBag> {
     public boolean waitHistoric(int timeout, int releaseMax) {
         boolean success = false;
         try {
-            printer.printStatus(WAITING_FIRST);
-            if (!semaphore.tryAcquire(1, timeout, TimeUnit.MILLISECONDS)) return false;
+            if (!semaphore.tryAcquire(1, timeout, TimeUnit.MILLISECONDS)) {
+                printer.printStatus(MISSING_NODES_RESPONSE);
+                return false;
+            }
             int waiting = historic.getFirst().getTotalNodes() - 1;
             if (waiting < 0) {
                 printer.printStatus(NO_CLUSTER_INFO);
                 Thread.sleep(timeout);
                 success = false;
             } else {
-                printer.printStatus(WAITING_MORE, waiting);
                 success = semaphore.tryAcquire(waiting, timeout, TimeUnit.MILLISECONDS);
+                if (!success) {
+                    printer.printStatus(MISSING_NODES_RESPONSE);
+                }
             }
         } catch (InterruptedException ex) {
+            printer.printStatus(MISSING_NODES_RESPONSE);
         }
         releaseHistoric(releaseMax);
         return success;
@@ -90,14 +94,14 @@ public class BufferListener implements RestListener<MessageBag> {
 
     public synchronized void releaseAll() {
         releasing = true;
-        while(!other.isEmpty()) {
+        while (!other.isEmpty()) {
             MessageBag bag = other.pop();
             printBag(bag);
         }
     }
 
     private void printBag(MessageBag bag) {
-        for(Message message : Lists.reverse(bag.getItems()))
+        for (Message message : Lists.reverse(bag.getItems()))
             printer.printMessage(message);
     }
 }

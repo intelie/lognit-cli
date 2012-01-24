@@ -8,20 +8,21 @@ import org.mockito.InOrder;
 import static org.mockito.Mockito.*;
 
 public class EntryPointTest {
-
-    private UserOptions options;
     private UserConsole console;
     private StateKeeper state;
     private EntryPoint entry;
+    private RequestRunner request;
+    private UsageRunner usage;
     private InOrder orderly;
 
     @Before
     public void setUp() throws Exception {
-        options = mock(UserOptions.class);
         console = mock(UserConsole.class);
         state = mock(StateKeeper.class);
-        entry = new EntryPoint(console, options, state);
-        orderly = inOrder(options, console, state);
+        request = mock(RequestRunner.class);
+        usage = mock(UsageRunner.class);
+        entry = new EntryPoint(console, state, request, usage);
+        orderly = inOrder(console, state, request, usage);
     }
 
     @Test
@@ -29,19 +30,39 @@ public class EntryPointTest {
         entry.run("-a", "-b", "c");
 
         orderly.verify(state).begin();
-        orderly.verify(options).run("-a", "-b", "c");
+        orderly.verify(request).run(new UserOptions("-a", "-b", "c"));
+        orderly.verify(state).end();
+        orderly.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void willRunUsage() throws Exception {
+        entry.run();
+
+        orderly.verify(state).begin();
+        orderly.verify(usage).run();
+        orderly.verify(state).end();
+        orderly.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void willRunUsage2() throws Exception {
+        entry.run("-a", "-b", "c", "--help");
+
+        orderly.verify(state).begin();
+        orderly.verify(usage).run();
         orderly.verify(state).end();
         orderly.verifyNoMoreInteractions();
     }
 
     @Test
     public void willCatchExceptions() throws Exception {
-        doThrow(new RuntimeException("abc")).when(options).run("-a", "-b", "c");
+        doThrow(new RuntimeException("abc")).when(request).run(new UserOptions("-a", "-b", "c"));
 
         entry.run("-a", "-b", "c");
 
         orderly.verify(state).begin();
-        orderly.verify(options).run("-a", "-b", "c");
+        orderly.verify(request).run(new UserOptions("-a", "-b", "c"));
         orderly.verify(console).println("%s: %s", "RuntimeException", "abc");
         orderly.verify(state).end();
         orderly.verifyNoMoreInteractions();

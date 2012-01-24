@@ -28,6 +28,14 @@ public class LognitTest {
     }
 
     @Test
+    public void testGetServer() throws Exception {
+        when(client.getServer()).thenReturn("abc");
+        assertThat(lognit.getServer()).isEqualTo("abc");
+        verify(client).getServer();
+    }
+
+
+    @Test
     public void testAuthenticate() throws Exception {
         lognit.authenticate("abc", "def");
         verify(client).authenticate("abc", "def");

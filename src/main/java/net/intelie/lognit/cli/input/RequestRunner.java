@@ -19,7 +19,7 @@ public class RequestRunner {
         this.listener = listener;
     }
 
-    public void run(RequestOptions options) throws IOException {
+    public void run(UserOptions options) throws IOException {
         boolean askPassword = prepare(options.getServer(), options.getUser(), options.getPassword());
 
         int retries = askPassword ? 4 : 1;
@@ -35,18 +35,25 @@ public class RequestRunner {
         }
     }
 
-    private void execute(RequestOptions options) throws IOException {
-        if (!options.hasQuery()) {
+    private void execute(UserOptions options) throws IOException {
+        if (options.isUsage()) return;
+
+        if (options.isInfo()) {
+            console.println("server: %s", lognit.getServer());
             console.println(lognit.welcome().getMessage());
         } else {
-            RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
-            listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
-            if (options.isFollow()) {
-                listener.releaseAll();
-                console.waitChar('q');
-            }
-            handle.close();
+            executeRequest(options);
         }
+    }
+
+    private void executeRequest(UserOptions options) throws IOException {
+        RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
+        listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
+        if (options.isFollow()) {
+            listener.releaseAll();
+            console.waitChar('q');
+        }
+        handle.close();
     }
 
     private void askPassword(String user) {

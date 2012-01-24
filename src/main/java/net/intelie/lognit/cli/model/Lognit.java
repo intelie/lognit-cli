@@ -25,6 +25,10 @@ public class Lognit {
     public void setServer(String server) {
         client.setServer(server);
     }
+    
+    public String getServer() {
+        return client.getServer();
+    }
 
     public void authenticate(String username, String password) {
         client.authenticate(username, password);

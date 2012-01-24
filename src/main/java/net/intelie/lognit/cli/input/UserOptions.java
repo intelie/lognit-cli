@@ -1,33 +1,108 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.inject.Inject;
-
-import java.io.IOException;
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 
 public class UserOptions {
-    private final UsageRunner usage;
-    private final RequestRunner runner;
+    private final String server;
+    private final String user;
+    private final String password;
+    private final String query;
+    private final boolean follow;
+    private final boolean info;
+    private final boolean help;
+    private final int timeout;
+    private final int lines;
 
-    @Inject
-    public UserOptions(UsageRunner usage, RequestRunner runner) {
-        this.usage = usage;
-        this.runner = runner;
-    }
-
-    public void run(String... args) throws IOException {
+    public UserOptions(String... args) {
         ArgsParser parser = new ArgsParser(args);
-        if (parser.flag("-?", "--help")) {
-            usage.run();
-            return;
-        }
-        String server = parser.option(String.class, "-s", "--server");
-        String username = parser.option(String.class, "-u", "--user");
-        String password = parser.option(String.class, "-p", "--pass", "--password");
-        Integer timeout = parser.option(Integer.class, "-t", "--timeout");
-        Integer lines = parser.option(Integer.class, "-n", "--lines");
-        boolean follow = parser.flag("-f", "--follow");
-        String query = parser.text();
-
-        runner.run(new RequestOptions(server, username, password, query, timeout, lines, follow));
+        help = parser.flag("-?", "--help");
+        server = parser.option(String.class, "-s", "--server");
+        user = parser.option(String.class, "-u", "--user");
+        password = parser.option(String.class, "-p", "--pass", "--password");
+        timeout = def(parser.option(Integer.class, "-t", "--timeout"), 10);
+        lines = def(parser.option(Integer.class, "-n", "--lines"), 20);
+        follow = parser.flag("-f", "--follow");
+        info = parser.flag("-i", "--info");
+        query = parser.text();
     }
+
+    private <T> T def(T value, T def) {
+        return value != null ? value : def;
+    }
+    
+    public String getServer() {
+        return server;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public boolean isFollow() {
+        return follow;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public int getTimeoutInMilliseconds() {
+        return getTimeout() * 1000;
+    }
+
+    public boolean hasQuery() {
+        return !Strings.isNullOrEmpty(query);
+    }
+
+    public int getLines() {
+        return lines;
+    }
+
+    public boolean hasServer() {
+        return server != null;
+    }
+    
+    public boolean isInfo() {
+        return info || hasServer();
+    }
+
+    public boolean isHelp() {
+        return help;
+    }
+
+    public boolean isUsage() {
+        return isHelp() || !(isInfo() || hasQuery());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof UserOptions)) return false;
+        UserOptions that = (UserOptions) o;
+
+        return Objects.equal(this.server, that.server) &&
+                Objects.equal(this.user, that.user) &&
+                Objects.equal(this.password, that.password) &&
+                Objects.equal(this.query, that.query) &&
+                Objects.equal(this.follow, that.follow) &&
+                Objects.equal(this.timeout, that.timeout) &&
+                Objects.equal(this.lines, that.lines) &&
+                Objects.equal(this.info, that.info) &&
+                Objects.equal(this.help, that.help);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, help);
+    }
+
+
 }

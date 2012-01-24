@@ -8,12 +8,14 @@ Options:
   -n, --lines <number>        outputs last <number> lines (default: 20)
   -t, --timeout <seconds>     timeout for history search (default: 10)
   -f, --follow                outputs new messages as they arrive
+  -i, --info                  fetches server welcome message
   -?, --help                  shows this help
 
 Examples:
 
   nit '*'                     searches everything
   nit '*' -f                  searches everything, follows new messages
+  nit -i                      request current server message
   nit -s your-lognit-server   logs into your-lognit-server
   nit 'abcd' -n 50 -f         searches for 'abcd', last 50 messages,
                               following new messages

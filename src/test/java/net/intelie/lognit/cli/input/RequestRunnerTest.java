@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.input;
 
-import net.intelie.lognit.cli.http.RestListenerHandle;
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.model.Welcome;
@@ -26,24 +25,33 @@ public class RequestRunnerTest {
     }
 
     @Test
-    public void whenHasNoQueryOnlyPrintsWelcome() throws Exception {
+    public void whenHasNoQueryDoesNothing() throws Exception {
+        runner.run(new UserOptions());
+        verifyNoMoreInteractions(console, lognit);
+    }
+
+    @Test
+    public void whenHasInfoPrintsWelcome() throws Exception {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
-        runner.run(new RequestOptions(null, null, null, "", null, null, false));
+        runner.run(new UserOptions("-i"));
+        verify(lognit).getServer();
+        verify(console).println("server: %s", null);
         verify(lognit).welcome();
         verify(console).println("blablabla");
         verifyNoMoreInteractions(console, lognit);
     }
 
+
     @Test
     public void whenHasQueryExecutesSearchAndClose() throws Exception {
-        runner.run(new RequestOptions(null, null, null, "blablabla", null, 42, false));
+        runner.run(new UserOptions("blablabla", "-n", "42"));
         verify(lognit).search("blablabla", 42, listener);
         verify(lognit.search("blablabla", 42, listener)).close();
     }
 
     @Test
     public void whenHasQueryToFollowExecutesReleasesAndWait() throws Exception {
-        runner.run(new RequestOptions(null, null, null, "blablabla", null, 42, true));
+        runner.run(new UserOptions("blablabla", "-n", "42", "-f"));
         verify(lognit).search("blablabla", 42, listener);
         verify(listener).releaseAll();
         verify(console).waitChar('q');
@@ -53,9 +61,12 @@ public class RequestRunnerTest {
     @Test
     public void whenHasServerAlsoSetsTheServer() throws Exception {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
-        runner.run(new RequestOptions("someserver", null, null, "", null, null, false));
+        when(lognit.getServer()).thenReturn("someserver");
+        runner.run(new UserOptions("-s", "someserver"));
 
         verify(lognit).setServer("someserver");
+        verify(lognit).getServer();
+        verify(console).println("server: %s", "someserver");
         verify(lognit).welcome();
         verify(console).println("blablabla");
         verifyNoMoreInteractions(console, lognit);
@@ -64,8 +75,10 @@ public class RequestRunnerTest {
     @Test
     public void whenHasUserOnlyDoesNothingYet() throws Exception {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
-        runner.run(new RequestOptions(null, "user", null, "", null, null, false));
+        runner.run(new UserOptions("-u", "user", "-i"));
 
+        verify(lognit).getServer();
+        verify(console).println("server: %s", null);
         verify(lognit).welcome();
         verify(console).println("blablabla");
         verifyNoMoreInteractions(console, lognit);
@@ -75,9 +88,12 @@ public class RequestRunnerTest {
     @Test
     public void whenHasUserAndPasswordAuthenticates() throws Exception {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
-        runner.run(new RequestOptions(null, "user", "pass", "", null, null, false));
+        when(lognit.getServer()).thenReturn("someserver");
+        runner.run(new UserOptions("-u", "user", "-p", "pass", "-i"));
 
         verify(lognit).authenticate("user", "pass");
+        verify(lognit).getServer();
+        verify(console).println("server: %s", "someserver");
         verify(lognit).welcome();
         verify(console).println("blablabla");
         verifyNoMoreInteractions(console, lognit);
@@ -86,15 +102,18 @@ public class RequestRunnerTest {
     @Test
     public void whenReceivesUnauthorizedTryAskUser() throws Exception {
         Welcome welcome = new Welcome("blablabla");
+        when(lognit.getServer()).thenReturn("someserver");
         when(lognit.welcome())
                 .thenThrow(new UnauthorizedException(new StatusLine("HTTP/1.0 401 OK")))
                 .thenReturn(welcome);
         when(console.readLine("login: ")).thenReturn("somelogin");
         when(console.readPassword("%s's password: ", "somelogin")).thenReturn("somepass");
 
-        runner.run(new RequestOptions(null, null, null, "", null, null, false));
+        runner.run(new UserOptions("-i"));
 
         InOrder orderly = inOrder(lognit, console);
+        orderly.verify(lognit).getServer();
+        orderly.verify(console).println("server: %s", "someserver");
         orderly.verify(lognit).welcome();
         orderly.verify(console).println("HTTP/1.0 401 OK");
         orderly.verify(console).readLine(anyString());
@@ -108,14 +127,17 @@ public class RequestRunnerTest {
     @Test
     public void whenReceivesUnauthorizedTryAskPasswordOnlyIfUserIsPassed() throws Exception {
         Welcome welcome = new Welcome("blablabla");
+        when(lognit.getServer()).thenReturn("someserver");
         when(lognit.welcome())
                 .thenThrow(new UnauthorizedException(new StatusLine("HTTP/1.0 401 OK")))
                 .thenReturn(welcome);
         when(console.readPassword("%s's password: ", "somelogin")).thenReturn("somepass");
 
-        runner.run(new RequestOptions(null, "somelogin", null, "", null, null, false));
+        runner.run(new UserOptions("-u", "somelogin", "-i"));
 
         InOrder orderly = inOrder(lognit, console);
+        orderly.verify(lognit).getServer();
+        orderly.verify(console).println("server: %s", "someserver");
         orderly.verify(lognit).welcome();
         orderly.verify(console).println("HTTP/1.0 401 OK");
         orderly.verify(console).readPassword(anyString(), anyString());
@@ -132,7 +154,7 @@ public class RequestRunnerTest {
         when(console.readLine("login: ")).thenReturn("somelogin");
         when(console.readPassword("%s's password: ", "somelogin")).thenReturn("somepass");
 
-        runner.run(new RequestOptions(null, null, null, "", null, null, false));
+        runner.run(new UserOptions("-i"));
 
         verify(lognit, times(4)).welcome();
         verify(console, times(3)) .readLine(anyString());
@@ -143,8 +165,10 @@ public class RequestRunnerTest {
         when(lognit.welcome())
                 .thenThrow(new UnauthorizedException(new StatusLine("HTTP/1.0 401 OK")));
 
-        runner.run(new RequestOptions(null, "someuser", "somepass", "", null, null, false));
+        runner.run(new UserOptions("-u", "someuser", "-p", "somepass", "-i"));
 
+        verify(lognit).getServer();
+        verify(console).println("server: %s", null);
         verify(lognit).authenticate("someuser", "somepass");
         verify(lognit, times(1)).welcome();
         verify(console).println("HTTP/1.0 401 OK");

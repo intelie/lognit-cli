@@ -8,6 +8,8 @@ public interface RestClient {
 
     void setState(RestState state);
 
+    String getServer();
+
     void setServer(String server);
     
     void authenticate(String username, String password);

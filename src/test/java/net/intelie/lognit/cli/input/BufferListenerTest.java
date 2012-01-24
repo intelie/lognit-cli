@@ -24,7 +24,7 @@ public class BufferListenerTest {
     @Test(timeout = 1000)
     public void whenNoMessageArriveOnTime() {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
-        verify(printer).printStatus(BufferListener.WAITING_FIRST);
+        verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
         verifyNoMoreInteractions(printer);
     }
 
@@ -34,9 +34,7 @@ public class BufferListenerTest {
         listener.receive(ms(false, true, 2, mB, mA));
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
-        verify(printer).printStatus(BufferListener.WAITING_FIRST);
-        verify(printer).printStatus(BufferListener.WAITING_MORE, 1);
-
+        verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
         verify(printer).printMessage(mA);
         verify(printer).printMessage(mB);
         verifyNoMoreInteractions(printer);
@@ -54,7 +52,7 @@ public class BufferListenerTest {
         t.interrupt();
         t.join();
 
-        verify(printer).printStatus(BufferListener.WAITING_FIRST);
+        verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
         verifyNoMoreInteractions(printer);
     }
 
@@ -68,8 +66,7 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
 
-        verify(printer).printStatus(BufferListener.WAITING_FIRST);
-        verify(printer).printStatus(BufferListener.WAITING_MORE, 1);
+        verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
         verify(printer).printMessage(mA);
         verify(printer).printMessage(mB);
         verifyNoMoreInteractions(printer);
@@ -111,8 +108,6 @@ public class BufferListenerTest {
         listener.receive(ms(false, true, 1, mB, mA));
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
 
-        verify(printer).printStatus(BufferListener.WAITING_FIRST);
-        verify(printer).printStatus(BufferListener.WAITING_MORE, 0);
         verify(printer).printMessage(mA);
         verify(printer).printMessage(mB);
         verifyNoMoreInteractions(printer);
@@ -127,7 +122,6 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
         assertThat(System.currentTimeMillis() - start).isGreaterThanOrEqualTo(50);
 
-        verify(printer).printStatus(BufferListener.WAITING_FIRST);
         verify(printer).printStatus(BufferListener.NO_CLUSTER_INFO);
         verify(printer).printMessage(mA);
         verify(printer).printMessage(mB);
@@ -141,9 +135,6 @@ public class BufferListenerTest {
         listener.receive(ms(false, true, 2, mB, mA));
         listener.receive(ms(false, true, 2, mC, mD));
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
-
-        verify(printer).printStatus(BufferListener.WAITING_FIRST);
-        verify(printer).printStatus(BufferListener.WAITING_MORE, 1);
 
         verify(printer).printMessage(mB);
         verify(printer).printMessage(mC);
