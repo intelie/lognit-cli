@@ -20,10 +20,10 @@ public class ArgsParser {
     public <T> T option(Class<T> type, String... options) {
         String value = findValue(options);
         if (value == null) return null;
-        return convert(type, value, options);
+        return convert(type, value);
     }
 
-    private <T> T convert(Class<T> type, String value, String... options) {
+    private <T> T convert(Class<T> type, String value) {
         try {
             return type.getConstructor(String.class).newInstance(value);
         } catch (Exception e) {
@@ -33,8 +33,6 @@ public class ArgsParser {
 
     private String findValue(String... options) {
         ListIterator<String> it = findIterator(options);
-        if (it == null || !it.hasNext())
-            return null;
         return removeNext(it);
     }
 
@@ -52,7 +50,7 @@ public class ArgsParser {
     }
 
     private String removeNext(ListIterator<String> it) {
-        if (!it.hasNext()) return null;
+        if (it == null || !it.hasNext()) return null;
         String value = it.next();
         it.remove();
         return value;
