@@ -15,6 +15,7 @@ import java.net.URLEncoder;
 public class Lognit {
     public static final String URL_WELCOME = "/rest/users/welcome";
     public static final String URL_SEARCH = "/rest/search?expression=%s&windowLength=%d";
+    public static final String URL_TERMS = "/rest/terms?field=%s&term=%s";
     private final RestClient client;
 
     @Inject
@@ -39,6 +40,10 @@ public class Lognit {
         return client.listen(channel.getChannel(), MessageBag.class, listener);
     }
 
+    public Terms terms(String field, String term) throws IOException {
+        return client.request(make(URL_TERMS, encode(field), encode(term)), Terms.class);
+    }
+    
     public Welcome welcome() throws IOException {
         return client.request(URL_WELCOME, Welcome.class);
     }

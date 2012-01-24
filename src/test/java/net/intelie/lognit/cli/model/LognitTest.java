@@ -7,6 +7,8 @@ import net.intelie.lognit.cli.http.RestListenerHandle;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -46,6 +48,13 @@ public class LognitTest {
         Welcome welcome = new Welcome("abc");
         when(client.request("/rest/users/welcome", Welcome.class)).thenReturn(welcome);
         assertThat(lognit.welcome()).isEqualTo(welcome);
+    }
+
+    @Test
+    public void testTerms() throws Exception {
+        Terms terms = new Terms(Arrays.asList("AAA", "BBB", "CCC"));
+        when(client.request("/rest/terms?field=abc+qwe&term=123+456", Terms.class)).thenReturn(terms);
+        assertThat(lognit.terms("abc qwe", "123 456")).isEqualTo(terms);
     }
 
     @Test
