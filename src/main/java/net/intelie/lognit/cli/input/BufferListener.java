@@ -15,17 +15,22 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class BufferListener implements RestListener<MessageBag> {
+    public static final String NO_CLUSTER_INFO = "seems there is a bug in server response, no cluster info";
+    public static final String WAITING_FIRST = "waiting for first cluster response...";
+    public static final String WAITING_MORE = "waiting %d more responses...";
     private final Deque<MessageBag> historic;
     private final Deque<MessageBag> other;
     private final Semaphore semaphore;
     private final MessagePrinter printer;
-
+    private boolean releasing;
+    
     @Inject
     public BufferListener(MessagePrinter printer) {
         this.printer = printer;
         this.historic = new LinkedList<MessageBag>();
         this.other = new LinkedList<MessageBag>();
         this.semaphore = new Semaphore(0);
+        this.releasing = false;
     }
 
 
@@ -42,9 +47,17 @@ public class BufferListener implements RestListener<MessageBag> {
     public boolean waitHistoric(int timeout, int releaseMax) {
         boolean success = false;
         try {
+            printer.printStatus(WAITING_FIRST);
             if (!semaphore.tryAcquire(1, timeout, TimeUnit.MILLISECONDS)) return false;
             int waiting = historic.getFirst().getTotalNodes() - 1;
-            success = waiting < 0 || semaphore.tryAcquire(waiting, timeout, TimeUnit.MILLISECONDS);
+            if (waiting < 0) {
+                printer.printStatus(NO_CLUSTER_INFO);
+                Thread.sleep(timeout);
+                success = false;
+            } else {
+                printer.printStatus(WAITING_MORE, waiting);
+                success = semaphore.tryAcquire(waiting, timeout, TimeUnit.MILLISECONDS);
+            }
         } catch (InterruptedException ex) {
         }
         releaseHistoric(releaseMax);
@@ -52,16 +65,22 @@ public class BufferListener implements RestListener<MessageBag> {
     }
 
     private void releaseHistoric(int releaseMax) {
-        PriorityQueue<Message> queue = new PriorityQueue<Message>();
-
-        while (!historic.isEmpty())
-            queue.addAll(historic.pop().getItems());
-
-        Iterable<Message> limited = Iterables.limit(queue, releaseMax);
-        LinkedList<Message> list = Lists.newLinkedList(limited);
-        List<Message> reverse = Lists.reverse(list);
+        List<Message> reverse = pickValidHistory(releaseMax);
 
         for (Message message : reverse)
             printer.printMessage(message);
+    }
+
+    private List<Message> pickValidHistory(int releaseMax) {
+        PriorityQueue<Message> queue = new PriorityQueue<Message>();
+
+        while (!historic.isEmpty()) {
+            MessageBag bag = historic.pop();
+            queue.addAll(bag.getItems());
+        }
+
+        Iterable<Message> limited = Iterables.limit(queue, releaseMax);
+        LinkedList<Message> list = Lists.newLinkedList(limited);
+        return Lists.reverse(list);
     }
 }

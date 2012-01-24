@@ -20,28 +20,30 @@ public class RequestRunner {
         this.listener = listener;
     }
 
-    public void run(String server, String user, String password, String query) throws IOException {
-        boolean askPassword = prepare(server, user, password);
+    public void run(RequestOptions options) throws IOException {
+        boolean askPassword = prepare(options.getServer(), options.getUser(), options.getPassword());
 
         int retries = askPassword ? 4 : 1;
         while (retries-- > 0) {
             try {
-                execute(query);
+                execute(options);
                 break;
             } catch (UnauthorizedException ex) {
                 console.println(ex.getMessage());
                 if (retries > 0)
-                    askPassword(user);
+                    askPassword(options.getUser());
             }
         }
     }
 
-    private void execute(String query) throws IOException {
-        if (Strings.isNullOrEmpty(query)) {
+    private void execute(RequestOptions options) throws IOException {
+        if (!options.hasQuery()) {
             console.println(lognit.welcome().getMessage());
         } else {
-            RestListenerHandle handle = lognit.search(query, listener);
-            listener.waitHistoric(1000, 10);
+            RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
+            listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
+            if (!options.isFollow())
+                handle.close();
         }
     }
 

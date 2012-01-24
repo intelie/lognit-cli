@@ -1,1 +1,1 @@
-mvn compile exec:java -Dexec.args="$@"
+exec mvn -q compile exec:java -Dexec.args="$*"

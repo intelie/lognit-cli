@@ -23,8 +23,11 @@ public class UserOptions {
         String server = parser.option(String.class, "-s", "--server");
         String username = parser.option(String.class, "-u", "--user");
         String password = parser.option(String.class, "-p", "--pass", "--password");
+        Integer timeout = parser.option(Integer.class, "-t", "--timeout");
+        Integer lines = parser.option(Integer.class, "-n", "--lines");
+        boolean follow = parser.flag("-f", "--follow");
         String query = parser.text();
 
-        runner.run(server, username, password, query);
+        runner.run(new RequestOptions(server, username, password, query, timeout, lines, follow));
     }
 }

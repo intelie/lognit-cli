@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.input;
 
-import net.intelie.lognit.cli.model.Lognit;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +30,7 @@ public class UserOptionsTest {
     @Test
     public void whenParsingServer() throws Exception {
         options.run("-s", "test");
-        verify(request).run("test", null, null, "");
+        verify(request).run(new RequestOptions("test", null, null, "", null, null, false));
     }
 
 }

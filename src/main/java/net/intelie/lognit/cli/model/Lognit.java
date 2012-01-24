@@ -14,7 +14,7 @@ import java.net.URLEncoder;
 
 public class Lognit {
     public static final String URL_WELCOME = "/rest/users/welcome";
-    public static final String URL_SEARCH = "/rest/search?expression=%s";
+    public static final String URL_SEARCH = "/rest/search?expression=%s&windowLength=%d";
     private final RestClient client;
 
     @Inject
@@ -30,8 +30,8 @@ public class Lognit {
         client.authenticate(username, password);
     }
 
-    public RestListenerHandle search(String query, RestListener<MessageBag> listener) throws IOException {
-        SearchChannel channel = client.request(make(URL_SEARCH, encode(query)), SearchChannel.class);
+    public RestListenerHandle search(String query, int windowLength, RestListener<MessageBag> listener) throws IOException {
+        SearchChannel channel = client.request(make(URL_SEARCH, encode(query), windowLength), SearchChannel.class);
         return client.listen(channel.getChannel(), MessageBag.class, listener);
     }
 

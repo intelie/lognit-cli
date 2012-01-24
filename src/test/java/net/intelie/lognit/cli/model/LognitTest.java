@@ -46,9 +46,9 @@ public class LognitTest {
         RestListenerHandle handle = mock(RestListenerHandle.class);
         RestListener<MessageBag> listener = mock(RestListener.class);
 
-        when(client.request("/rest/search?expression=qwe+asd", SearchChannel.class)).thenReturn(channel);
+        when(client.request("/rest/search?expression=qwe+asd&windowLength=20", SearchChannel.class)).thenReturn(channel);
         when(client.listen("lalala", MessageBag.class, listener)).thenReturn(handle);
 
-        assertThat(lognit.search("qwe asd", listener)).isEqualTo(handle);
+        assertThat(lognit.search("qwe asd", 20, listener)).isEqualTo(handle);
     }
 }

@@ -45,7 +45,6 @@ public class RestClientImpl implements RestClient {
     public void setState(RestState state) {
         client.getState().addCookies(state.getCookies());
         server = state.getServer();
-        System.err.printf("server: %s\n", server);
     }
 
     @Override
@@ -63,8 +62,9 @@ public class RestClientImpl implements RestClient {
 
     @Override
     public <T> T request(String uri, Class<T> responseClass) throws IOException {
-        uri = prependServer(uri);
+        System.err.printf("server: %s\n", server);
 
+        uri = prependServer(uri);
         HttpMethod method = execute(uri);
 
         String body = IOUtils.toString(method.getResponseBodyAsStream());

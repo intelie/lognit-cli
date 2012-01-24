@@ -24,7 +24,7 @@ public class BufferListenerTest {
     @Test(timeout = 1000)
     public void whenNoMessageArriveOnTime() {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
-
+        verify(printer).printStatus(BufferListener.WAITING_FIRST);
         verifyNoMoreInteractions(printer);
     }
 
@@ -34,20 +34,42 @@ public class BufferListenerTest {
         listener.receive(ms(false, true, 2, mB, mA));
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
+        verify(printer).printStatus(BufferListener.WAITING_FIRST);
+        verify(printer).printStatus(BufferListener.WAITING_MORE, 1);
+
         verify(printer).printMessage(mA);
         verify(printer).printMessage(mB);
+        verifyNoMoreInteractions(printer);
+    }
+
+    @Test(timeout = 1000)
+    public void whenOnlyOneOfTwoMessagesAriveOnTimeAndTheThreadInterrupts() throws Exception {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                assertThat(listener.waitHistoric(10000, 3)).isFalse();
+            }
+        });
+        t.start();
+        t.interrupt();
+        t.join();
+
+        verify(printer).printStatus(BufferListener.WAITING_FIRST);
         verifyNoMoreInteractions(printer);
     }
 
 
     @Test(timeout = 1000)
     public void whenOnlyOneOfTwoMessagesAriveOnTimeRealTimeAndFailedDoesntCount() {
-        Message mA = m("A"), mB = m("B"), mC=m("C");
+        Message mA = m("A"), mB = m("B"), mC = m("C");
         listener.receive(ms(false, true, 2, mB, mA));
         listener.receive(ms(true, true, 2, mC));
         listener.receive(ms(false, false, 2, mC));
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
+
+        verify(printer).printStatus(BufferListener.WAITING_FIRST);
+        verify(printer).printStatus(BufferListener.WAITING_MORE, 1);
         verify(printer).printMessage(mA);
         verify(printer).printMessage(mB);
         verifyNoMoreInteractions(printer);
@@ -59,6 +81,8 @@ public class BufferListenerTest {
         listener.receive(ms(false, true, 1, mB, mA));
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
 
+        verify(printer).printStatus(BufferListener.WAITING_FIRST);
+        verify(printer).printStatus(BufferListener.WAITING_MORE, 0);
         verify(printer).printMessage(mA);
         verify(printer).printMessage(mB);
         verifyNoMoreInteractions(printer);
@@ -68,8 +92,13 @@ public class BufferListenerTest {
     public void wontCauseExceptionIfOneMessageArrivesWithoutClusterInfo() {
         Message mA = m("A"), mB = m("B");
         listener.receive(ms(false, true, 0, mB, mA));
-        assertThat(listener.waitHistoric(10000, 3)).isTrue();
 
+        long start = System.currentTimeMillis();
+        assertThat(listener.waitHistoric(50, 3)).isFalse();
+        assertThat(System.currentTimeMillis() - start).isGreaterThanOrEqualTo(50);
+
+        verify(printer).printStatus(BufferListener.WAITING_FIRST);
+        verify(printer).printStatus(BufferListener.NO_CLUSTER_INFO);
         verify(printer).printMessage(mA);
         verify(printer).printMessage(mB);
         verifyNoMoreInteractions(printer);
@@ -79,9 +108,12 @@ public class BufferListenerTest {
     @Test(timeout = 1000)
     public void whenTwoOfTwoMessagesArriveOntime() {
         Message mA = m("A"), mB = m("B"), mC = m("C"), mD = m("D");
-        listener.receive(ms(false, true, 1, mB, mA));
-        listener.receive(ms(false, true, 1, mC, mD));
+        listener.receive(ms(false, true, 2, mB, mA));
+        listener.receive(ms(false, true, 2, mC, mD));
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
+
+        verify(printer).printStatus(BufferListener.WAITING_FIRST);
+        verify(printer).printStatus(BufferListener.WAITING_MORE, 1);
 
         verify(printer).printMessage(mB);
         verify(printer).printMessage(mC);
