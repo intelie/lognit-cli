@@ -10,13 +10,13 @@ import java.io.IOException;
 public class RequestRunner {
     private final UserConsole console;
     private final Lognit lognit;
-    private final BufferListener listener;
+    private final BufferListenerFactory factory;
 
     @Inject
-    public RequestRunner(UserConsole console, Lognit lognit, BufferListener listener) {
+    public RequestRunner(UserConsole console, Lognit lognit, BufferListenerFactory factory) {
         this.console = console;
         this.lognit = lognit;
-        this.listener = listener;
+        this.factory = factory;
     }
 
     public void run(UserOptions options) throws IOException {
@@ -47,6 +47,7 @@ public class RequestRunner {
     }
 
     private void executeRequest(UserOptions options) throws IOException {
+        BufferListener listener = factory.create(options.isNoColor());
         RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
         listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
         if (options.isFollow()) {

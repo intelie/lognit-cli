@@ -14,14 +14,14 @@ public class RequestRunnerTest {
     private UserConsole console;
     private Lognit lognit;
     private RequestRunner runner;
-    private BufferListener listener;
+    private BufferListenerFactory factory;
 
     @Before
     public void setUp() throws Exception {
         console = mock(UserConsole.class);
         lognit = mock(Lognit.class, RETURNS_DEEP_STUBS);
-        listener = mock(BufferListener.class);
-        runner = new RequestRunner(console, lognit, listener);
+        factory = mock(BufferListenerFactory.class, RETURNS_DEEP_STUBS);
+        runner = new RequestRunner(console, lognit, factory);
     }
 
     @Test
@@ -45,13 +45,14 @@ public class RequestRunnerTest {
     @Test
     public void whenHasQueryExecutesSearchAndClose() throws Exception {
         runner.run(new UserOptions("blablabla", "-n", "42"));
-        verify(lognit).search("blablabla", 42, listener);
-        verify(lognit.search("blablabla", 42, listener)).close();
+        verify(lognit).search("blablabla", 42, factory.create(false));
+        verify(lognit.search("blablabla", 42, factory.create(false))).close();
     }
 
     @Test
     public void whenHasQueryToFollowExecutesReleasesAndWait() throws Exception {
         runner.run(new UserOptions("blablabla", "-n", "42", "-f"));
+        BufferListener listener = factory.create(false);
         verify(lognit).search("blablabla", 42, listener);
         verify(listener).releaseAll();
         verify(console).waitChar('q');

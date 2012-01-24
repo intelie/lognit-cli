@@ -9,6 +9,7 @@ Options:
   -t, --timeout <seconds>     timeout for history search (default: 10)
   -f, --follow                outputs new messages as they arrive
   -i, --info                  fetches server welcome message
+  -b, --no-color              forces displaying results in black&white
   -?, --help                  shows this help
 
 Examples:

@@ -12,12 +12,12 @@ import static org.mockito.Mockito.*;
 
 public class BufferListenerTest {
 
-    private MessagePrinter printer;
+    private ColoredMessagePrinter printer;
     private BufferListener listener;
 
     @Before
     public void setUp() throws Exception {
-        printer = mock(MessagePrinter.class);
+        printer = mock(ColoredMessagePrinter.class);
         listener = new BufferListener(printer);
     }
 

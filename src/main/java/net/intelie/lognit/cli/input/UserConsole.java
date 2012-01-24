@@ -1,6 +1,7 @@
 package net.intelie.lognit.cli.input;
 
 import com.google.inject.Inject;
+import jline.ANSIBuffer;
 import jline.ConsoleReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,10 @@ public class UserConsole {
     public void printOut(String format, Object... args) {
         stdout.println(String.format(format, args));
         stdout.flush();
+    }
+    
+    public boolean isTTY() {
+        return System.console() != null;
     }
 
     public char waitChar(char... allowed) {
