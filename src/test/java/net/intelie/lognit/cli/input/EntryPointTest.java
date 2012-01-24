@@ -64,6 +64,7 @@ public class EntryPointTest {
         orderly.verify(state).begin();
         orderly.verify(request).run(new UserOptions("-a", "-b", "c"));
         orderly.verify(console).println("%s: %s", "RuntimeException", "abc");
+        orderly.verify(console).println(anyString());
         orderly.verify(state).end();
         orderly.verifyNoMoreInteractions();
     }

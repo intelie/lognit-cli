@@ -83,6 +83,11 @@ public class UserOptions {
         return isHelp() || !(isInfo() || hasQuery());
     }
 
+    public boolean askPassword() {
+        return user == null || password == null;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof UserOptions)) return false;

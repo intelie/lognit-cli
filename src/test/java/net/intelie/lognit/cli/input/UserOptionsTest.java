@@ -59,6 +59,14 @@ public class UserOptionsTest {
     }
 
     @Test
+    public void testAskPassCombinations() {
+        assertThat(new UserOptions("-u", "user").askPassword()).isEqualTo(true);
+        assertThat(new UserOptions("-p", "pass").askPassword()).isEqualTo(true);
+        assertThat(new UserOptions("-u", "user", "-p", "pass").askPassword()).isEqualTo(false);
+    }
+
+
+    @Test
     public void differentOrderShouldDoTheSame() {
         UserOptions opts1 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i");
         UserOptions opts2 = new UserOptions("-i", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?");

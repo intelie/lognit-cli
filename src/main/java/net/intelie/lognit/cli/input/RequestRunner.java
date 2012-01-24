@@ -20,9 +20,9 @@ public class RequestRunner {
     }
 
     public void run(UserOptions options) throws IOException {
-        boolean askPassword = prepare(options.getServer(), options.getUser(), options.getPassword());
+        prepare(options);
 
-        int retries = askPassword ? 4 : 1;
+        int retries = options.askPassword() ? 4 : 1;
         while (retries-- > 0) {
             try {
                 execute(options);
@@ -62,12 +62,10 @@ public class RequestRunner {
         lognit.authenticate(newUser, newPass);
     }
 
-    private boolean prepare(String server, String user, String password) {
-        boolean askPassword = user == null || password == null;
-        if (server != null)
-            lognit.setServer(server);
-        if (!askPassword)
-            lognit.authenticate(user, password);
-        return askPassword;
+    private void prepare(UserOptions opts) {
+        if (opts.hasServer())
+            lognit.setServer(opts.getServer());
+        if (!opts.askPassword())
+            lognit.authenticate(opts.getUser(), opts.getPassword());
     }
 }

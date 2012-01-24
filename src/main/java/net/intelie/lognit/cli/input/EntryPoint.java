@@ -33,6 +33,7 @@ public class EntryPoint {
         } catch (Exception ex) {
             logger.warn("An error has ocurred. Sad.", ex);
             console.println("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());
+            console.println("run the command with --help for usage help");
         } finally {
             state.end();
         }
