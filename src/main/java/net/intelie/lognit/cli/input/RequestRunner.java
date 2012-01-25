@@ -17,20 +17,21 @@ public class RequestRunner {
         this.factory = factory;
     }
 
-    public void run(UserOptions options) throws IOException {
+    public int run(UserOptions options) throws IOException {
         prepare(options);
 
         int retries = options.askPassword() ? 4 : 1;
         while (retries-- > 0) {
             try {
                 execute(options);
-                break;
+                return 0;
             } catch (UnauthorizedException ex) {
                 console.println("(%s): %s", lognit.getServer(), ex.getMessage());
                 if (retries > 0)
                     askPassword(options.getUser());
             }
         }
+        return 2;
     }
 
     private void execute(UserOptions options) throws IOException {

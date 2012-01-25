@@ -19,19 +19,20 @@ public class EntryPoint {
         this.usage = usage;
     }
 
-    public void run(String... args) {
+    public int run(String... args) {
         state.begin();
 
         try {
             UserOptions options = new UserOptions(args);
             if (options.isUsage())
-                usage.run();
+                return usage.run();
             else
-                request.run(options);
+                return request.run(options);
         } catch (Exception ex) {
             logger.warn("An error has ocurred. Sad.", ex);
             console.println("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());
             console.println("run the command with --help for usage help");
+            return 3;
         } finally {
             state.end();
         }

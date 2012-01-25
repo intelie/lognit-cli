@@ -11,6 +11,7 @@ import org.mockito.InOrder;
 
 import java.util.Arrays;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class RequestRunnerTest {
@@ -36,7 +37,7 @@ public class RequestRunnerTest {
     @Test
     public void whenHasInfoPrintsWelcome() throws Exception {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
-        runner.run(new UserOptions("-i"));
+        assertThat(runner.run(new UserOptions("-i"))).isEqualTo(0);
         verify(lognit).getServer();
         verify(lognit).welcome();
         verify(console).println("(%s): %s", null, "blablabla");
@@ -163,7 +164,7 @@ public class RequestRunnerTest {
         when(console.readLine("login: ")).thenReturn("somelogin");
         when(console.readPassword("%s's password: ", "somelogin")).thenReturn("somepass");
 
-        runner.run(new UserOptions("-i"));
+        assertThat(runner.run(new UserOptions("-i"))).isEqualTo(2);
 
         verify(lognit, times(4)).welcome();
         verify(console, times(3)).readLine(anyString());

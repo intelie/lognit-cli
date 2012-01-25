@@ -11,11 +11,12 @@ public class UsageRunner {
         this.console = console;
     }
 
-    public void run() {
+    public int run() {
         try {
             console.println(Resources.toString(Resources.getResource("usage.txt"), Charset.defaultCharset()));
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
 }

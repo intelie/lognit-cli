@@ -10,6 +10,6 @@ import static org.fest.assertions.Assertions.assertThat;
 public class MainTest {
     @Test
     public void callingWithoutParamsWontBreakTheWorld() throws Exception {
-        Main.main("--help");
+        assertThat(Main.main("--help")).isEqualTo(0);
     }
 }

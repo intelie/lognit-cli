@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class EntryPointTest {
@@ -27,7 +28,7 @@ public class EntryPointTest {
 
     @Test
     public void willRunOptions() throws Exception {
-        entry.run("-a", "-b", "c");
+        assertThat(entry.run("-a", "-b", "c")).isEqualTo(0);
 
         orderly.verify(state).begin();
         orderly.verify(request).run(new UserOptions("-a", "-b", "c"));
@@ -59,7 +60,7 @@ public class EntryPointTest {
     public void willCatchExceptions() throws Exception {
         doThrow(new RuntimeException("abc")).when(request).run(new UserOptions("-a", "-b", "c"));
 
-        entry.run("-a", "-b", "c");
+        assertThat(entry.run("-a", "-b", "c")).isEqualTo(3);
 
         orderly.verify(state).begin();
         orderly.verify(request).run(new UserOptions("-a", "-b", "c"));

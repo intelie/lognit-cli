@@ -2,6 +2,7 @@ package net.intelie.lognit.cli.input;
 
 import org.junit.Test;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -10,7 +11,7 @@ public class UsageRunnerTest {
     public void willPrintToConsole() {
         UserConsole console = mock(UserConsole.class);
         UsageRunner printer = new UsageRunner(console);
-        printer.run();
+        assertThat(printer.run()).isEqualTo(0);
         verify(console).println(anyString());
     }
 
