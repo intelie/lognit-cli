@@ -9,14 +9,17 @@ import net.intelie.lognit.cli.state.RestStateStorage;
 import net.intelie.lognit.cli.state.StateKeeper;
 import org.apache.commons.httpclient.HttpClient;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.PrintWriter;
+import java.io.*;
 
 public class Main {
     public static void main(String... args) throws Exception {
         //it's just because I couldn't find a faster IOC container
+        resolveEntryPoint().run(args);
+    }
+
+    private static EntryPoint resolveEntryPoint() throws IOException {
+        File stateFile = new File(new File(System.getProperty("user.home"), ".lognit"), "state");
+
         Jsonizer jsonizer = new Jsonizer(new Gson());
 
         ConsoleReader consoleReader = new ConsoleReader(
@@ -25,8 +28,7 @@ public class Main {
 
         UserConsole userConsole = new UserConsole(consoleReader, new PrintWriter(System.out));
 
-        RestStateStorage storage = new RestStateStorage(
-                new File(new File(System.getProperty("user.home"), ".lognit"), "state"), jsonizer);
+        RestStateStorage storage = new RestStateStorage(stateFile, jsonizer);
 
         HttpClient httpClient = new HttpClient();
         MethodFactory methodFactory = new MethodFactory();
@@ -42,7 +44,6 @@ public class Main {
         RequestRunner requestRunner = new RequestRunner(userConsole, lognit, bufferListenerFactory);
 
         UsageRunner usageRunner = new UsageRunner(userConsole);
-        EntryPoint entry = new EntryPoint(userConsole, stateKeeper, requestRunner, usageRunner);
-        entry.run(args);
+        return new EntryPoint(userConsole, stateKeeper, requestRunner, usageRunner);
     }
 }
