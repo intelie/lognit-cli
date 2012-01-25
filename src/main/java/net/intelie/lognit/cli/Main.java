@@ -1,45 +1,48 @@
 package net.intelie.lognit.cli;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.google.gson.Gson;
 import jline.ConsoleReader;
-import net.intelie.lognit.cli.http.Jsonizer;
-import net.intelie.lognit.cli.http.RestClient;
-import net.intelie.lognit.cli.http.RestClientImpl;
-import net.intelie.lognit.cli.input.EntryPoint;
-import net.intelie.lognit.cli.input.UserConsole;
+import net.intelie.lognit.cli.http.*;
+import net.intelie.lognit.cli.input.*;
+import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.state.RestStateStorage;
+import net.intelie.lognit.cli.state.StateKeeper;
+import org.apache.commons.httpclient.HttpClient;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.PrintWriter;
 
-public class Main extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(RestClient.class).to(RestClientImpl.class).in(Singleton.class);
-    }
+public class Main {
+    public static void main(String... args) throws Exception {
+        //it's just because I couldn't find a faster IOC container
+        Jsonizer jsonizer = new Jsonizer(new Gson());
 
-    @Provides
-    private ConsoleReader console() throws IOException {
-        return new ConsoleReader(
+        ConsoleReader consoleReader = new ConsoleReader(
                 new FileInputStream(FileDescriptor.in),
                 new PrintWriter(System.err));
-    }
 
-    @Provides
-    private UserConsole userConsole(ConsoleReader console) throws IOException {
-        return new UserConsole(console, new PrintWriter(System.out));
-    }
-    
-    @Provides
-    private RestStateStorage storage(Jsonizer jsonizer) {
-        return new RestStateStorage(new File(new File(System.getProperty("user.home"), ".lognit"), "state"), jsonizer);
-    }
+        UserConsole userConsole = new UserConsole(consoleReader, new PrintWriter(System.out));
 
-    public static void main(String... args) {
-        Guice.createInjector(new Main())
-                .getInstance(EntryPoint.class)
-                .run(args);
+        RestStateStorage storage = new RestStateStorage(
+                new File(new File(System.getProperty("user.home"), ".lognit"), "state"), jsonizer);
+
+        HttpClient httpClient = new HttpClient();
+        MethodFactory methodFactory = new MethodFactory();
+        RestClient restClient = new RestClientImpl(httpClient, methodFactory, new BayeuxFactory(), jsonizer);
+
+        StateKeeper stateKeeper = new StateKeeper(restClient, storage);
+
+        DefaultMessagePrinter defaultPrinter = new DefaultMessagePrinter(userConsole);
+        ColoredMessagePrinter coloredPrinter = new ColoredMessagePrinter(userConsole);
+        BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(userConsole, coloredPrinter, defaultPrinter);
+
+        Lognit lognit = new Lognit(restClient);
+        RequestRunner requestRunner = new RequestRunner(userConsole, lognit, bufferListenerFactory);
+
+        UsageRunner usageRunner = new UsageRunner(userConsole);
+        EntryPoint entry = new EntryPoint(userConsole, stateKeeper, requestRunner, usageRunner);
+        entry.run(args);
     }
 }

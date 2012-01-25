@@ -1,7 +1,6 @@
 package net.intelie.lognit.cli.input;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestListener;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.MessageBag;
@@ -23,7 +22,6 @@ public class BufferListener implements RestListener<MessageBag> {
     private final MessagePrinter printer;
     private boolean releasing;
 
-    @Inject
     public BufferListener(MessagePrinter printer) {
         this.printer = printer;
         this.historic = new LinkedList<MessageBag>();

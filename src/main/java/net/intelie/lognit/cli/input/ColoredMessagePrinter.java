@@ -1,13 +1,11 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.inject.Inject;
 import jline.ANSIBuffer;
 import net.intelie.lognit.cli.model.Message;
 
 public class ColoredMessagePrinter implements MessagePrinter {
     private final UserConsole console;
 
-    @Inject
     public ColoredMessagePrinter(UserConsole console) {
         this.console = console;
     }

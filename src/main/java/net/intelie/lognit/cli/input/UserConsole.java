@@ -1,7 +1,5 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.inject.Inject;
-import jline.ANSIBuffer;
 import jline.ConsoleReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +12,6 @@ public class UserConsole {
     private final ConsoleReader console;
     private final PrintWriter stdout;
 
-    @Inject
     public UserConsole(ConsoleReader console, PrintWriter stdout) {
         this.console = console;
         this.stdout = stdout;
@@ -37,7 +34,7 @@ public class UserConsole {
 
     public char waitChar(char... allowed) {
         try {
-            return (char)console.readCharacter(allowed);
+            return (char) console.readCharacter(allowed);
         } catch (IOException e) {
             logger.warn("why fail readchar?", e);
             return '\0';

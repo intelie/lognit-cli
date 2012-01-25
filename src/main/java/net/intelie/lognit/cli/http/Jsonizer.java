@@ -1,12 +1,10 @@
 package net.intelie.lognit.cli.http;
 
 import com.google.gson.Gson;
-import com.google.inject.Inject;
 
 public class Jsonizer {
     private final Gson gson;
 
-    @Inject
     public Jsonizer(Gson gson) {
         this.gson = gson;
     }

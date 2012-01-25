@@ -93,7 +93,7 @@ public class BufferListenerTest {
         listener.receive(ms(false, false, 2, mB));
         listener.releaseAll();
 
-        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, null);
+        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, (Object)null);
         verifyNoMoreInteractions(printer);
         listener.releaseAll();
         verifyNoMoreInteractions(printer);

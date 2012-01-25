@@ -1,12 +1,10 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.inject.Inject;
 import net.intelie.lognit.cli.model.Message;
 
 public class DefaultMessagePrinter implements MessagePrinter {
     private final UserConsole console;
 
-    @Inject
     public DefaultMessagePrinter(UserConsole console) {
         this.console = console;
     }

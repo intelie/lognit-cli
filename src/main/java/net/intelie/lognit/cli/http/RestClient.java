@@ -1,7 +1,6 @@
 package net.intelie.lognit.cli.http;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 public interface RestClient {
     RestState getState();
@@ -11,7 +10,7 @@ public interface RestClient {
     String getServer();
 
     void setServer(String server);
-    
+
     void authenticate(String username, String password);
 
     <T> T request(String uri, Class<T> type) throws IOException;

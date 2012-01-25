@@ -1,10 +1,8 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestListenerHandle;
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 
@@ -13,7 +11,6 @@ public class RequestRunner {
     private final Lognit lognit;
     private final BufferListenerFactory factory;
 
-    @Inject
     public RequestRunner(UserConsole console, Lognit lognit, BufferListenerFactory factory) {
         this.console = console;
         this.lognit = lognit;

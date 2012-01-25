@@ -1,12 +1,8 @@
 package net.intelie.lognit.cli.model;
 
-import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestListener;
 import net.intelie.lognit.cli.http.RestListenerHandle;
-import net.intelie.lognit.cli.model.MessageBag;
-import net.intelie.lognit.cli.model.SearchChannel;
-import net.intelie.lognit.cli.model.Welcome;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -18,7 +14,6 @@ public class Lognit {
     public static final String URL_TERMS = "/rest/terms?field=%s&term=%s&avoidColons=true&size=100";
     private final RestClient client;
 
-    @Inject
     public Lognit(RestClient client) {
         this.client = client;
     }
@@ -26,7 +21,7 @@ public class Lognit {
     public void setServer(String server) {
         client.setServer(server);
     }
-    
+
     public String getServer() {
         return client.getServer();
     }
@@ -43,7 +38,7 @@ public class Lognit {
     public Terms terms(String field, String term) throws IOException {
         return client.request(make(URL_TERMS, encode(field), encode(term)), Terms.class);
     }
-    
+
     public Welcome welcome() throws IOException {
         return client.request(URL_WELCOME, Welcome.class);
     }
