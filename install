@@ -13,7 +13,7 @@ _nit()
     local cur=\"\${COMP_WORDS[COMP_CWORD]}\"
 
     if [[ \${cur} == ?* ]] ; then
-        COMPREPLY=( \$(nit -c \${cur} ) )
+        COMPREPLY=( \$(nit -c \${cur} < /dev/null 2> /dev/null ) )
         return 0
     fi
 }
