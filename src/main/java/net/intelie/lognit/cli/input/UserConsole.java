@@ -21,10 +21,16 @@ public class UserConsole {
     }
 
     public void printOut(String format, Object... args) {
-        stdout.println(String.format(format, args));
+        stdout.println(reallyFormat(format, args));
         stdout.flush();
     }
-    
+
+    private String reallyFormat(String format, Object[] args) {
+        if (args.length > 0)
+            format = String.format(format, args);
+        return format;
+    }
+
     public boolean isTTY() {
         return System.console() != null && console.getTerminal().isANSISupported();
     }
@@ -40,7 +46,7 @@ public class UserConsole {
 
     public void println(String format, Object... args) {
         try {
-            console.printString(String.format(format, args));
+            console.printString(reallyFormat(format, args));
             console.printNewline();
             console.flushConsole();
         } catch (IOException e) {
@@ -50,7 +56,7 @@ public class UserConsole {
 
     public String readLine(String format, Object... args) {
         try {
-            return console.readLine(String.format(format, args));
+            return console.readLine(reallyFormat(format, args));
         } catch (IOException e) {
             logger.warn("why fail readline?", e);
             return "";
@@ -59,7 +65,7 @@ public class UserConsole {
 
     public String readPassword(String format, Object... args) {
         try {
-            return console.readLine(String.format(format, args), '\0');
+            return console.readLine(reallyFormat(format, args), '\0');
         } catch (IOException e) {
             logger.warn("why fail readPassword?", e);
 

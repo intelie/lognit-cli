@@ -5,3 +5,17 @@ echo $file
 curl -L $file > /tmp/nit
 mv /tmp/nit /usr/bin/nit
 chmod a+x /usr/bin/nit
+echo "
+_nit() 
+{
+    COMPREPLY=()
+    local cur=\"\${COMP_WORDS[COMP_CWORD]}\"
+
+    if [[ \${cur} == ?* ]] ; then
+        COMPREPLY=( \$(nit -c \${cur} ) )
+        return 0
+    fi
+}
+complete -F _nit nit
+" > /etc/bash_completion.d/nit
+bash /etc/bash_completion.d/nit
