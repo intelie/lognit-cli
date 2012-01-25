@@ -3,10 +3,15 @@ package net.intelie.lognit.cli.input;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 public class UserOptions {
-    private final String server;
-    private final String user;
-    private final String password;
+    private String server;
+    private String user;
+    private String password;
     private final String query;
     private final boolean follow;
     private final boolean info;
@@ -27,6 +32,27 @@ public class UserOptions {
         info = parser.flag("-i", "--info");
         noColor = parser.flag("-b", "--no-color");
         query = parser.text();
+
+        // try load settings from ~/.nit file.
+        File f = new File(System.getProperty("user.home"), ".nit");
+        if (f.exists()) {
+            Properties prop = new Properties();
+            try {
+                prop.load(new FileInputStream(f));
+                if (password == null && prop.getProperty("password") != null) {
+                    password = prop.getProperty("password");
+                }
+                if (user == null && prop.getProperty("username") != null) {
+                    user = prop.getProperty("username");
+                }
+                if (server == null && prop.getProperty("server") != null) {
+                    server = prop.getProperty("server");
+                }
+            } catch (IOException e) {
+                System.err.print("Inv‡lido ~/.nit");
+            }
+        }
+
     }
 
     private <T> T def(T value, T def) {
@@ -112,7 +138,7 @@ public class UserOptions {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, noColor,  help);
+        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, noColor, help);
     }
 
 }
