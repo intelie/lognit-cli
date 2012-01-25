@@ -35,9 +35,8 @@ public class RequestRunnerTest {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
         runner.run(new UserOptions("-i"));
         verify(lognit).getServer();
-        verify(console).println("server: %s", null);
         verify(lognit).welcome();
-        verify(console).println("blablabla");
+        verify(console).println("(%s): %s", null, "blablabla");
         verifyNoMoreInteractions(console, lognit);
     }
 
@@ -67,9 +66,8 @@ public class RequestRunnerTest {
 
         verify(lognit).setServer("someserver");
         verify(lognit).getServer();
-        verify(console).println("server: %s", "someserver");
         verify(lognit).welcome();
-        verify(console).println("blablabla");
+        verify(console).println("(%s): %s", "someserver", "blablabla");
         verifyNoMoreInteractions(console, lognit);
     }
 
@@ -79,9 +77,8 @@ public class RequestRunnerTest {
         runner.run(new UserOptions("-u", "user", "-i"));
 
         verify(lognit).getServer();
-        verify(console).println("server: %s", null);
         verify(lognit).welcome();
-        verify(console).println("blablabla");
+        verify(console).println("(%s): %s", null, "blablabla");
         verifyNoMoreInteractions(console, lognit);
     }
 
@@ -94,9 +91,8 @@ public class RequestRunnerTest {
 
         verify(lognit).authenticate("user", "pass");
         verify(lognit).getServer();
-        verify(console).println("server: %s", "someserver");
         verify(lognit).welcome();
-        verify(console).println("blablabla");
+        verify(console).println("(%s): %s", "someserver", "blablabla");
         verifyNoMoreInteractions(console, lognit);
     }
 
@@ -114,14 +110,14 @@ public class RequestRunnerTest {
 
         InOrder orderly = inOrder(lognit, console);
         orderly.verify(lognit).getServer();
-        orderly.verify(console).println("server: %s", "someserver");
         orderly.verify(lognit).welcome();
-        orderly.verify(console).println("HTTP/1.0 401 OK");
+        orderly.verify(console).println("(%s): %s", "someserver", "HTTP/1.0 401 OK");
         orderly.verify(console).readLine(anyString());
         orderly.verify(console).readPassword(anyString(), anyString());
         orderly.verify(lognit).authenticate("somelogin", "somepass");
+        orderly.verify(lognit).getServer();
         orderly.verify(lognit).welcome();
-        orderly.verify(console).println("blablabla");
+        orderly.verify(console).println("(%s): %s", "someserver", "blablabla");
         orderly.verifyNoMoreInteractions();
     }
 
@@ -138,13 +134,13 @@ public class RequestRunnerTest {
 
         InOrder orderly = inOrder(lognit, console);
         orderly.verify(lognit).getServer();
-        orderly.verify(console).println("server: %s", "someserver");
         orderly.verify(lognit).welcome();
-        orderly.verify(console).println("HTTP/1.0 401 OK");
+        orderly.verify(console).println("(%s): %s", "someserver", "HTTP/1.0 401 OK");
         orderly.verify(console).readPassword(anyString(), anyString());
         orderly.verify(lognit).authenticate("somelogin", "somepass");
+        orderly.verify(lognit).getServer();
         orderly.verify(lognit).welcome();
-        orderly.verify(console).println("blablabla");
+        orderly.verify(console).println("(%s): %s", "someserver", "blablabla");
         orderly.verifyNoMoreInteractions();
     }
 
@@ -158,7 +154,7 @@ public class RequestRunnerTest {
         runner.run(new UserOptions("-i"));
 
         verify(lognit, times(4)).welcome();
-        verify(console, times(3)) .readLine(anyString());
+        verify(console, times(3)).readLine(anyString());
     }
 
     @Test
@@ -168,11 +164,10 @@ public class RequestRunnerTest {
 
         runner.run(new UserOptions("-u", "someuser", "-p", "somepass", "-i"));
 
-        verify(lognit).getServer();
-        verify(console).println("server: %s", null);
+        verify(lognit, times(2)).getServer();
         verify(lognit).authenticate("someuser", "somepass");
         verify(lognit, times(1)).welcome();
-        verify(console).println("HTTP/1.0 401 OK");
+        verify(console).println("(%s): %s", null, "HTTP/1.0 401 OK");
         verifyNoMoreInteractions(lognit, console);
     }
 

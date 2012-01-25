@@ -28,7 +28,7 @@ public class RequestRunner {
                 execute(options);
                 break;
             } catch (UnauthorizedException ex) {
-                console.println(ex.getMessage());
+                console.println("(%s): %s", lognit.getServer(), ex.getMessage());
                 if (retries > 0)
                     askPassword(options.getUser());
             }
@@ -39,8 +39,7 @@ public class RequestRunner {
         if (options.isUsage()) return;
 
         if (options.isInfo()) {
-            console.println("server: %s", lognit.getServer());
-            console.println(lognit.welcome().getMessage());
+            console.println("(%s): %s", lognit.getServer(), lognit.welcome().getMessage());
         } else {
             executeRequest(options);
         }
