@@ -29,15 +29,15 @@ public class ColoredMessagePrinter implements MessagePrinter {
     @Override
     public void printMessage(Message message) {
         ANSIBuffer buffer = new ANSIBuffer();
-        buffer.attrib(message.getHost(), CYAN);
+        buffer.cyan(message.getHost());
         buffer.append(" ");
-        buffer.attrib(message.getDate() + message.getTime(), GREEN);
+        buffer.green(message.getDate() + message.getTime());
         buffer.append(" ");
         buffer.append(message.getFacility());
         buffer.append(" ");
         buffer.append(message.getSeverity());
         buffer.append(" ");
-        buffer.attrib(message.getApp(), YELLOW);
+        buffer.yellow(message.getApp());
         buffer.append(" ");
         buffer.append(message.getMessage());
 
