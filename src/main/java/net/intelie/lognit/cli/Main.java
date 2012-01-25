@@ -12,9 +12,9 @@ import org.apache.commons.httpclient.HttpClient;
 import java.io.*;
 
 public class Main {
-    public static int main(String... args) throws Exception {
+    public static void main(String... args) throws Exception {
         //it's just because I couldn't find a faster IOC container
-        return resolveEntryPoint().run(args);
+        System.exit(resolveEntryPoint().run(args));
     }
 
     private static EntryPoint resolveEntryPoint() throws IOException {
