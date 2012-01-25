@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.http;
 
+import com.google.common.base.Objects;
 import com.google.inject.Inject;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
@@ -43,8 +44,8 @@ public class RestClientImpl implements RestClient {
 
     @Override
     public void setState(RestState state) {
+        setServer(state.getServer());
         client.getState().addCookies(state.getCookies());
-        server = state.getServer();
     }
 
     public String getServer() {
@@ -53,7 +54,8 @@ public class RestClientImpl implements RestClient {
     
     @Override
     public void setServer(String server) {
-        client.getState().clearCookies();
+        if (!Objects.equal(this.server, server))
+            client.getState().clearCookies();
         this.server = server;
     }
 

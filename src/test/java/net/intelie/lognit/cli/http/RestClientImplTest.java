@@ -40,6 +40,15 @@ public class RestClientImplTest {
         verifyNoMoreInteractions(client.getParams(), client.getState());
     }
 
+    @Test
+    public void whenSettingSameServerWontClearCookies() throws Exception {
+        rest.setServer("localhost:9000");
+        reset(client.getState());
+        rest.setServer("localhost:9000");
+        assertThat(rest.getServer()).isEqualTo("localhost:9000");
+        verifyNoMoreInteractions(client.getParams(), client.getState());
+    }
+
 
     @Test
     public void whenAuthenticating() throws Exception {
@@ -106,6 +115,7 @@ public class RestClientImplTest {
         RestState state = new RestState(cookies, "abcabc:1211");
 
         rest.setState(state);
+        verify(client.getState()).clearCookies();
         verify(client.getState()).addCookies(cookies);
 
         HttpMethod method = mockReturn("http://abcabc:1211/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
