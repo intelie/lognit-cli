@@ -5,15 +5,6 @@ import jline.ANSIBuffer;
 import net.intelie.lognit.cli.model.Message;
 
 public class ColoredMessagePrinter implements MessagePrinter {
-    public static int NONE = 0;
-    public static int RED = 31;
-    public static int GREEN = 32;
-    public static int YELLOW = 33;
-    public static int BLUE = 34;
-    public static int MAGENTA = 35;
-    public static int CYAN = 36;
-    public static int WHITE = 37;
-
     private final UserConsole console;
 
     @Inject
