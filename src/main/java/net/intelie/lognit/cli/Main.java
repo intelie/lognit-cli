@@ -22,14 +22,13 @@ public class Main extends AbstractModule {
 
     @Provides
     private ConsoleReader console() throws IOException {
-        return new ConsoleReader(new FileInputStream(FileDescriptor.in),
-                new PrintWriter(
-                        new OutputStreamWriter(System.err,
-                                System.getProperty("jline.WindowsTerminal.output.encoding", System.getProperty("file.encoding")))));
+        return new ConsoleReader(
+                new FileInputStream(FileDescriptor.in),
+                new PrintWriter(System.err));
     }
 
     @Provides
-    private UserConsole userConsole(ConsoleReader console) {
+    private UserConsole userConsole(ConsoleReader console) throws IOException {
         return new UserConsole(console, new PrintWriter(System.out));
     }
     

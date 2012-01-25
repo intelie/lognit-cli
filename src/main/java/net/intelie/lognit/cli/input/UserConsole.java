@@ -26,7 +26,7 @@ public class UserConsole {
     }
     
     public boolean isTTY() {
-        return System.console() != null;
+        return System.console() != null && console.getTerminal().isANSISupported();
     }
 
     public char waitChar(char... allowed) {
