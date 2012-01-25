@@ -17,7 +17,7 @@ public class Main {
         System.exit(resolveEntryPoint().run(args));
     }
 
-    private static EntryPoint resolveEntryPoint() throws IOException {
+    public static EntryPoint resolveEntryPoint() throws IOException {
         File stateFile = new File(new File(System.getProperty("user.home"), ".lognit"), "state");
 
         Jsonizer jsonizer = new Jsonizer(new Gson());
