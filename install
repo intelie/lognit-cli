@@ -5,6 +5,7 @@ echo $file
 curl -L $file > /tmp/nit
 mv /tmp/nit /usr/bin/nit
 chmod a+x /usr/bin/nit
+
 echo "
 _nit() 
 {
@@ -17,5 +18,14 @@ _nit()
     fi
 }
 complete -F _nit nit
-" > /etc/bash_completion.d/nit
-bash /etc/bash_completion.d/nit
+" > /tmp/_nit
+if [ -d /etc/bash_completion.d ]; then
+    echo "Installing bash completion (linux)"
+    cp /tmp/_nit /etc/bash_completion.d/nit
+fi
+if [ -d /usr/local/etc/bash_completion.d ]; then
+    echo "Installing bash completion (mac)"
+    cp /tmp/_nit /usr/local/etc/bash_completion.d/nit
+fi
+
+
