@@ -1,10 +1,27 @@
 package net.intelie.lognit.cli.input;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 public class UserOptionsTest {
+
+    @Before
+    @After
+    public void cleanUp() {
+        // it's a problem -- remove my user settings.
+        System.setProperty("user.home", System.getProperty("java.io.tmpdir"));
+        new File(System.getProperty("user.home"), ".nit").delete();
+    }
+
     @Test
     public void canConstructWithDefaults() {
         UserOptions opts = new UserOptions();
@@ -116,4 +133,57 @@ public class UserOptionsTest {
         assertThat(opts1.hashCode()).isNotEqualTo(opts11.hashCode());
         assertThat(opts1.hashCode()).isNotEqualTo(new Object().hashCode());
     }
+
+
+    @Test
+    public void canConstructWithNonDefaultsAndFileSettings() throws IOException {
+        Properties prop = new Properties();
+        prop.setProperty("username", "B");
+    	prop.setProperty("server", "A");
+        prop.setProperty("password", "C");
+        prop.store(new FileOutputStream(new File(System.getProperty("user.home"), ".nit")), null);
+
+        UserOptions opts = new UserOptions("D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b");
+        assertThat(opts.getServer()).isEqualTo("A");
+        assertThat(opts.hasServer()).isEqualTo(true);
+        assertThat(opts.getUser()).isEqualTo("B");
+        assertThat(opts.getPassword()).isEqualTo("C");
+        assertThat(opts.getQuery()).isEqualTo("D");
+        assertThat(opts.hasQuery()).isEqualTo(true);
+        assertThat(opts.getLines()).isEqualTo(43);
+        assertThat(opts.getTimeout()).isEqualTo(42);
+        assertThat(opts.getTimeoutInMilliseconds()).isEqualTo(42000);
+        assertThat(opts.isFollow()).isEqualTo(true);
+        assertThat(opts.isInfo()).isEqualTo(true);
+        assertThat(opts.isNoColor()).isEqualTo(true);
+        assertThat(opts.isHelp()).isEqualTo(true);
+        assertThat(opts.isUsage()).isEqualTo(true);
+    }
+
+     @Test
+    public void canConstructWithNonDefaultsAndFileSettingsDuplicated() throws IOException {
+        Properties prop = new Properties();
+        prop.setProperty("username", "B");
+    	prop.setProperty("server", "A");
+        prop.setProperty("password", "C");
+        prop.store(new FileOutputStream(new File(System.getProperty("user.home"), ".nit")), null);
+
+        UserOptions opts = new UserOptions("-s", "AA", "-u", "BB", "-p", "CC", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b");
+
+        assertThat(opts.getServer()).isEqualTo("AA");
+        assertThat(opts.hasServer()).isEqualTo(true);
+        assertThat(opts.getUser()).isEqualTo("BB");
+        assertThat(opts.getPassword()).isEqualTo("CC");
+        assertThat(opts.getQuery()).isEqualTo("D");
+        assertThat(opts.hasQuery()).isEqualTo(true);
+        assertThat(opts.getLines()).isEqualTo(43);
+        assertThat(opts.getTimeout()).isEqualTo(42);
+        assertThat(opts.getTimeoutInMilliseconds()).isEqualTo(42000);
+        assertThat(opts.isFollow()).isEqualTo(true);
+        assertThat(opts.isInfo()).isEqualTo(true);
+        assertThat(opts.isNoColor()).isEqualTo(true);
+        assertThat(opts.isHelp()).isEqualTo(true);
+        assertThat(opts.isUsage()).isEqualTo(true);
+    }
+
 }
