@@ -14,6 +14,7 @@ public class UserOptions {
     private final int timeout;
     private final int lines;
     private final boolean noColor;
+    private final boolean complete;
 
     public UserOptions(String... args) {
         ArgsParser parser = new ArgsParser(args);
@@ -26,6 +27,7 @@ public class UserOptions {
         follow = parser.flag("-f", "--follow");
         info = parser.flag("-i", "--info");
         noColor = parser.flag("-b", "--no-color");
+        complete = parser.flag("-c", "--complete");
         query = parser.text();
     }
 
@@ -77,12 +79,8 @@ public class UserOptions {
         return info || (hasServer() && !hasQuery());
     }
 
-    public boolean isHelp() {
-        return help;
-    }
-
     public boolean isUsage() {
-        return isHelp() || !(isInfo() || hasQuery());
+        return help || !(isInfo() || hasQuery());
     }
 
     public boolean askPassword() {
@@ -91,6 +89,10 @@ public class UserOptions {
 
     public boolean isNoColor() {
         return noColor;
+    }
+
+    public boolean isComplete() {
+        return complete;
     }
 
     @Override
@@ -107,12 +109,14 @@ public class UserOptions {
                 Objects.equal(this.lines, that.lines) &&
                 Objects.equal(this.info, that.info) &&
                 Objects.equal(this.noColor, that.noColor) &&
+                Objects.equal(this.complete, that.complete) &&
                 Objects.equal(this.help, that.help);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, noColor,  help);
+        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, noColor, complete, help);
     }
+
 
 }

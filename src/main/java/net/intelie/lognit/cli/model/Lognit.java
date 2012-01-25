@@ -15,7 +15,7 @@ import java.net.URLEncoder;
 public class Lognit {
     public static final String URL_WELCOME = "/rest/users/welcome";
     public static final String URL_SEARCH = "/rest/search?expression=%s&windowLength=%d";
-    public static final String URL_TERMS = "/rest/terms?field=%s&term=%s";
+    public static final String URL_TERMS = "/rest/terms?field=%s&term=%s&avoidColons=true&size=100";
     private final RestClient client;
 
     @Inject

@@ -2,11 +2,14 @@ package net.intelie.lognit.cli.input;
 
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
+import net.intelie.lognit.cli.model.Terms;
 import net.intelie.lognit.cli.model.Welcome;
 import org.apache.commons.httpclient.StatusLine;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
+
+import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
 
@@ -94,6 +97,15 @@ public class RequestRunnerTest {
         verify(lognit).welcome();
         verify(console).println("(%s): %s", "someserver", "blablabla");
         verifyNoMoreInteractions(console, lognit);
+    }
+
+    @Test
+    public void whenIsCompletePrintTerms() throws Exception {
+        when(lognit.terms("", "aaa")).thenReturn(new Terms(Arrays.asList("aaab", "aaac", "aaad")));
+        runner.run(new UserOptions("-c", "aaa"));
+        verify(console).printOut("aaab");
+        verify(console).printOut("aaac");
+        verify(console).printOut("aaad");
     }
 
     @Test

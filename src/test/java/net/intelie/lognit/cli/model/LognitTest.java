@@ -53,7 +53,7 @@ public class LognitTest {
     @Test
     public void testTerms() throws Exception {
         Terms terms = new Terms(Arrays.asList("AAA", "BBB", "CCC"));
-        when(client.request("/rest/terms?field=abc+qwe&term=123+456", Terms.class)).thenReturn(terms);
+        when(client.request("/rest/terms?field=abc+qwe&term=123+456&avoidColons=true&size=100", Terms.class)).thenReturn(terms);
         assertThat(lognit.terms("abc qwe", "123 456")).isEqualTo(terms);
     }
 

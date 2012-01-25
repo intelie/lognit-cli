@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestListenerHandle;
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 
@@ -38,7 +39,10 @@ public class RequestRunner {
     private void execute(UserOptions options) throws IOException {
         if (options.isUsage()) return;
 
-        if (options.isInfo()) {
+        if (options.isComplete()) {
+            for (String term : lognit.terms("", options.getQuery()).getTerms())
+                console.printOut(term);
+        } else if (options.isInfo()) {
             console.println("(%s): %s", lognit.getServer(), lognit.welcome().getMessage());
         } else {
             executeRequest(options);
