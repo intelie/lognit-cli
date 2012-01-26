@@ -51,6 +51,13 @@ public class LognitTest {
     }
 
     @Test
+    public void testStats() throws Exception {
+        StatsSummary summary = mock(StatsSummary.class);
+        when(client.request("/rest/stats", StatsSummary.class)).thenReturn(summary);
+        assertThat(lognit.stats()).isEqualTo(summary);
+    }
+
+    @Test
     public void testTerms() throws Exception {
         Terms terms = new Terms(Arrays.asList("AAA", "BBB", "CCC"));
         when(client.request("/rest/terms?field=abc+qwe&term=123+456&avoidColons=true&size=100", Terms.class)).thenReturn(terms);

@@ -76,11 +76,11 @@ public class UserOptions {
     }
 
     public boolean isInfo() {
-        return info || (hasServer() && !hasQuery());
+        return info;
     }
 
     public boolean isUsage() {
-        return help || !(isInfo() || hasQuery());
+        return help;
     }
 
     public boolean askPassword() {

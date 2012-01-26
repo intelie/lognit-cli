@@ -84,7 +84,6 @@
             <artifactId>guava</artifactId>
             <version>r08</version>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>

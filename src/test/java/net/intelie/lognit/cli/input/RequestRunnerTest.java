@@ -1,9 +1,8 @@
 package net.intelie.lognit.cli.input;
 
+import com.google.gson.JsonElement;
 import net.intelie.lognit.cli.http.UnauthorizedException;
-import net.intelie.lognit.cli.model.Lognit;
-import net.intelie.lognit.cli.model.Terms;
-import net.intelie.lognit.cli.model.Welcome;
+import net.intelie.lognit.cli.model.*;
 import org.apache.commons.httpclient.StatusLine;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +10,7 @@ import org.mockito.InOrder;
 
 import java.util.Arrays;
 
+import static net.intelie.lognit.cli.model.JsonHelpers.jsonElement;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -29,19 +29,45 @@ public class RequestRunnerTest {
     }
 
     @Test
-    public void whenHasNoQueryDoesNothing() throws Exception {
-        runner.run(new UserOptions());
-        verifyNoMoreInteractions(console, lognit);
-    }
-
-    @Test
-    public void whenHasInfoPrintsWelcome() throws Exception {
+    public void whenHasNoQueryShowsWelcome() throws Exception {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
-        assertThat(runner.run(new UserOptions("-i"))).isEqualTo(0);
+        assertThat(runner.run(new UserOptions())).isEqualTo(0);
         verify(lognit).getServer();
         verify(lognit).welcome();
         verify(console).println("(%s): %s", null, "blablabla");
         verifyNoMoreInteractions(console, lognit);
+    }
+
+    @Test
+    public void whenHasInfoPrintsInfoWhenAllResponded() throws Exception {
+        StatsSummary summary = new StatsSummary(Arrays.asList(
+                new Stats("AA", 100, Arrays.asList("AAA", "BBB", "CCC")),
+                new Stats("BB", 50, Arrays.asList("DDD", "BBB", "CCC"))), 0);
+        when(lognit.getServer()).thenReturn("someserver");
+        when(lognit.stats()).thenReturn(summary);
+        assertThat(runner.run(new UserOptions("-i"))).isEqualTo(0);
+
+        
+        verify(console).printOut(RequestRunner.NO_MISSING_NODES, "someserver");
+        verify(console).printOut(RequestRunner.NODE_INFO, "AA", 3, 100L);
+        verify(console).printOut(RequestRunner.NODE_INFO, "BB", 3, 50L);
+        verifyNoMoreInteractions(console);
+    }
+
+    @Test
+    public void whenHasInfoPrintsInfoWhenSomeDidNotRespond() throws Exception {
+        StatsSummary summary = new StatsSummary(Arrays.asList(
+                new Stats("AA", 100, Arrays.asList("AAA", "BBB", "CCC")),
+                new Stats("BB", 50, Arrays.asList("DDD", "BBB", "CCC"))), 2);
+        when(lognit.getServer()).thenReturn("someserver");
+        when(lognit.stats()).thenReturn(summary);
+        assertThat(runner.run(new UserOptions("-i"))).isEqualTo(0);
+
+
+        verify(console).printOut(RequestRunner.HAS_MISSING_NODES, "someserver", 2);
+        verify(console).printOut(RequestRunner.NODE_INFO, "AA", 3, 100L);
+        verify(console).printOut(RequestRunner.NODE_INFO, "BB", 3, 50L);
+        verifyNoMoreInteractions(console);
     }
 
 
@@ -78,7 +104,7 @@ public class RequestRunnerTest {
     @Test
     public void whenHasUserOnlyDoesNothingYet() throws Exception {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
-        runner.run(new UserOptions("-u", "user", "-i"));
+        runner.run(new UserOptions("-u", "user"));
 
         verify(lognit).getServer();
         verify(lognit).welcome();
@@ -91,7 +117,7 @@ public class RequestRunnerTest {
     public void whenHasUserAndPasswordAuthenticates() throws Exception {
         when(lognit.welcome()).thenReturn(new Welcome("blablabla"));
         when(lognit.getServer()).thenReturn("someserver");
-        runner.run(new UserOptions("-u", "user", "-p", "pass", "-i"));
+        runner.run(new UserOptions("-u", "user", "-p", "pass"));
 
         verify(lognit).authenticate("user", "pass");
         verify(lognit).getServer();
@@ -119,7 +145,7 @@ public class RequestRunnerTest {
         when(console.readLine("login: ")).thenReturn("somelogin");
         when(console.readPassword("%s's password: ", "somelogin")).thenReturn("somepass");
 
-        runner.run(new UserOptions("-i"));
+        runner.run(new UserOptions());
 
         InOrder orderly = inOrder(lognit, console);
         orderly.verify(lognit).getServer();
@@ -143,7 +169,7 @@ public class RequestRunnerTest {
                 .thenReturn(welcome);
         when(console.readPassword("%s's password: ", "somelogin")).thenReturn("somepass");
 
-        runner.run(new UserOptions("-u", "somelogin", "-i"));
+        runner.run(new UserOptions("-u", "somelogin"));
 
         InOrder orderly = inOrder(lognit, console);
         orderly.verify(lognit).getServer();
@@ -164,7 +190,7 @@ public class RequestRunnerTest {
         when(console.readLine("login: ")).thenReturn("somelogin");
         when(console.readPassword("%s's password: ", "somelogin")).thenReturn("somepass");
 
-        assertThat(runner.run(new UserOptions("-i"))).isEqualTo(2);
+        assertThat(runner.run(new UserOptions())).isEqualTo(2);
 
         verify(lognit, times(4)).welcome();
         verify(console, times(3)).readLine(anyString());
@@ -175,7 +201,7 @@ public class RequestRunnerTest {
         when(lognit.welcome())
                 .thenThrow(new UnauthorizedException(new StatusLine("HTTP/1.0 401 OK")));
 
-        runner.run(new UserOptions("-u", "someuser", "-p", "somepass", "-i"));
+        runner.run(new UserOptions("-u", "someuser", "-p", "somepass"));
 
         verify(lognit, times(2)).getServer();
         verify(lognit).authenticate("someuser", "somepass");

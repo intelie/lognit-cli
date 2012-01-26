@@ -20,7 +20,7 @@ public class UserOptionsTest {
         assertThat(opts.isFollow()).isEqualTo(false);
         assertThat(opts.isNoColor()).isEqualTo(false);
         assertThat(opts.isComplete()).isEqualTo(false);
-        assertThat(opts.isUsage()).isEqualTo(true);
+        assertThat(opts.isUsage()).isEqualTo(false);
     }
 
     @Test
@@ -44,22 +44,12 @@ public class UserOptionsTest {
 
     @Test
     public void testUsageCombinations() {
-        assertThat(new UserOptions("-s", "someserver").isUsage()).isEqualTo(false);
-        assertThat(new UserOptions("-s", "someserver", "*").isUsage()).isEqualTo(false);
         assertThat(new UserOptions("-s", "someserver", "-?").isUsage()).isEqualTo(true);
-        assertThat(new UserOptions("-i").isUsage()).isEqualTo(false);
-        assertThat(new UserOptions("-u", "user", "-p", "pass").isUsage()).isEqualTo(true);
-        assertThat(new UserOptions("").isUsage()).isEqualTo(true);
-        assertThat(new UserOptions().isUsage()).isEqualTo(true);
     }
 
     @Test
     public void testInfoCombinations() {
         assertThat(new UserOptions("-i").isInfo()).isEqualTo(true);
-        assertThat(new UserOptions("-s", "someserver").isInfo()).isEqualTo(true);
-        assertThat(new UserOptions("-s", "someserver", "*").isInfo()).isEqualTo(false);
-        assertThat(new UserOptions("-s", "someserver", "-?").isInfo()).isEqualTo(true);
-        assertThat(new UserOptions("-u", "user", "-p", "pass").isInfo()).isEqualTo(false);
     }
 
     @Test

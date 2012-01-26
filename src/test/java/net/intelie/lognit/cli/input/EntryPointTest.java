@@ -37,17 +37,17 @@ public class EntryPointTest {
     }
 
     @Test
-    public void willRunUsage() throws Exception {
+    public void willRunRequestWithoutQuery() throws Exception {
         entry.run();
 
         orderly.verify(state).begin();
-        orderly.verify(usage).run();
+        orderly.verify(request).run(new UserOptions());
         orderly.verify(state).end();
         orderly.verifyNoMoreInteractions();
     }
 
     @Test
-    public void willRunUsage2() throws Exception {
+    public void willRunUsage() throws Exception {
         entry.run("-a", "-b", "c", "--help");
 
         orderly.verify(state).begin();
