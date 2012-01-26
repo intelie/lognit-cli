@@ -9,7 +9,7 @@ import net.intelie.lognit.cli.model.StatsSummary;
 import java.io.IOException;
 
 public class RequestRunner {
-    public static final String HAS_MISSING_NODES = "(%s): %d nodes did not respond";
+    public static final String HAS_MISSING_NODES = "(%s): %d node(s) did not respond";
     public static final String NO_MISSING_NODES = "(%s): all nodes responded";
     public static final String NODE_INFO = "node '%s': %d queries / %d docs";
     public static final String TOTAL_INFO = "total: %d queries / %d docs";
