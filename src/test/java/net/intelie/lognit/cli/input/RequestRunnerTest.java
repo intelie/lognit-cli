@@ -49,6 +49,7 @@ public class RequestRunnerTest {
 
         
         verify(console).printOut(RequestRunner.NO_MISSING_NODES, "someserver");
+        verify(console).printOut(RequestRunner.TOTAL_INFO, 4, 150L);
         verify(console).printOut(RequestRunner.NODE_INFO, "AA", 3, 100L);
         verify(console).printOut(RequestRunner.NODE_INFO, "BB", 3, 50L);
         verifyNoMoreInteractions(console);
@@ -65,6 +66,7 @@ public class RequestRunnerTest {
 
 
         verify(console).printOut(RequestRunner.HAS_MISSING_NODES, "someserver", 2);
+        verify(console).printOut(RequestRunner.TOTAL_INFO, 4, 150L);
         verify(console).printOut(RequestRunner.NODE_INFO, "AA", 3, 100L);
         verify(console).printOut(RequestRunner.NODE_INFO, "BB", 3, 50L);
         verifyNoMoreInteractions(console);

@@ -12,6 +12,7 @@ public class RequestRunner {
     public static final String HAS_MISSING_NODES = "(%s): %d nodes did not respond";
     public static final String NO_MISSING_NODES = "(%s): all nodes responded";
     public static final String NODE_INFO = "node '%s': %d queries / %d docs";
+    public static final String TOTAL_INFO = "total: %d queries / %d docs";
     private final UserConsole console;
     private final Lognit lognit;
     private final BufferListenerFactory factory;
@@ -62,6 +63,7 @@ public class RequestRunner {
         else
             console.printOut(NO_MISSING_NODES, lognit.getServer());
 
+        console.printOut(TOTAL_INFO, summary.getQueries().size(),  summary.getTotalDocs());
         for (Stats stats : summary.getPerNodes()) {
             console.printOut(NODE_INFO, stats.getNode(), stats.getQueries().size(), stats.getTotalDocs());
         }
