@@ -1,3 +1,0 @@
-cp target/lognit-cli-*.sh /usr/bin/nit
-chmod a+x /usr/bin/nit
-

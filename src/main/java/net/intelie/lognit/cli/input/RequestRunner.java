@@ -5,8 +5,10 @@ import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.model.Stats;
 import net.intelie.lognit.cli.model.StatsSummary;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
+import java.util.Collection;
 
 public class RequestRunner {
     public static final String HAS_MISSING_NODES = "(%s): %d node(s) did not respond";
@@ -44,8 +46,7 @@ public class RequestRunner {
         if (options.isUsage()) return;
 
         if (options.isComplete()) {
-            for (String term : lognit.terms("", options.getQuery()).getTerms())
-                console.printOut(term);
+            executeComplete(options);
         } else if (options.isInfo()) {
             executeInfo();
         } else if (!options.hasQuery()) {
@@ -53,6 +54,18 @@ public class RequestRunner {
         } else {
             executeRequest(options);
         }
+    }
+
+    private void executeComplete(UserOptions options) throws IOException {
+        String[] args = StringUtils.split(options.getQuery(), ":", 2);
+        if (args.length == 0) return;
+        
+        Collection<String> terms = args.length == 1 ?
+                lognit.terms("", args[0]).getTerms() :
+                lognit.terms(args[0], args[1]).getTerms();
+
+        for (String term : terms)
+            console.printOut(term);
     }
 
     private void executeInfo() throws IOException {
@@ -93,3 +106,4 @@ public class RequestRunner {
             lognit.authenticate(opts.getUser(), opts.getPassword());
     }
 }
+

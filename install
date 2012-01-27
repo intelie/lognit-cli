@@ -1,24 +1,37 @@
 #!/bin/sh
-echo Installing Lognit command-line interface...
-file=$(curl -s "https://api.github.com/repos/intelie/lognit-cli/downloads" | grep "https://github.com/downloads/intelie/lognit-cli/lognit-cli-" | sed 's/    "html_url": "//' | sed 's/",//' | sort | tail -n 1)
-echo $file
-curl -L $file > /tmp/nit
-mv /tmp/nit /usr/bin/nit
-chmod a+x /usr/bin/nit
 
-echo "
+if [ "$1" = "--local" ]; then
+    echo "Installing Lognit command-line interface (local)..."
+    cp target/lognit-cli-*.sh /usr/bin/nit
+    chmod a+x /usr/bin/nit
+else
+    echo "Installing Lognit command-line interface..."
+    file=$(curl -s "https://api.github.com/repos/intelie/lognit-cli/downloads" | grep "https://github.com/downloads/intelie/lognit-cli/lognit-cli-" | sed 's/    "html_url": "//' | sed 's/",//' | sort | tail -n 1)
+    echo $file
+    curl -L $file > /tmp/nit
+    mv /tmp/nit /usr/bin/nit
+    chmod a+x /usr/bin/nit
+fi
+
+echo '
 _nit() 
 {
     COMPREPLY=()
-    local cur=\"\${COMP_WORDS[COMP_CWORD]}\"
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local sep="${COMP_WORDS[COMP_CWORD-1]}"
+    local fld="${COMP_WORDS[COMP_CWORD-2]}"
 
-    if [[ \${cur} == ?* ]] ; then
-        COMPREPLY=( \$(nit -c \${cur} < /dev/null 2> /dev/null ) )
+    if [[ "${sep}" == ":" ]] ; then
+        cur=${fld}:${cur}
+    fi
+
+    if [[ ${cur} == ?* ]] ; then
+        COMPREPLY=( $(nit -c ${cur} < /dev/null 2> /dev/null ) )
         return 0
     fi
 }
 complete -F _nit nit
-" > /tmp/_nit
+' > /tmp/_nit
 if [ -d /etc/bash_completion.d ]; then
     echo "Installing bash completion (linux)"
     cp /tmp/_nit /etc/bash_completion.d/nit

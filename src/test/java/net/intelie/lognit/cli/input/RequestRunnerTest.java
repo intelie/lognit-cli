@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.gson.JsonElement;
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.*;
 import org.apache.commons.httpclient.StatusLine;
@@ -10,7 +9,6 @@ import org.mockito.InOrder;
 
 import java.util.Arrays;
 
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonElement;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -47,7 +45,7 @@ public class RequestRunnerTest {
         when(lognit.stats()).thenReturn(summary);
         assertThat(runner.run(new UserOptions("-i"))).isEqualTo(0);
 
-        
+
         verify(console).printOut(RequestRunner.NO_MISSING_NODES, "someserver");
         verify(console).printOut(RequestRunner.TOTAL_INFO, 4, 150L);
         verify(console).printOut(RequestRunner.NODE_INFO, "AA", 3, 100L);
@@ -135,6 +133,22 @@ public class RequestRunnerTest {
         verify(console).printOut("aaab");
         verify(console).printOut("aaac");
         verify(console).printOut("aaad");
+    }
+
+    @Test
+    public void whenIsCompleteWithColonPrintTerms() throws Exception {
+        when(lognit.terms("aaa", "bbb ccc")).thenReturn(new Terms(Arrays.asList("aaab", "aaac", "aaad")));
+        runner.run(new UserOptions("-c", "aaa:bbb", "ccc"));
+        verify(console).printOut("aaab");
+        verify(console).printOut("aaac");
+        verify(console).printOut("aaad");
+    }
+
+    @Test
+    public void whenIsCompleteEmptyDoNothing() throws Exception {
+        when(lognit.terms("", "")).thenReturn(new Terms(Arrays.asList("aaab", "aaac", "aaad")));
+        runner.run(new UserOptions("-c"));
+        verifyNoMoreInteractions(console);
     }
 
     @Test
