@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class BufferListener implements RestListener<MessageBag> {
     public static final String NO_CLUSTER_INFO = "WARN: seems there is a bug in server response, no cluster info";
     public static final String MISSING_NODES_RESPONSE = "WARN: missing some cluster responses, check nodes status";
-    public static final String QUERY_CANCELLED = "WARN: query has been cancelled (%s)";
+    public static final String QUERY_CANCELLED = "WARN: %s";
     private final Deque<MessageBag> historic;
     private final Deque<MessageBag> other;
     private final Semaphore semaphore;
