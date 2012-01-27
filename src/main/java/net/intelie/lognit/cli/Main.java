@@ -18,32 +18,40 @@ public class Main {
     }
 
     public static EntryPoint resolveEntryPoint() throws IOException {
-        File stateFile = new File(new File(System.getProperty("user.home"), ".lognit"), "state");
+        final File stateFile = new File(new File(System.getProperty("user.home"), ".lognit"), "state");
 
-        Jsonizer jsonizer = new Jsonizer(new Gson());
+        final Jsonizer jsonizer = new Jsonizer(new Gson());
 
-        ConsoleReader consoleReader = new ConsoleReader(
+        final ConsoleReader consoleReader = new ConsoleReader(
                 new FileInputStream(FileDescriptor.in),
                 new PrintWriter(System.err));
 
-        UserConsole userConsole = new UserConsole(consoleReader, new PrintWriter(System.out));
+        final UserConsole userConsole = new UserConsole(consoleReader, new PrintWriter(System.out));
 
-        RestStateStorage storage = new RestStateStorage(stateFile, jsonizer);
+        final RestStateStorage storage = new RestStateStorage(stateFile, jsonizer);
 
-        HttpClient httpClient = new HttpClient();
-        MethodFactory methodFactory = new MethodFactory();
-        RestClient restClient = new RestClientImpl(httpClient, methodFactory, new BayeuxFactory(), jsonizer);
+        final HttpClient httpClient = new HttpClient();
+        final MethodFactory methodFactory = new MethodFactory();
+        final RestClient restClient = new RestClientImpl(httpClient, methodFactory, new BayeuxFactory(), jsonizer);
 
-        StateKeeper stateKeeper = new StateKeeper(restClient, storage);
+        final StateKeeper stateKeeper = new StateKeeper(restClient, storage);
 
-        DefaultMessagePrinter defaultPrinter = new DefaultMessagePrinter(userConsole);
-        ColoredMessagePrinter coloredPrinter = new ColoredMessagePrinter(userConsole);
-        BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(userConsole, coloredPrinter, defaultPrinter);
+        final DefaultMessagePrinter defaultPrinter = new DefaultMessagePrinter(userConsole);
+        final ColoredMessagePrinter coloredPrinter = new ColoredMessagePrinter(userConsole);
+        final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(userConsole, coloredPrinter, defaultPrinter);
 
-        Lognit lognit = new Lognit(restClient);
-        RequestRunner requestRunner = new RequestRunner(userConsole, lognit, bufferListenerFactory);
+        final Lognit lognit = new Lognit(restClient);
+        final RequestRunner requestRunner = new RequestRunner(userConsole, lognit, bufferListenerFactory);
 
-        UsageRunner usageRunner = new UsageRunner(userConsole);
+        final UsageRunner usageRunner = new UsageRunner(userConsole);
+        
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                stateKeeper.end();
+            }
+        }));
+        
         return new EntryPoint(userConsole, stateKeeper, requestRunner, usageRunner);
     }
 }
