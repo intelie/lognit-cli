@@ -1,11 +1,8 @@
 package net.intelie.lognit.cli.input;
 
 import net.intelie.lognit.cli.state.StateKeeper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EntryPoint {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserConsole console;
     private final StateKeeper state;
@@ -29,7 +26,7 @@ public class EntryPoint {
             else
                 return request.run(options);
         } catch (Exception ex) {
-            logger.warn("An error has ocurred. Sad.", ex);
+            //put some verbose logging here
             console.println("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());
             console.println("run the command with --help for usage help");
             return 3;

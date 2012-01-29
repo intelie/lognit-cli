@@ -1,14 +1,11 @@
 package net.intelie.lognit.cli.input;
 
 import jline.ConsoleReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
 public class UserConsole {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ConsoleReader console;
     private final PrintWriter stdout;
 
@@ -36,7 +33,6 @@ public class UserConsole {
         try {
             return (char) console.readCharacter(allowed);
         } catch (IOException e) {
-            logger.warn("why fail readchar?", e);
             return '\0';
         }
     }
@@ -47,7 +43,6 @@ public class UserConsole {
             console.printNewline();
             console.flushConsole();
         } catch (IOException e) {
-            logger.warn("why fail println?", e);
         }
     }
 
@@ -55,7 +50,6 @@ public class UserConsole {
         try {
             return console.readLine(reallyFormat(format, args));
         } catch (IOException e) {
-            logger.warn("why fail readline?", e);
             return "";
         }
     }
@@ -64,8 +58,6 @@ public class UserConsole {
         try {
             return console.readLine(reallyFormat(format, args), '\0');
         } catch (IOException e) {
-            logger.warn("why fail readPassword?", e);
-
             return "";
         }
     }

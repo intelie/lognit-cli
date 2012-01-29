@@ -9,15 +9,11 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.io.IOUtils;
 import org.cometd.client.BayeuxClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 
 public class RestClientImpl implements RestClient {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final HttpClient client;
     private final MethodFactory methods;
     private final BayeuxFactory bayeux;
