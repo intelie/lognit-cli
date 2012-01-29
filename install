@@ -8,14 +8,13 @@ else
     echo "Installing Lognit command-line interface..."
     file=$(curl -s "https://api.github.com/repos/intelie/lognit-cli/downloads" | grep "https://github.com/downloads/intelie/lognit-cli/lognit-cli-" | sed 's/    "html_url": "//' | sed 's/",//' | sort | tail -n 1)
     echo $file
-    curl -L $file > /tmp/nit
+    curl -L -H "Pragma: no-cache" $file > /tmp/nit
     mv /tmp/nit /usr/bin/nit
     chmod a+x /usr/bin/nit
 fi
 
-echo '
-
-_nit() 
+cat << '__END__' > /tmp/_nit  
+_nit()
 {
     COMPREPLY=()
     local cur="${COMP_WORDS[COMP_CWORD]}"
@@ -23,16 +22,23 @@ _nit()
     local fld="${COMP_WORDS[COMP_CWORD-2]}"
 
     if [[ "${sep}" == ":" ]] ; then
-        cur=${fld}:${cur}
+        local field=${fld}
     elif [[ "${cur}" == ":" ]] ; then
-        cur=${sep}:
+        local field=${sep}
+        cur=
     fi
 
-    COMPREPLY=( $(nit -c ${cur} < /dev/null 2> /dev/null ) )
+	server=$(cat ~/.lognit/state | sed -r 's/.*"server":"(.*)"}/\1/g')
+	sessionid=$(cat ~/.lognit/state | sed -r 's/.*"name":"JSESSIONID","value":"(\w*)".*/\1/g')
+
+    COMPREPLY=( $(curl -s -b JSESSIONID=${sessionid} "http://${server}/rest/terms?field=${field}&term=${cur}&avoidColons=true&size=100" | 
+        sed -re 's/\{"terms":\[(.*)\]\}/\1/g' | 
+        awk -v k=text '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed -re 's/"(.*)"/\1/g') )
     return 0
 }
 complete -F _nit nit
-' > /tmp/_nit
+__END__
+
 if [ -d /etc/bash_completion.d ]; then
     echo "Installing bash completion (linux)"
     cp /tmp/_nit /etc/bash_completion.d/nit
