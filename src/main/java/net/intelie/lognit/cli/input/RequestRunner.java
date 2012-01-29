@@ -46,19 +46,23 @@ public class RequestRunner {
         if (options.isUsage()) return;
 
         if (options.isComplete()) {
-            executeComplete(options);
+            executeCompletion(options);
         } else if (options.isInfo()) {
             executeInfo();
         } else if (!options.hasQuery()) {
-            console.println("(%s): %s", lognit.getServer(), lognit.welcome().getMessage());
+            executeWelcome();
         } else {
             executeRequest(options);
         }
     }
 
-    private void executeComplete(UserOptions options) throws IOException {
-        String[] args = StringUtils.split(options.getQuery(), ":", 2);
-        if (args.length == 0) return;
+    private void executeWelcome() throws IOException {
+        console.println("(%s): %s", lognit.getServer(), lognit.welcome().getMessage());
+    }
+
+    private void executeCompletion(UserOptions options) throws IOException {
+        String[] args = StringUtils.splitPreserveAllTokens(options.getQuery(), ":", 2);
+        if (args.length == 0) args = new String[] { "" };
         
         Collection<String> terms = args.length == 1 ?
                 lognit.terms("", args[0]).getTerms() :

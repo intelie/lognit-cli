@@ -14,6 +14,7 @@ else
 fi
 
 echo '
+
 _nit() 
 {
     COMPREPLY=()
@@ -23,12 +24,12 @@ _nit()
 
     if [[ "${sep}" == ":" ]] ; then
         cur=${fld}:${cur}
+    elif [[ "${cur}" == ":" ]] ; then
+        cur=${sep}:
     fi
 
-    if [[ ${cur} == ?* ]] ; then
-        COMPREPLY=( $(nit -c ${cur} < /dev/null 2> /dev/null ) )
-        return 0
-    fi
+    COMPREPLY=( $(nit -c ${cur} < /dev/null 2> /dev/null ) )
+    return 0
 }
 complete -F _nit nit
 ' > /tmp/_nit

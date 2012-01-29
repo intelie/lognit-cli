@@ -145,10 +145,21 @@ public class RequestRunnerTest {
     }
 
     @Test
-    public void whenIsCompleteEmptyDoNothing() throws Exception {
+    public void whenIsCompleteWithColonOnlyPrintTerms() throws Exception {
+        when(lognit.terms("aaa", "")).thenReturn(new Terms(Arrays.asList("aaab", "aaac", "aaad")));
+        runner.run(new UserOptions("-c", "aaa:"));
+        verify(console).printOut("aaab");
+        verify(console).printOut("aaac");
+        verify(console).printOut("aaad");
+    }
+
+    @Test
+    public void whenIsCompleteEmptyCallsWithNothing() throws Exception {
         when(lognit.terms("", "")).thenReturn(new Terms(Arrays.asList("aaab", "aaac", "aaad")));
-        runner.run(new UserOptions("-c"));
-        verifyNoMoreInteractions(console);
+        runner.run(new UserOptions("-c", ""));
+        verify(console).printOut("aaab");
+        verify(console).printOut("aaac");
+        verify(console).printOut("aaad");
     }
 
     @Test
