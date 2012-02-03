@@ -161,9 +161,9 @@ public class BufferListenerTest {
 
         Message mA = m("A"), mB = m("B"), mC = m("C"), mD = m("D");
         listener.receive(ms(false, true, "AAA", 3L, 2, mB, mA));
-        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "AAA", 2, 3L, 2);
+        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "AAA", 2, 3L);
         listener.receive(ms(false, true, "BBB", 5L, 3, mC, mD));
-        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "BBB", 2, 5L, 3);
+        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "BBB", 2, 5L);
 
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
 
@@ -178,8 +178,8 @@ public class BufferListenerTest {
         listener = new BufferListener(printer, true);
 
         Message mA = m("A"), mB = m("B"), mC = m("C"), mD = m("D");
-        listener.receive(ms(false, true, "AAA", 3L, 42, mB, mA));
-        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "AAA", 2, 3L, 42);
+        listener.receive(ms(false, true, "AAA", 3L, 2, mB, mA));
+        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "AAA", 2, 3L);
 
         assertThat(listener.waitHistoric(50, 3)).isFalse();
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
@@ -188,7 +188,7 @@ public class BufferListenerTest {
         verify(printer).printMessage(mA);
 
         listener.receive(ms(false, true, "BBB", 5L, 3, mC, mD));
-        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "BBB", 2, 5L, 3);
+        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "BBB", 2, 5L);
 
         verifyNoMoreInteractions(printer);
     }
