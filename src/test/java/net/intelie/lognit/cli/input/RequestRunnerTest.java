@@ -74,14 +74,24 @@ public class RequestRunnerTest {
     @Test
     public void whenHasQueryExecutesSearchAndClose() throws Exception {
         runner.run(new UserOptions("blablabla", "-n", "42"));
-        verify(lognit).search("blablabla", 42, factory.create(false));
-        verify(lognit.search("blablabla", 42, factory.create(false))).close();
+        verify(lognit).search("blablabla", 42, factory.create(false, false));
+        verify(lognit.search("blablabla", 42, factory.create(false, false))).close();
     }
 
     @Test
     public void whenHasQueryToFollowExecutesReleasesAndWait() throws Exception {
         runner.run(new UserOptions("blablabla", "-n", "42", "-f"));
-        BufferListener listener = factory.create(false);
+        BufferListener listener = factory.create(false, false);
+        verify(lognit).search("blablabla", 42, listener);
+        verify(listener).releaseAll();
+        verify(console).waitChar('q');
+        verify(lognit.search("blablabla", 42, listener)).close();
+    }
+
+    @Test
+    public void whenHasQueryToFollowExecutesReleasesAndWaitVerbosely() throws Exception {
+        runner.run(new UserOptions("blablabla", "-n", "42", "-f", "-v"));
+        BufferListener listener = factory.create(false, true);
         verify(lognit).search("blablabla", 42, listener);
         verify(listener).releaseAll();
         verify(console).waitChar('q');

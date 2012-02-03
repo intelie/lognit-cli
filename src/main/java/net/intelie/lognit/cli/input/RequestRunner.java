@@ -87,7 +87,7 @@ public class RequestRunner {
     }
 
     private void executeRequest(UserOptions options) throws IOException {
-        BufferListener listener = factory.create(options.isNoColor());
+        BufferListener listener = factory.create(options.isNoColor(), options.isVerbose());
         RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
         listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
         if (options.isFollow()) {

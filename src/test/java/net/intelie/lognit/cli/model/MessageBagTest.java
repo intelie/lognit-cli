@@ -16,6 +16,8 @@ public class MessageBagTest {
             "message:'some message', " +
             "total_items:200, " +
             "total_nodes:42, " +
+            "node: abc," +
+            "time: 42, " +
             "items:[{id:'abc1'}, {id:'abc2'}]}";
 
     @Test
@@ -29,12 +31,14 @@ public class MessageBagTest {
         assertThat(messages.getTotalNodes()).isEqualTo(42);
         assertThat(messages.getTotalItems()).isEqualTo(200);
         assertThat(messages.getItems().size()).isEqualTo(2);
+        assertThat(messages.getNode()).isEqualTo("abc");
+        assertThat(messages.getTime()).isEqualTo(42L);
     }
 
     @Test
     public void whenSerializing() {
         MessageBag messages = new MessageBag(Arrays.asList(new Message("abc1"), new Message("abc2")),
-                "some message", true, true, 42, 200);
+                "abc", 42L, "some message", true, true, 42, 200);
         JsonElement actual = jsonElement(messages);
 
         assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));

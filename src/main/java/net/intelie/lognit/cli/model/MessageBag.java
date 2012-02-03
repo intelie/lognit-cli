@@ -9,9 +9,13 @@ public class MessageBag {
     private final boolean realtime;
     private final int total_items;
     private final int total_nodes;
-
-    public MessageBag(List<Message> items, String message, boolean success, boolean realtime, int totalNodes, int totalItems) {
+    private final String node;
+    private final Long time;
+    
+    public MessageBag(List<Message> items, String node, Long time, String message, boolean success, boolean realtime, int totalNodes, int totalItems) {
         this.items = items;
+        this.node = node;
+        this.time = time;
         this.message = message;
         this.success = success;
         this.realtime = realtime;
@@ -45,5 +49,13 @@ public class MessageBag {
 
     public int getTotalNodes() {
         return total_nodes;
+    }
+
+    public String getNode() {
+        return node;
+    }
+
+    public Long getTime() {
+        return time;
     }
 }

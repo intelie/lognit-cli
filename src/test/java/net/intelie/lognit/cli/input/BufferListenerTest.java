@@ -18,7 +18,7 @@ public class BufferListenerTest {
     @Before
     public void setUp() throws Exception {
         printer = mock(ColoredMessagePrinter.class);
-        listener = new BufferListener(printer);
+        listener = new BufferListener(printer, false);
     }
 
     @Test(timeout = 1000)
@@ -93,7 +93,7 @@ public class BufferListenerTest {
         listener.receive(ms(false, false, 2, mB));
         listener.releaseAll();
 
-        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, (Object)null);
+        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, (Object) null);
         verifyNoMoreInteractions(printer);
         listener.releaseAll();
         verifyNoMoreInteractions(printer);
@@ -155,8 +155,50 @@ public class BufferListenerTest {
         verifyNoMoreInteractions(printer);
     }
 
+    @Test(timeout = 1000)
+    public void whenTwoOfTwoMessagesArriveOntimeAndIsVerboseShowAll() {
+        listener = new BufferListener(printer, true);
+
+        Message mA = m("A"), mB = m("B"), mC = m("C"), mD = m("D");
+        listener.receive(ms(false, true, "AAA", 3L, 2, mB, mA));
+        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "AAA", 2, 3L);
+        listener.receive(ms(false, true, "BBB", 5L, 3, mC, mD));
+        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "BBB", 2, 5L);
+
+        assertThat(listener.waitHistoric(10000, 3)).isTrue();
+
+        verify(printer).printMessage(mB);
+        verify(printer).printMessage(mC);
+        verify(printer).printMessage(mD);
+        verifyNoMoreInteractions(printer);
+    }
+
+    @Test(timeout = 1000)
+    public void willPrintEvenIfReceivesAfterTimeout() {
+        listener = new BufferListener(printer, true);
+
+        Message mA = m("A"), mB = m("B"), mC = m("C"), mD = m("D");
+        listener.receive(ms(false, true, "AAA", 3L, 2, mB, mA));
+        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "AAA", 2, 3L);
+
+        assertThat(listener.waitHistoric(50, 3)).isFalse();
+        verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
+
+        verify(printer).printMessage(mB);
+        verify(printer).printMessage(mA);
+
+        listener.receive(ms(false, true, "BBB", 5L, 3, mC, mD));
+        verify(printer).printStatus(BufferListener.REPONSE_RECEIVED, "BBB", 2, 5L);
+
+        verifyNoMoreInteractions(printer);
+    }
+
     private MessageBag ms(boolean realtime, boolean success, int nodes, Message... messages) {
-        return new MessageBag(Arrays.asList(messages), null, success, realtime, nodes, 0);
+        return ms(realtime, success, null, 0L, nodes, messages);
+    }
+
+    private MessageBag ms(boolean realtime, boolean success, String node, Long time, int nodes, Message... messages) {
+        return new MessageBag(Arrays.asList(messages), node, time, null, success, realtime, nodes, 0);
     }
 
     private Message m(String id) {

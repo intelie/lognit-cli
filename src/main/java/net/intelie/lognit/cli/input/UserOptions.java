@@ -15,6 +15,7 @@ public class UserOptions {
     private final int lines;
     private final boolean noColor;
     private final boolean complete;
+    private final boolean verbose;
 
     public UserOptions(String... args) {
         ArgsParser parser = new ArgsParser(args);
@@ -28,6 +29,7 @@ public class UserOptions {
         info = parser.flag("-i", "--info");
         noColor = parser.flag("-b", "--no-color");
         complete = parser.flag("-c", "--complete");
+        verbose = parser.flag("-v", "--verbose");
         query = parser.text();
     }
 
@@ -95,6 +97,10 @@ public class UserOptions {
         return complete;
     }
 
+    public boolean isVerbose() {
+        return verbose;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof UserOptions)) return false;
@@ -110,13 +116,15 @@ public class UserOptions {
                 Objects.equal(this.info, that.info) &&
                 Objects.equal(this.noColor, that.noColor) &&
                 Objects.equal(this.complete, that.complete) &&
+                Objects.equal(this.verbose, that.verbose) &&
                 Objects.equal(this.help, that.help);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, noColor, complete, help);
+        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, noColor, complete, verbose, help);
     }
+
 
 
 }

@@ -25,21 +25,33 @@ public class BufferListenerFactoryTest {
     @Test
     public void creatingForcingNoColor() {
         when(userConsole.isTTY()).thenReturn(true);
-        BufferListener listener = listenerFactory.create(true);
+        BufferListener listener = listenerFactory.create(true, false);
         assertThat(listener.getPrinter()).isEqualTo(defaultPrinter);
+        assertThat(listener.isVerbose()).isEqualTo(false);
     }
+
+    @Test
+    public void creatingVerboseForcingNoColor() {
+        when(userConsole.isTTY()).thenReturn(true);
+        BufferListener listener = listenerFactory.create(true, true);
+        assertThat(listener.getPrinter()).isEqualTo(defaultPrinter);
+        assertThat(listener.isVerbose()).isEqualTo(true);
+    }
+
 
     @Test
     public void createOnTTY() {
         when(userConsole.isTTY()).thenReturn(true);
-        BufferListener listener = listenerFactory.create(false);
+        BufferListener listener = listenerFactory.create(false, false);
         assertThat(listener.getPrinter()).isEqualTo(coloredPrinter);
+        assertThat(listener.isVerbose()).isEqualTo(false);
     }
 
     @Test
     public void createOnNonTTY() {
         when(userConsole.isTTY()).thenReturn(false);
-        BufferListener listener = listenerFactory.create(false);
+        BufferListener listener = listenerFactory.create(false, false);
         assertThat(listener.getPrinter()).isEqualTo(defaultPrinter);
+        assertThat(listener.isVerbose()).isEqualTo(false);
     }
 }

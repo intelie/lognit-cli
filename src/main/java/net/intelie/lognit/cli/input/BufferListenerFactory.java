@@ -11,9 +11,9 @@ public class BufferListenerFactory {
         this.defaultPrinter = defaultPrinter;
     }
 
-    public BufferListener create(boolean forceNoColor) {
+    public BufferListener create(boolean forceNoColor, boolean verbose) {
         if (!console.isTTY() || forceNoColor)
-            return new BufferListener(defaultPrinter);
-        return new BufferListener(coloredPrinter);
+            return new BufferListener(defaultPrinter, verbose);
+        return new BufferListener(coloredPrinter, verbose);
     }
 }
