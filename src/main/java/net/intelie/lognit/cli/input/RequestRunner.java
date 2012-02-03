@@ -5,6 +5,7 @@ import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.model.Stats;
 import net.intelie.lognit.cli.model.StatsSummary;
+import net.intelie.lognit.cli.state.Clock;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
@@ -15,14 +16,17 @@ public class RequestRunner {
     public static final String NO_MISSING_NODES = "(%s): all nodes responded";
     public static final String NODE_INFO = "node '%s': %d queries / %d docs";
     public static final String TOTAL_INFO = "total: %d queries / %d docs";
+    public static final String HANDSHAKE = "INFO: handshake (%dms)";
     private final UserConsole console;
     private final Lognit lognit;
     private final BufferListenerFactory factory;
+    private final Clock clock;
 
-    public RequestRunner(UserConsole console, Lognit lognit, BufferListenerFactory factory) {
+    public RequestRunner(UserConsole console, Lognit lognit, BufferListenerFactory factory, Clock clock) {
         this.console = console;
         this.lognit = lognit;
         this.factory = factory;
+        this.clock = clock;
     }
 
     public int run(UserOptions options) throws IOException {
@@ -62,8 +66,8 @@ public class RequestRunner {
 
     private void executeCompletion(UserOptions options) throws IOException {
         String[] args = StringUtils.splitPreserveAllTokens(options.getQuery(), ":", 2);
-        if (args.length == 0) args = new String[] { "" };
-        
+        if (args.length == 0) args = new String[]{""};
+
         Collection<String> terms = args.length == 1 ?
                 lognit.terms("", args[0]).getTerms() :
                 lognit.terms(args[0], args[1]).getTerms();
@@ -80,7 +84,7 @@ public class RequestRunner {
         else
             console.printOut(NO_MISSING_NODES, lognit.getServer());
 
-        console.printOut(TOTAL_INFO, summary.getQueries().size(),  summary.getTotalDocs());
+        console.printOut(TOTAL_INFO, summary.getQueries().size(), summary.getTotalDocs());
         for (Stats stats : summary.getPerNodes()) {
             console.printOut(NODE_INFO, stats.getNode(), stats.getQueries().size(), stats.getTotalDocs());
         }
@@ -88,13 +92,23 @@ public class RequestRunner {
 
     private void executeRequest(UserOptions options) throws IOException {
         BufferListener listener = factory.create(options.isNoColor(), options.isVerbose());
-        RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
+
+        RestListenerHandle handle = handshake(options, listener);
+
         listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
         if (options.isFollow()) {
             listener.releaseAll();
             console.waitChar('q');
         }
         handle.close();
+    }
+
+    private RestListenerHandle handshake(UserOptions options, BufferListener listener) throws IOException {
+        long start = clock.currentMillis();
+        RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
+        if (options.isVerbose())
+            console.println(HANDSHAKE, clock.currentMillis() - start);
+        return handle;
     }
 
     private void askPassword(String user) {

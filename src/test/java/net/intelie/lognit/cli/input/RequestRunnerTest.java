@@ -2,6 +2,7 @@ package net.intelie.lognit.cli.input;
 
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.*;
+import net.intelie.lognit.cli.state.Clock;
 import org.apache.commons.httpclient.StatusLine;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,13 +18,15 @@ public class RequestRunnerTest {
     private Lognit lognit;
     private RequestRunner runner;
     private BufferListenerFactory factory;
-
+    private Clock clock;
+    
     @Before
     public void setUp() throws Exception {
         console = mock(UserConsole.class);
         lognit = mock(Lognit.class, RETURNS_DEEP_STUBS);
         factory = mock(BufferListenerFactory.class, RETURNS_DEEP_STUBS);
-        runner = new RequestRunner(console, lognit, factory);
+        clock = mock(Clock.class);
+        runner = new RequestRunner(console, lognit, factory, clock);
     }
 
     @Test
@@ -90,9 +93,11 @@ public class RequestRunnerTest {
 
     @Test
     public void whenHasQueryToFollowExecutesReleasesAndWaitVerbosely() throws Exception {
+        when(clock.currentMillis()).thenReturn(10L, 42L);
         runner.run(new UserOptions("blablabla", "-n", "42", "-f", "-v"));
         BufferListener listener = factory.create(false, true);
         verify(lognit).search("blablabla", 42, listener);
+        verify(console).println(RequestRunner.HANDSHAKE, 32L);
         verify(listener).releaseAll();
         verify(console).waitChar('q');
         verify(lognit.search("blablabla", 42, listener)).close();

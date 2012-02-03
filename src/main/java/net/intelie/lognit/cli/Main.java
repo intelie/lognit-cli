@@ -5,6 +5,7 @@ import jline.ConsoleReader;
 import net.intelie.lognit.cli.http.*;
 import net.intelie.lognit.cli.input.*;
 import net.intelie.lognit.cli.model.Lognit;
+import net.intelie.lognit.cli.state.Clock;
 import net.intelie.lognit.cli.state.RestStateStorage;
 import net.intelie.lognit.cli.state.StateKeeper;
 import org.apache.commons.httpclient.HttpClient;
@@ -41,17 +42,18 @@ public class Main {
         final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(userConsole, coloredPrinter, defaultPrinter);
 
         final Lognit lognit = new Lognit(restClient);
-        final RequestRunner requestRunner = new RequestRunner(userConsole, lognit, bufferListenerFactory);
+        final Clock clock = new Clock();
+        final RequestRunner requestRunner = new RequestRunner(userConsole, lognit, bufferListenerFactory, clock);
 
         final UsageRunner usageRunner = new UsageRunner(userConsole);
-        
+
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
                 stateKeeper.end();
             }
         }));
-        
+
         return new EntryPoint(userConsole, stateKeeper, requestRunner, usageRunner);
     }
 }
