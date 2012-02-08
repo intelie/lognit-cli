@@ -13,22 +13,16 @@ public class StatsSummary {
     private final Collection<String> nodes;
     private final Collection<String> queries;
     private final Collection<Stats> per_nodes;
+    private final Collection<Long> load;
     private int missing;
 
-    public StatsSummary(Iterable<Stats> stats, int missing) {
+    public StatsSummary(long total_docs, Collection<String> nodes, Collection<String> queries, Collection<Stats> per_nodes, Collection<Long> load, int missing) {
+        this.total_docs = total_docs;
+        this.nodes = nodes;
+        this.queries = queries;
+        this.per_nodes = per_nodes;
+        this.load = load;
         this.missing = missing;
-        long totalDocs = 0;
-        nodes = new ArrayList<String>();
-        queries = new TreeSet<String>();
-        per_nodes = Lists.newArrayList(stats);
-
-        for (Stats stat : stats) {
-            totalDocs += stat.getTotalDocs();
-            this.nodes.add(stat.getNode());
-            this.queries.addAll(stat.getQueries());
-        }
-
-        this.total_docs = totalDocs;
     }
 
     public long getTotalDocs() {
@@ -49,5 +43,9 @@ public class StatsSummary {
 
     public int getMissing() {
         return missing;
+    }
+
+    public Collection<Long> getLoad() {
+        return load;
     }
 }

@@ -19,14 +19,16 @@ public class RequestRunnerTest {
     private RequestRunner runner;
     private BufferListenerFactory factory;
     private Clock clock;
-    
+    private InfoRunner infoRunner;
+
     @Before
     public void setUp() throws Exception {
         console = mock(UserConsole.class);
         lognit = mock(Lognit.class, RETURNS_DEEP_STUBS);
         factory = mock(BufferListenerFactory.class, RETURNS_DEEP_STUBS);
+        infoRunner = mock(InfoRunner.class);
         clock = mock(Clock.class);
-        runner = new RequestRunner(console, lognit, factory, clock);
+        runner = new RequestRunner(console, lognit, infoRunner, factory, clock);
     }
 
     @Test
@@ -40,37 +42,15 @@ public class RequestRunnerTest {
     }
 
     @Test
-    public void whenHasInfoPrintsInfoWhenAllResponded() throws Exception {
-        StatsSummary summary = new StatsSummary(Arrays.asList(
-                new Stats("AA", 100, Arrays.asList("AAA", "BBB", "CCC")),
-                new Stats("BB", 50, Arrays.asList("DDD", "BBB", "CCC"))), 0);
+    public void whenHasInfoPrintsInfo() throws Exception {
+        StatsSummary summary = mock(StatsSummary.class);
+
         when(lognit.getServer()).thenReturn("someserver");
         when(lognit.stats()).thenReturn(summary);
-        assertThat(runner.run(new UserOptions("-i"))).isEqualTo(0);
 
-
-        verify(console).printOut(RequestRunner.NO_MISSING_NODES, "someserver");
-        verify(console).printOut(RequestRunner.TOTAL_INFO, 4, 150L);
-        verify(console).printOut(RequestRunner.NODE_INFO, "AA", 3, 100L);
-        verify(console).printOut(RequestRunner.NODE_INFO, "BB", 3, 50L);
-        verifyNoMoreInteractions(console);
-    }
-
-    @Test
-    public void whenHasInfoPrintsInfoWhenSomeDidNotRespond() throws Exception {
-        StatsSummary summary = new StatsSummary(Arrays.asList(
-                new Stats("AA", 100, Arrays.asList("AAA", "BBB", "CCC")),
-                new Stats("BB", 50, Arrays.asList("DDD", "BBB", "CCC"))), 2);
-        when(lognit.getServer()).thenReturn("someserver");
-        when(lognit.stats()).thenReturn(summary);
-        assertThat(runner.run(new UserOptions("-i"))).isEqualTo(0);
-
-
-        verify(console).printOut(RequestRunner.HAS_MISSING_NODES, "someserver", 2);
-        verify(console).printOut(RequestRunner.TOTAL_INFO, 4, 150L);
-        verify(console).printOut(RequestRunner.NODE_INFO, "AA", 3, 100L);
-        verify(console).printOut(RequestRunner.NODE_INFO, "BB", 3, 50L);
-        verifyNoMoreInteractions(console);
+        runner.run(new UserOptions("-i"));
+        
+        verify(infoRunner).printInfo("someserver", summary);
     }
 
 

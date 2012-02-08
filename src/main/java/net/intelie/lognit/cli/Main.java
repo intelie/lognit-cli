@@ -43,7 +43,8 @@ public class Main {
 
         final Lognit lognit = new Lognit(restClient);
         final Clock clock = new Clock();
-        final RequestRunner requestRunner = new RequestRunner(userConsole, lognit, bufferListenerFactory, clock);
+        final InfoRunner runner = new InfoRunner(userConsole);
+        final RequestRunner requestRunner = new RequestRunner(userConsole, lognit, runner, bufferListenerFactory, clock);
 
         final UsageRunner usageRunner = new UsageRunner(userConsole);
 

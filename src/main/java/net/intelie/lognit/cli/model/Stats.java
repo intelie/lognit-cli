@@ -9,11 +9,13 @@ public class Stats implements Serializable {
     private final String node;
     private final long total_docs;
     private final Collection<String> queries;
+    private final Collection<Long> load;
 
-    public Stats(String node, long totalDocs, Collection<String> queries) {
+    public Stats(String node, long totalDocs, Collection<String> queries, Collection<Long> load) {
         this.node = node;
         this.total_docs = totalDocs;
         this.queries = queries;
+        this.load = load;
     }
 
     public String getNode() {
@@ -26,5 +28,9 @@ public class Stats implements Serializable {
 
     public Collection<String> getQueries() {
         return queries;
+    }
+
+    public Collection<Long> getLoad() {
+        return load;
     }
 }

@@ -3,7 +3,6 @@ package net.intelie.lognit.cli.input;
 import net.intelie.lognit.cli.http.RestListenerHandle;
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
-import net.intelie.lognit.cli.model.Stats;
 import net.intelie.lognit.cli.model.StatsSummary;
 import net.intelie.lognit.cli.state.Clock;
 import org.apache.commons.lang.StringUtils;
@@ -12,19 +11,17 @@ import java.io.IOException;
 import java.util.Collection;
 
 public class RequestRunner {
-    public static final String HAS_MISSING_NODES = "(%s): %d node(s) did not respond";
-    public static final String NO_MISSING_NODES = "(%s): all nodes responded";
-    public static final String NODE_INFO = "node '%s': %d queries / %d docs";
-    public static final String TOTAL_INFO = "total: %d queries / %d docs";
     public static final String HANDSHAKE = "INFO: handshake (%dms)";
     private final UserConsole console;
     private final Lognit lognit;
+    private final InfoRunner infoRunner;
     private final BufferListenerFactory factory;
     private final Clock clock;
 
-    public RequestRunner(UserConsole console, Lognit lognit, BufferListenerFactory factory, Clock clock) {
+    public RequestRunner(UserConsole console, Lognit lognit, InfoRunner infoRunner, BufferListenerFactory factory, Clock clock) {
         this.console = console;
         this.lognit = lognit;
+        this.infoRunner = infoRunner;
         this.factory = factory;
         this.clock = clock;
     }
@@ -77,17 +74,7 @@ public class RequestRunner {
     }
 
     private void executeInfo() throws IOException {
-        StatsSummary summary = lognit.stats();
-
-        if (summary.getMissing() > 0)
-            console.printOut(HAS_MISSING_NODES, lognit.getServer(), summary.getMissing());
-        else
-            console.printOut(NO_MISSING_NODES, lognit.getServer());
-
-        console.printOut(TOTAL_INFO, summary.getQueries().size(), summary.getTotalDocs());
-        for (Stats stats : summary.getPerNodes()) {
-            console.printOut(NODE_INFO, stats.getNode(), stats.getQueries().size(), stats.getTotalDocs());
-        }
+        infoRunner.printInfo(lognit.getServer(), lognit.stats());
     }
 
     private void executeRequest(UserOptions options) throws IOException {
