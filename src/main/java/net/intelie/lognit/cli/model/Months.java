@@ -3,7 +3,7 @@ package net.intelie.lognit.cli.model;
 public class Months {
     private static String[] months = {
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Ago", "Sep", "Oct", "Nov", "Dec"};
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     public static String forNumber(String monthStringNumber) {
         try {

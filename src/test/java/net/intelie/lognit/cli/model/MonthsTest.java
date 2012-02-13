@@ -14,7 +14,7 @@ public class MonthsTest {
         assertThat(Months.forNumber("05")).isEqualTo("May");
         assertThat(Months.forNumber("06")).isEqualTo("Jun");
         assertThat(Months.forNumber("07")).isEqualTo("Jul");
-        assertThat(Months.forNumber("08")).isEqualTo("Ago");
+        assertThat(Months.forNumber("08")).isEqualTo("Aug");
         assertThat(Months.forNumber("09")).isEqualTo("Sep");
         assertThat(Months.forNumber("10")).isEqualTo("Oct");
         assertThat(Months.forNumber("11")).isEqualTo("Nov");

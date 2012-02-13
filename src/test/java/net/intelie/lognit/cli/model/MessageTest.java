@@ -4,11 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.junit.Test;
 
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonElement;
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonExpected;
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonPrepare;
+import static net.intelie.lognit.cli.model.JsonHelpers.*;
 import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 
 public class MessageTest {
 
@@ -77,10 +74,12 @@ public class MessageTest {
         Message message1 = new Message(null, null, "2012021", "182653", null, null, null, null);
         Message message2 = new Message(null, null, "20120213", "82653", null, null, null, null);
         Message message3 = new Message(null, null, "20121313", "182653", null, null, null, null);
+        Message message4 = new Message(null, null, null, null, null, null, null, null);
 
         assertThat(message1.formattedDateTime()).isEqualTo("2012021182653");
         assertThat(message2.formattedDateTime()).isEqualTo("2012021382653");
         assertThat(message3.formattedDateTime()).isEqualTo("?13? 13 18:26:53");
+        assertThat(message4.formattedDateTime()).isEqualTo("nullnull");
     }
 
 
