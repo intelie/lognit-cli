@@ -20,7 +20,7 @@ public class ColoredMessagePrinter implements MessagePrinter {
         ANSIBuffer buffer = new ANSIBuffer();
         buffer.cyan(message.getHost());
         buffer.append(" ");
-        buffer.green(message.getDate() + message.getTime());
+        buffer.green(message.formattedDateTime());
         buffer.append(" ");
         buffer.append(message.getFacility());
         buffer.append(" ");

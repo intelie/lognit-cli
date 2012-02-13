@@ -19,9 +19,9 @@ public class DefaultMessagePrinterTest {
 
     @Test
     public void testPrintStatus() throws Exception {
-        Message message = new Message("123", "A", "B", "C", "D", "E", "F", "abc");
+        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc");
         printer.printMessage(message);
-        verify(console).printOut("%s %s%s %s %s %s %s", "A", "B", "C", "D", "E", "F", "abc");
+        verify(console).printOut("%s %s %s %s %s %s", "A", "Nov 11 11:11:11", "D", "E", "F", "abc");
     }
 
     @Test

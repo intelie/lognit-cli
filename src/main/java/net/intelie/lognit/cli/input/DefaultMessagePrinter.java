@@ -16,7 +16,7 @@ public class DefaultMessagePrinter implements MessagePrinter {
 
     @Override
     public void printMessage(Message message) {
-        console.printOut("%s %s%s %s %s %s %s", message.getHost(), message.getDate(), message.getTime(),
+        console.printOut("%s %s %s %s %s %s", message.getHost(), message.formattedDateTime(),
                 message.getFacility(), message.getSeverity(), message.getApp(), message.getMessage());
     }
 }

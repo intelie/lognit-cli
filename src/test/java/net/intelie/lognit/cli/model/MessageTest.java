@@ -65,4 +65,23 @@ public class MessageTest {
         assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
     }
 
+    @Test
+    public void whenFormattingDateTime() {
+        Message message = new Message(null, null, "20120213", "182653", null, null, null, null);
+
+        assertThat(message.formattedDateTime()).isEqualTo("Feb 13 18:26:53");
+    }
+
+    @Test
+    public void whenFormattingDateTimeWrong() {
+        Message message1 = new Message(null, null, "2012021", "182653", null, null, null, null);
+        Message message2 = new Message(null, null, "20120213", "82653", null, null, null, null);
+        Message message3 = new Message(null, null, "20121313", "182653", null, null, null, null);
+
+        assertThat(message1.formattedDateTime()).isEqualTo("2012021182653");
+        assertThat(message2.formattedDateTime()).isEqualTo("2012021382653");
+        assertThat(message3.formattedDateTime()).isEqualTo("?13? 13 18:26:53");
+    }
+
+
 }

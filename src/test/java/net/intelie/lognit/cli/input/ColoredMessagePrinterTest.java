@@ -28,9 +28,9 @@ public class ColoredMessagePrinterTest {
 
     @Test
     public void testPrintStatus() throws Exception {
-        Message message = new Message("123", "A", "B", "C", "D", "E", "F", "abc");
+        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc");
         printer.printMessage(message);
-        verify(console).printOut("$cA$n $gBC$n D E $yF$n abc"
+        verify(console).printOut("$cA$n $gNov 11 11:11:11$n D E $yF$n abc"
                 .replace("$c", CYAN).replace("$g", GREEN).replace("$y", YELLOW).replace("$n", NONE));
     }
 

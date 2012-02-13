@@ -47,7 +47,7 @@ public class InfoRunner {
         for (Long value : load) {
             if (i < 3) v3 += value;
             if (i < 15) v15 += value;
-            if (i < 70) v60 += value;
+            if (i < 60) v60 += value;
             i++;
         }
         console.printOut(LOAD_INFO, v3/3, v15/15, v60/60);

@@ -32,6 +32,13 @@ public class Message implements Comparable<Message> {
         this.message = message;
     }
 
+    public String formattedDateTime() {
+        if (date.length() != 8 || time.length() != 6) return date + time;
+        return String.format("%s %s %s:%s:%s",
+                Months.forNumber(date.substring(4, 6)), date.substring(6, 8),
+                time.substring(0, 2), time.substring(2, 4), time.substring(4, 6));
+    }
+
     public String getMessage() {
         return message;
     }
