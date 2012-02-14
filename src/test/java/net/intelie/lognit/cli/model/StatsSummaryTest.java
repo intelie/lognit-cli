@@ -18,17 +18,20 @@ public class StatsSummaryTest {
             " nodes: ['AA', 'BB']," +
             " queries: ['AAA','BBB','CCC','DDD']," +
             " missing: 2, " +
-            " load: [3, 5, 6, 9, 1], " +
+            " docs_rate: [3, 5, 6, 9, 1], " +
+            " bytes_rate: [1, 1, 2, 2], " +
             " per_nodes: [" +
             "    { " +
             "      node: 'AA'," +
             "      queries: ['AAA', 'BBB', 'CCC']," +
-            "      load: [1, 2, 3, 4]," +
+            "      docs_rate: [1, 2, 3, 4]," +
+            "      bytes_rate: [1, 1, 1, 1]," +
             "      total_docs: 100 " +
             "    }," +
             "    { " +
             "      node: 'BB'," +
-            "      load: [2, 3, 3, 5, 1]," +
+            "      docs_rate: [2, 3, 3, 5, 1]," +
+            "      bytes_rate: [0, 0, 1, 1]," +
             "      queries: ['DDD', 'BBB', 'CCC']," +
             "      total_docs: 50 " +
             "    }]" +
@@ -43,7 +46,7 @@ public class StatsSummaryTest {
         assertThat(message.getQueries()).containsOnly("AAA", "BBB", "CCC", "DDD");
         assertThat(message.getTotalDocs()).isEqualTo(150);
         assertThat(message.getMissing()).isEqualTo(2);
-        assertThat(message.getLoad()).isEqualTo(Arrays.asList(3L, 5L, 6L, 9L, 1L));
+        assertThat(message.getDocsRate()).isEqualTo(Arrays.asList(3L, 5L, 6L, 9L, 1L));
 
         Iterator<Stats> it = message.getPerNodes().iterator();
 
@@ -51,12 +54,12 @@ public class StatsSummaryTest {
         assertThat(st1.getNode()).isEqualTo("AA");
         assertThat(st1.getQueries()).containsOnly("AAA", "BBB", "CCC");
         assertThat(st1.getTotalDocs()).isEqualTo(100);
-        assertThat(st1.getLoad()).isEqualTo(Arrays.asList(1L, 2L, 3L, 4L));
+        assertThat(st1.getDocsRate()).isEqualTo(Arrays.asList(1L, 2L, 3L, 4L));
 
         assertThat(st2.getNode()).isEqualTo("BB");
         assertThat(st2.getQueries()).containsOnly("DDD", "BBB", "CCC");
         assertThat(st2.getTotalDocs()).isEqualTo(50);
-        assertThat(st2.getLoad()).isEqualTo(Arrays.asList(2L, 3L, 3L, 5L, 1L));
+        assertThat(st2.getDocsRate()).isEqualTo(Arrays.asList(2L, 3L, 3L, 5L, 1L));
 
     }
 
@@ -66,9 +69,9 @@ public class StatsSummaryTest {
                 Arrays.asList("AA", "BB"),
                 Arrays.asList("AAA", "BBB", "CCC", "DDD"),
                 Arrays.asList(
-                    new Stats("AA", 100, Arrays.asList("AAA", "BBB", "CCC"), Arrays.asList(1L, 2L, 3L, 4L)),
-                    new Stats("BB", 50, Arrays.asList("DDD", "BBB", "CCC"), Arrays.asList(2L, 3L, 3L, 5L, 1L))),
-                Arrays.asList(3L, 5L, 6L, 9L, 1L), 2));
+                    new Stats("AA", 100, Arrays.asList("AAA", "BBB", "CCC"), Arrays.asList(1L, 2L, 3L, 4L), Arrays.asList(1L, 1L, 1L, 1L)),
+                    new Stats("BB", 50, Arrays.asList("DDD", "BBB", "CCC"), Arrays.asList(2L, 3L, 3L, 5L, 1L), Arrays.asList(0L, 0L, 1L, 1L))),
+                Arrays.asList(3L, 5L, 6L, 9L, 1L), Arrays.asList(1L, 1L, 2L, 2L), 2));
 
         assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
     }

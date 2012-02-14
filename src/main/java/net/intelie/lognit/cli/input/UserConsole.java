@@ -4,6 +4,7 @@ import jline.ConsoleReader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
 
 public class UserConsole {
     private final ConsoleReader console;
@@ -21,7 +22,7 @@ public class UserConsole {
 
     private String reallyFormat(String format, Object[] args) {
         if (args.length > 0)
-            format = String.format(format, args);
+            format = String.format(Locale.ENGLISH, format, args);
         return format;
     }
 
