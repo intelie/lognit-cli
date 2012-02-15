@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=0.4-SNAPSHOT
+VERSION=0.3.4
 
 if [ "$1" = "--local" ]; then
     echo "Installing Lognit command-line interface (local)..."
@@ -8,7 +8,7 @@ if [ "$1" = "--local" ]; then
     chmod a+x /usr/bin/nit
 else
     FILE=https://github.com/downloads/intelie/lognit-cli/lognit-cli-$VERSION.sh
-    curl -L -H "Pragma: no-cache" $FILE > /tmp/nit
+    echo $FILEcurl -L -H "Pragma: no-cache" $FILE > /tmp/nit
     mv /tmp/nit /usr/bin/nit
     chmod a+x /usr/bin/nit
 fi
