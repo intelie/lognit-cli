@@ -15,40 +15,43 @@ public class FormatterSelectorTest {
     private UserConsole console;
     private FormatterSelector selector;
     private JsonFormatter json;
+    private FlatJsonFormatter flatJson;
 
     @Before
     public void setUp() throws Exception {
         plain = mock(PlainFormatter.class);
         colored = mock(ColoredFormatter.class);
         json = mock(JsonFormatter.class);
+        flatJson = mock(FlatJsonFormatter.class);
         console = mock(UserConsole.class);
-        selector = new FormatterSelector(console, colored, plain, json);
+        selector = new FormatterSelector(console, colored, plain, json, flatJson);
     }
 
     @Test
     public void whenSelectingColoredWithTtyTerminal() {
         when(console.isTTY()).thenReturn(true);
-        Formatter selected = selector.select("colored");
-        assertThat(selected).isSameAs(colored);
+        assertThat(selector.select("colored")).isSameAs(colored);
     }
 
     @Test
     public void whenSelectingColoredWithNonTtyTerminal() {
         when(console.isTTY()).thenReturn(false);
-        Formatter selected = selector.select("colored");
-        assertThat(selected).isSameAs(plain);
+        assertThat(selector.select("colored")).isSameAs(plain);
     }
     @Test
     public void whenSelectingPlain() {
         when(console.isTTY()).thenReturn(true);
-        Formatter selected = selector.select("plain");
-        assertThat(selected).isSameAs(plain);
+        assertThat(selector.select("plain")).isSameAs(plain);
     }
 
     @Test
     public void whenSelectingJson() {
-        Formatter selected = selector.select("json");
-        assertThat(selected).isSameAs(json);
+        assertThat(selector.select("json")).isSameAs(json);
+    }
+
+    @Test
+    public void whenSelectingFlatJson() {
+        assertThat(selector.select("flat-json")).isSameAs(flatJson);
     }
 
     @Test(expected = IllegalArgumentException.class)

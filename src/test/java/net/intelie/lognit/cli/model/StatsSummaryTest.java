@@ -7,9 +7,9 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonElement;
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonExpected;
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonPrepare;
+import static net.intelie.lognit.cli.JsonHelpers.jsonElement;
+import static net.intelie.lognit.cli.JsonHelpers.jsonParse;
+import static net.intelie.lognit.cli.JsonHelpers.jsonParse;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class StatsSummaryTest {
@@ -73,12 +73,12 @@ public class StatsSummaryTest {
                     new Stats("BB", 50, Arrays.asList("DDD", "BBB", "CCC"), Arrays.asList(2L, 3L, 3L, 5L, 1L), Arrays.asList(0L, 0L, 1L, 1L))),
                 Arrays.asList(3L, 5L, 6L, 9L, 1L), Arrays.asList(1L, 1L, 2L, 2L), 2));
 
-        assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
+        assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
     }
 
     @Test
     public void fullTest() {
-        JsonElement actual = jsonPrepare(TEST_JSON, StatsSummary.class);
-        assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
+        JsonElement actual = jsonParse(TEST_JSON, StatsSummary.class);
+        assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
     }
 }

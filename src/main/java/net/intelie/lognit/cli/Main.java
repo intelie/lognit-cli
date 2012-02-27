@@ -1,13 +1,13 @@
 package net.intelie.lognit.cli;
 
-import com.google.gson.Gson;
 import jline.ConsoleReader;
-import net.intelie.lognit.cli.formatters.ColoredFormatter;
-import net.intelie.lognit.cli.formatters.FormatterSelector;
-import net.intelie.lognit.cli.formatters.JsonFormatter;
-import net.intelie.lognit.cli.formatters.PlainFormatter;
-import net.intelie.lognit.cli.http.*;
+import net.intelie.lognit.cli.formatters.*;
+import net.intelie.lognit.cli.http.BayeuxFactory;
+import net.intelie.lognit.cli.http.MethodFactory;
+import net.intelie.lognit.cli.http.RestClient;
+import net.intelie.lognit.cli.http.RestClientImpl;
 import net.intelie.lognit.cli.input.*;
+import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.state.Clock;
 import net.intelie.lognit.cli.state.RestStateStorage;
@@ -25,7 +25,7 @@ public class Main {
     public static EntryPoint resolveEntryPoint() throws IOException {
         final File stateFile = new File(new File(System.getProperty("user.home"), ".lognit"), "state");
 
-        final Jsonizer jsonizer = new Jsonizer(new Gson());
+        final Jsonizer jsonizer = new Jsonizer();
 
         final ConsoleReader consoleReader = new ConsoleReader(
                 new FileInputStream(FileDescriptor.in),
@@ -44,7 +44,8 @@ public class Main {
         final PlainFormatter plainFormatter = new PlainFormatter(userConsole);
         final ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
         final JsonFormatter jsonFormatter = new JsonFormatter(userConsole, jsonizer);
-        final FormatterSelector selector = new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter);
+        final FlatJsonFormatter flatJsonFormatter = new FlatJsonFormatter(userConsole, jsonizer);
+        final FormatterSelector selector = new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter, flatJsonFormatter);
 
         final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(selector);
 

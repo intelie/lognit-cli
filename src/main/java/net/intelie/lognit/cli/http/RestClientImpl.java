@@ -1,6 +1,7 @@
 package net.intelie.lognit.cli.http;
 
 import com.google.common.base.Objects;
+import net.intelie.lognit.cli.json.Jsonizer;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;

@@ -1,12 +1,9 @@
 package net.intelie.lognit.cli.state;
 
-import net.intelie.lognit.cli.http.Jsonizer;
+import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestState;
-import org.apache.commons.httpclient.Cookie;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
 

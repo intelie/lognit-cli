@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.http;
 
+import net.intelie.lognit.cli.json.Jsonizer;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
