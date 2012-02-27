@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonElement;
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonExpected;
-import static net.intelie.lognit.cli.model.JsonHelpers.jsonPrepare;
+import static net.intelie.lognit.cli.JsonHelpers.jsonElement;
+import static net.intelie.lognit.cli.JsonHelpers.jsonParse;
+import static net.intelie.lognit.cli.JsonHelpers.jsonParse;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class TermsTest {
@@ -26,12 +26,12 @@ public class TermsTest {
         Terms terms = new Terms(Arrays.asList("AAA", "BBB", "CCC"));
         JsonElement actual = jsonElement(terms);
 
-        assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
+        assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
     }
 
     @Test
     public void fullTest() {
-        JsonElement actual = jsonPrepare(TEST_JSON, Terms.class);
-        assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
+        JsonElement actual = jsonParse(TEST_JSON, Terms.class);
+        assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
     }
 }

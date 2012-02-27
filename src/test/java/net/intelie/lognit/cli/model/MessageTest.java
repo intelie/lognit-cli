@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.intelie.lognit.cli.model.JsonHelpers.*;
+import static net.intelie.lognit.cli.JsonHelpers.*;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class MessageTest {
@@ -50,7 +50,7 @@ public class MessageTest {
 
         JsonElement actual = jsonElement(new Message("123", "A", "B", "C", "D", "E", "F", "abc", metadata));
 
-        assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
+        assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
     }
 
     @Test
@@ -71,8 +71,8 @@ public class MessageTest {
 
     @Test
     public void fullTest() {
-        JsonElement actual = jsonPrepare(TEST_JSON, Message.class);
-        assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
+        JsonElement actual = jsonParse(TEST_JSON, Message.class);
+        assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
     }
 
     @Test

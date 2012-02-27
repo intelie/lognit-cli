@@ -1,14 +1,14 @@
-package net.intelie.lognit.cli.model;
+package net.intelie.lognit.cli;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 public class JsonHelpers {
-    public static JsonElement jsonExpected(String input) {
+    public static JsonElement jsonParse(String input) {
         return new Gson().fromJson(input, JsonElement.class);
     }
 
-    public static <T> JsonElement jsonPrepare(String input, Class<T> type) {
+    public static <T> JsonElement jsonParse(String input, Class<T> type) {
         return jsonElement(new Gson().fromJson(input, type));
     }
 

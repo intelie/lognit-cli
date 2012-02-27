@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.http;
 
+import net.intelie.lognit.cli.json.Jsonizer;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 

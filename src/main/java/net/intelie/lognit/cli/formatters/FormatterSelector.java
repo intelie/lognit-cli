@@ -7,12 +7,14 @@ public class FormatterSelector {
     private final ColoredFormatter colored;
     private final PlainFormatter plain;
     private final JsonFormatter json;
+    private final FlatJsonFormatter flatJson;
 
-    public FormatterSelector(UserConsole console, ColoredFormatter colored, PlainFormatter plain, JsonFormatter json) {
+    public FormatterSelector(UserConsole console, ColoredFormatter colored, PlainFormatter plain, JsonFormatter json, FlatJsonFormatter flatJson) {
         this.console = console;
         this.colored = colored;
         this.plain = plain;
         this.json = json;
+        this.flatJson = flatJson;
     }
 
     public Formatter select(String formatter) {
@@ -22,6 +24,8 @@ public class FormatterSelector {
             return plain;
         else if ("json".equalsIgnoreCase(formatter))
             return json;
+        else if ("flat-json".equalsIgnoreCase(formatter))
+            return flatJson;
 
         throw new IllegalArgumentException("formatter");
     }

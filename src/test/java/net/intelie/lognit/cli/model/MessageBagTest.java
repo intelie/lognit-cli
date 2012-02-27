@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static net.intelie.lognit.cli.model.JsonHelpers.*;
+import static net.intelie.lognit.cli.JsonHelpers.*;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class MessageBagTest {
@@ -41,13 +41,13 @@ public class MessageBagTest {
                 "abc", 42L, "some message", true, true, 42, 200);
         JsonElement actual = jsonElement(messages);
 
-        assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
+        assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
     }
 
     @Test
     public void fullTest() {
-        JsonElement actual = jsonPrepare(TEST_JSON, MessageBag.class);
-        assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
+        JsonElement actual = jsonParse(TEST_JSON, MessageBag.class);
+        assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
     }
 
 }
