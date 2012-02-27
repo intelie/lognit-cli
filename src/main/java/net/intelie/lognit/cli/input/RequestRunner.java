@@ -78,7 +78,7 @@ public class RequestRunner {
     }
 
     private void executeRequest(UserOptions options) throws IOException {
-        BufferListener listener = factory.create(options.isNoColor(), options.isVerbose());
+        BufferListener listener = factory.create(options.getFormat(), options.isVerbose());
 
         RestListenerHandle handle = handshake(options, listener);
 

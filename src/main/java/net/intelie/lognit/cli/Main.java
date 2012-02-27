@@ -3,6 +3,7 @@ package net.intelie.lognit.cli;
 import com.google.gson.Gson;
 import jline.ConsoleReader;
 import net.intelie.lognit.cli.formatters.ColoredFormatter;
+import net.intelie.lognit.cli.formatters.FormatterSelector;
 import net.intelie.lognit.cli.formatters.PlainFormatter;
 import net.intelie.lognit.cli.http.*;
 import net.intelie.lognit.cli.input.*;
@@ -41,7 +42,9 @@ public class Main {
 
         final PlainFormatter plainFormatter = new PlainFormatter(userConsole);
         final ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
-        final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(userConsole, coloredFormatter, plainFormatter);
+        final FormatterSelector selector = new FormatterSelector(userConsole, coloredFormatter, plainFormatter);
+
+        final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(selector);
 
         final Lognit lognit = new Lognit(restClient);
         final Clock clock = new Clock();

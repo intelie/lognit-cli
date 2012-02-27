@@ -112,7 +112,7 @@ public class BufferListener implements RestListener<MessageBag> {
             printer.printStatus(QUERY_CANCELLED, bag.getMessage());
     }
 
-    public Formatter getPrinter() {
+    public Formatter getFormatter() {
         return printer;
     }
 

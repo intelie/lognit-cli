@@ -1,7 +1,7 @@
 package net.intelie.lognit.cli.input;
 
-import net.intelie.lognit.cli.formatters.ColoredFormatter;
-import net.intelie.lognit.cli.formatters.PlainFormatter;
+import net.intelie.lognit.cli.formatters.Formatter;
+import net.intelie.lognit.cli.formatters.FormatterSelector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,49 +11,22 @@ import static org.mockito.Mockito.when;
 
 public class BufferListenerFactoryTest {
 
-    private PlainFormatter defaultPrinter;
-    private ColoredFormatter coloredPrinter;
-    private UserConsole userConsole;
     private BufferListenerFactory listenerFactory;
+    private FormatterSelector selector;
 
     @Before
     public void setUp() throws Exception {
-        defaultPrinter = mock(PlainFormatter.class);
-        coloredPrinter = mock(ColoredFormatter.class);
-        userConsole = mock(UserConsole.class);
-        listenerFactory = new BufferListenerFactory(userConsole, coloredPrinter, defaultPrinter);
+        selector = mock(FormatterSelector.class);
+        listenerFactory = new BufferListenerFactory(selector);
     }
 
     @Test
-    public void creatingForcingNoColor() {
-        when(userConsole.isTTY()).thenReturn(true);
-        BufferListener listener = listenerFactory.create(true, false);
-        assertThat(listener.getPrinter()).isEqualTo(defaultPrinter);
+    public void whenCreating() {
+        Formatter formatter = mock(Formatter.class);
+        when(selector.select("test")).thenReturn(formatter);
+        BufferListener listener = listenerFactory.create("test", false);
+        assertThat(listener.getFormatter()).isEqualTo(formatter);
         assertThat(listener.isVerbose()).isEqualTo(false);
     }
 
-    @Test
-    public void creatingVerboseForcingNoColor() {
-        when(userConsole.isTTY()).thenReturn(true);
-        BufferListener listener = listenerFactory.create(true, true);
-        assertThat(listener.getPrinter()).isEqualTo(defaultPrinter);
-        assertThat(listener.isVerbose()).isEqualTo(true);
-    }
-
-
-    @Test
-    public void createOnTTY() {
-        when(userConsole.isTTY()).thenReturn(true);
-        BufferListener listener = listenerFactory.create(false, false);
-        assertThat(listener.getPrinter()).isEqualTo(coloredPrinter);
-        assertThat(listener.isVerbose()).isEqualTo(false);
-    }
-
-    @Test
-    public void createOnNonTTY() {
-        when(userConsole.isTTY()).thenReturn(false);
-        BufferListener listener = listenerFactory.create(false, false);
-        assertThat(listener.getPrinter()).isEqualTo(defaultPrinter);
-        assertThat(listener.isVerbose()).isEqualTo(false);
-    }
 }
