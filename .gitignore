@@ -2,6 +2,7 @@
 *.ipr
 *.iws
 *.log
+*.pyc
 *.versionsBackup
 .ideas
 .idea
