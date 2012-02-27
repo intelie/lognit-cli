@@ -14,13 +14,15 @@ public class FormatterSelectorTest {
     private ColoredFormatter colored;
     private UserConsole console;
     private FormatterSelector selector;
+    private JsonFormatter json;
 
     @Before
     public void setUp() throws Exception {
         plain = mock(PlainFormatter.class);
         colored = mock(ColoredFormatter.class);
+        json = mock(JsonFormatter.class);
         console = mock(UserConsole.class);
-        selector = new FormatterSelector(console, colored, plain);
+        selector = new FormatterSelector(console, colored, plain, json);
     }
 
     @Test
@@ -41,6 +43,12 @@ public class FormatterSelectorTest {
         when(console.isTTY()).thenReturn(true);
         Formatter selected = selector.select("plain");
         assertThat(selected).isSameAs(plain);
+    }
+
+    @Test
+    public void whenSelectingJson() {
+        Formatter selected = selector.select("json");
+        assertThat(selected).isSameAs(json);
     }
 
     @Test(expected = IllegalArgumentException.class)

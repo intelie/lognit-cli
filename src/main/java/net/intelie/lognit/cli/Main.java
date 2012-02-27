@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import jline.ConsoleReader;
 import net.intelie.lognit.cli.formatters.ColoredFormatter;
 import net.intelie.lognit.cli.formatters.FormatterSelector;
+import net.intelie.lognit.cli.formatters.JsonFormatter;
 import net.intelie.lognit.cli.formatters.PlainFormatter;
 import net.intelie.lognit.cli.http.*;
 import net.intelie.lognit.cli.input.*;
@@ -42,7 +43,8 @@ public class Main {
 
         final PlainFormatter plainFormatter = new PlainFormatter(userConsole);
         final ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
-        final FormatterSelector selector = new FormatterSelector(userConsole, coloredFormatter, plainFormatter);
+        final JsonFormatter jsonFormatter = new JsonFormatter(userConsole, jsonizer);
+        final FormatterSelector selector = new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter);
 
         final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(selector);
 

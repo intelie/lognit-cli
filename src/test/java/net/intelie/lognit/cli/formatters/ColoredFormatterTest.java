@@ -24,15 +24,15 @@ public class ColoredFormatterTest {
     }
 
     @Test
-    public void testPrintStatus() throws Exception {
-        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc");
+    public void testPrintMessage() throws Exception {
+        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
         printer.printMessage(message);
         verify(console).printOut("$cA$n $gNov 11 11:11:11$n D E $yF$n abc"
                 .replace("$c", CYAN).replace("$g", GREEN).replace("$y", YELLOW).replace("$n", NONE));
     }
 
     @Test
-    public void testPrintMessage() throws Exception {
+    public void testPrintStatus() throws Exception {
         printer.printStatus("ABC", 1, "2", 3);
         verify(console).println("ABC", 1, "2", 3);
     }
