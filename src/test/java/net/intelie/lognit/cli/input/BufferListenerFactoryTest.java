@@ -1,5 +1,7 @@
 package net.intelie.lognit.cli.input;
 
+import net.intelie.lognit.cli.formatters.ColoredFormatter;
+import net.intelie.lognit.cli.formatters.PlainFormatter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,15 +11,15 @@ import static org.mockito.Mockito.when;
 
 public class BufferListenerFactoryTest {
 
-    private DefaultMessagePrinter defaultPrinter;
-    private ColoredMessagePrinter coloredPrinter;
+    private PlainFormatter defaultPrinter;
+    private ColoredFormatter coloredPrinter;
     private UserConsole userConsole;
     private BufferListenerFactory listenerFactory;
 
     @Before
     public void setUp() throws Exception {
-        defaultPrinter = mock(DefaultMessagePrinter.class);
-        coloredPrinter = mock(ColoredMessagePrinter.class);
+        defaultPrinter = mock(PlainFormatter.class);
+        coloredPrinter = mock(ColoredFormatter.class);
         userConsole = mock(UserConsole.class);
         listenerFactory = new BufferListenerFactory(userConsole, coloredPrinter, defaultPrinter);
     }

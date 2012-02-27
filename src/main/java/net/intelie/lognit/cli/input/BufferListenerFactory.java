@@ -1,11 +1,16 @@
 package net.intelie.lognit.cli.input;
 
+import com.google.inject.Inject;
+import net.intelie.lognit.cli.formatters.ColoredFormatter;
+import net.intelie.lognit.cli.formatters.PlainFormatter;
+
 public class BufferListenerFactory {
     private final UserConsole console;
-    private final ColoredMessagePrinter coloredPrinter;
-    private final DefaultMessagePrinter defaultPrinter;
+    private final ColoredFormatter coloredPrinter;
+    private final PlainFormatter defaultPrinter;
 
-    public BufferListenerFactory(UserConsole console, ColoredMessagePrinter coloredPrinter, DefaultMessagePrinter defaultPrinter) {
+    @Inject
+    public BufferListenerFactory(UserConsole console, ColoredFormatter coloredPrinter, PlainFormatter defaultPrinter) {
         this.console = console;
         this.coloredPrinter = coloredPrinter;
         this.defaultPrinter = defaultPrinter;

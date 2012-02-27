@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.http;
 
+import com.google.inject.Inject;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 
@@ -8,6 +9,7 @@ class JsonMessageListener<T> implements ClientSessionChannel.MessageListener {
     private final Class<T> type;
     private final Jsonizer jsonizer;
 
+    @Inject
     public JsonMessageListener(RestListener<T> listener, Class<T> type, Jsonizer jsonizer) {
         this.listener = listener;
         this.type = type;

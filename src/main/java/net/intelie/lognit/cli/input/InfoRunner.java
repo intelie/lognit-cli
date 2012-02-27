@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.input;
 
+import com.google.inject.Inject;
 import net.intelie.lognit.cli.model.Stats;
 import net.intelie.lognit.cli.model.StatsSummary;
 
@@ -17,6 +18,7 @@ public class InfoRunner {
 
     private final UserConsole console;
 
+    @Inject
     public InfoRunner(UserConsole console) {
         this.console = console;
     }

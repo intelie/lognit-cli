@@ -1,6 +1,7 @@
 package net.intelie.lognit.cli.input;
 
 import com.google.common.collect.Lists;
+import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.http.RestListener;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.MessageBag;
@@ -20,11 +21,11 @@ public class BufferListener implements RestListener<MessageBag> {
     private final Deque<MessageBag> historic;
     private final Deque<MessageBag> other;
     private final Semaphore semaphore;
-    private final MessagePrinter printer;
+    private final Formatter printer;
     private final boolean verbose;
     private boolean releasing;
 
-    public BufferListener(MessagePrinter printer, boolean verbose) {
+    public BufferListener(Formatter printer, boolean verbose) {
         this.printer = printer;
         this.verbose = verbose;
         this.historic = new LinkedList<MessageBag>();
@@ -111,7 +112,7 @@ public class BufferListener implements RestListener<MessageBag> {
             printer.printStatus(QUERY_CANCELLED, bag.getMessage());
     }
 
-    public MessagePrinter getPrinter() {
+    public Formatter getPrinter() {
         return printer;
     }
 

@@ -1,5 +1,6 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli.formatters;
 
+import net.intelie.lognit.cli.input.UserConsole;
 import net.intelie.lognit.cli.model.Message;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,14 +8,14 @@ import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class DefaultMessagePrinterTest {
-    private DefaultMessagePrinter printer;
+public class PlainFormatterTest {
+    private PlainFormatter printer;
     private UserConsole console;
 
     @Before
     public void setUp() throws Exception {
         console = mock(UserConsole.class);
-        printer = new DefaultMessagePrinter(console);
+        printer = new PlainFormatter(console);
     }
 
     @Test

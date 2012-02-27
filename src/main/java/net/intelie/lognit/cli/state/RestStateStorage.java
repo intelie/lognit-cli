@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.state;
 
+import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.Jsonizer;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestState;
@@ -11,6 +12,7 @@ public class RestStateStorage {
     private final File file;
     private final Jsonizer jsonizer;
 
+    @Inject
     public RestStateStorage(File file, Jsonizer jsonizer) {
         this.file = file;
         this.jsonizer = jsonizer;
