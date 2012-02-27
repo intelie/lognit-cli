@@ -11,7 +11,7 @@ Options:
   -f, --follow                outputs new messages as they arrive
   -i, --info                  shows cluster summary info
   -b, --format <format>       sets message output format, must be "colored",
-                              "plain" or "json"
+                              "plain", "json" or "flat-json"
   -v, --verbose               shows some stats while querying
   -?, --help                  shows this help
 
