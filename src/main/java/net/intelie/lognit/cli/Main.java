@@ -1,48 +1,62 @@
 package net.intelie.lognit.cli;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.google.gson.Gson;
 import jline.ConsoleReader;
-import net.intelie.lognit.cli.http.Jsonizer;
-import net.intelie.lognit.cli.http.RestClient;
-import net.intelie.lognit.cli.http.RestClientImpl;
-import net.intelie.lognit.cli.input.EntryPoint;
-import net.intelie.lognit.cli.input.UserConsole;
+import net.intelie.lognit.cli.formatters.ColoredFormatter;
+import net.intelie.lognit.cli.formatters.PlainFormatter;
+import net.intelie.lognit.cli.http.*;
+import net.intelie.lognit.cli.input.*;
+import net.intelie.lognit.cli.model.Lognit;
+import net.intelie.lognit.cli.state.Clock;
 import net.intelie.lognit.cli.state.RestStateStorage;
+import net.intelie.lognit.cli.state.StateKeeper;
+import org.apache.commons.httpclient.HttpClient;
 
 import java.io.*;
 
-public class Main extends AbstractModule {
+public class Main {
     public static void main(String... args) throws Exception {
+        //it's just because I couldn't find a faster IOC container
         System.exit(resolveEntryPoint().run(args));
     }
 
-    public static EntryPoint resolveEntryPoint() {
-        return Guice.createInjector(new Main())
-                .getInstance(EntryPoint.class);
-    }
+    public static EntryPoint resolveEntryPoint() throws IOException {
+        final File stateFile = new File(new File(System.getProperty("user.home"), ".lognit"), "state");
 
-    @Override
-    protected void configure() {
-        bind(RestClient.class).to(RestClientImpl.class).in(Singleton.class);
-    }
+        final Jsonizer jsonizer = new Jsonizer(new Gson());
 
-    @Provides
-    private ConsoleReader console() throws IOException {
-        return new ConsoleReader(
+        final ConsoleReader consoleReader = new ConsoleReader(
                 new FileInputStream(FileDescriptor.in),
                 new PrintWriter(System.err));
-    }
 
-    @Provides
-    private UserConsole userConsole(ConsoleReader console) throws IOException {
-        return new UserConsole(console, new PrintWriter(System.out));
-    }
+        final UserConsole userConsole = new UserConsole(consoleReader, new PrintWriter(System.out));
 
-    @Provides
-    private RestStateStorage storage(Jsonizer jsonizer) {
-        return new RestStateStorage(new File(new File(System.getProperty("user.home"), ".lognit"), "state"), jsonizer);
+        final RestStateStorage storage = new RestStateStorage(stateFile, jsonizer);
+
+        final HttpClient httpClient = new HttpClient();
+        final MethodFactory methodFactory = new MethodFactory();
+        final RestClient restClient = new RestClientImpl(httpClient, methodFactory, new BayeuxFactory(), jsonizer);
+
+        final StateKeeper stateKeeper = new StateKeeper(restClient, storage);
+
+        final PlainFormatter plainFormatter = new PlainFormatter(userConsole);
+        final ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
+        final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(userConsole, coloredFormatter, plainFormatter);
+
+        final Lognit lognit = new Lognit(restClient);
+        final Clock clock = new Clock();
+        final InfoRunner runner = new InfoRunner(userConsole);
+        final RequestRunner requestRunner = new RequestRunner(userConsole, lognit, runner, bufferListenerFactory, clock);
+
+        final UsageRunner usageRunner = new UsageRunner(userConsole);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                stateKeeper.end();
+            }
+        }));
+
+        return new EntryPoint(userConsole, stateKeeper, requestRunner, usageRunner);
     }
 }

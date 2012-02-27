@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.inject.Inject;
 import jline.ConsoleReader;
 
 import java.io.IOException;
@@ -11,7 +10,6 @@ public class UserConsole {
     private final ConsoleReader console;
     private final PrintWriter stdout;
 
-    @Inject
     public UserConsole(ConsoleReader console, PrintWriter stdout) {
         this.console = console;
         this.stdout = stdout;

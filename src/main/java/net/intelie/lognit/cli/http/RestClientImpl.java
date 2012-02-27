@@ -1,7 +1,6 @@
 package net.intelie.lognit.cli.http;
 
 import com.google.common.base.Objects;
-import com.google.inject.Inject;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -23,7 +22,6 @@ public class RestClientImpl implements RestClient {
     private String server;
     private boolean authenticated;
 
-    @Inject
     public RestClientImpl(HttpClient client, MethodFactory methods, BayeuxFactory bayeux, Jsonizer jsonizer) {
         this.client = client;
         this.methods = methods;

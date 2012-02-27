@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.model;
 
-import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestListener;
 import net.intelie.lognit.cli.http.RestListenerHandle;
@@ -16,7 +15,6 @@ public class Lognit {
     public static final String URL_TERMS = "/rest/terms?field=%s&term=%s&avoidColons=true&size=100";
     private final RestClient client;
 
-    @Inject
     public Lognit(RestClient client) {
         this.client = client;
     }

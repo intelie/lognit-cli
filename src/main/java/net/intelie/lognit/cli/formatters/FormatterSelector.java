@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.formatters;
 
-import com.google.inject.Inject;
 import net.intelie.lognit.cli.input.UserConsole;
 
 public class FormatterSelector {
@@ -8,7 +7,6 @@ public class FormatterSelector {
     private final ColoredFormatter colored;
     private final PlainFormatter plain;
 
-    @Inject
     public FormatterSelector(UserConsole console, ColoredFormatter colored, PlainFormatter plain) {
         this.console = console;
         this.colored = colored;

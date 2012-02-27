@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.inject.Inject;
 import net.intelie.lognit.cli.http.RestListenerHandle;
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
@@ -19,7 +18,6 @@ public class RequestRunner {
     private final BufferListenerFactory factory;
     private final Clock clock;
 
-    @Inject
     public RequestRunner(UserConsole console, Lognit lognit, InfoRunner infoRunner, BufferListenerFactory factory, Clock clock) {
         this.console = console;
         this.lognit = lognit;

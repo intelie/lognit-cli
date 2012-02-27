@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.input;
 
-import com.google.inject.Inject;
 import net.intelie.lognit.cli.state.StateKeeper;
 
 public class EntryPoint {
@@ -10,7 +9,6 @@ public class EntryPoint {
     private final RequestRunner request;
     private final UsageRunner usage;
 
-    @Inject
     public EntryPoint(UserConsole console, StateKeeper state, RequestRunner request, UsageRunner usage) {
         this.console = console;
         this.state = state;
