@@ -4,6 +4,8 @@ import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public class Message implements Comparable<Message> {
     private static final Comparator COMPARATOR = new NullComparator(
@@ -16,12 +18,13 @@ public class Message implements Comparable<Message> {
     private final String severity;
     private final String app;
     private final String message;
+    private final Map<String, List<String>> _metadata;
 
     public Message(String id) {
-        this(id, null, null, null, null, null, null, null);
+        this(id, null, null, null, null, null, null, null, null);
     }
 
-    public Message(String id, String host, String date, String time, String facility, String severity, String app, String message) {
+    public Message(String id, String host, String date, String time, String facility, String severity, String app, String message, Map<String, List<String>> _metadata) {
         this.id = id;
         this.host = host;
         this.date = date;
@@ -30,6 +33,7 @@ public class Message implements Comparable<Message> {
         this.severity = severity;
         this.app = app;
         this.message = message;
+        this._metadata = _metadata;
     }
 
     public String formattedDateTime() {
@@ -76,4 +80,7 @@ public class Message implements Comparable<Message> {
         return severity;
     }
 
+    public Map<String, List<String>> getMetadata() {
+        return _metadata;
+    }
 }

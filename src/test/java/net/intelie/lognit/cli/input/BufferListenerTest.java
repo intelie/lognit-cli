@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.input;
 
+import net.intelie.lognit.cli.formatters.ColoredFormatter;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.MessageBag;
 import org.junit.Before;
@@ -12,12 +13,12 @@ import static org.mockito.Mockito.*;
 
 public class BufferListenerTest {
 
-    private ColoredMessagePrinter printer;
+    private ColoredFormatter printer;
     private BufferListener listener;
 
     @Before
     public void setUp() throws Exception {
-        printer = mock(ColoredMessagePrinter.class);
+        printer = mock(ColoredFormatter.class);
         listener = new BufferListener(printer, false);
     }
 

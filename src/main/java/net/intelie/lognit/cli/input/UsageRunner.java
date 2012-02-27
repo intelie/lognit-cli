@@ -7,7 +7,7 @@ import java.nio.charset.Charset;
 public class UsageRunner {
     private final UserConsole console;
 
-    public UsageRunner(UserConsole console) {
+     public UsageRunner(UserConsole console) {
         this.console = console;
     }
 

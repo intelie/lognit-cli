@@ -8,12 +8,12 @@ public class UserOptions {
     private final String user;
     private final String password;
     private final String query;
+    private final String format;
     private final boolean follow;
     private final boolean info;
     private final boolean help;
     private final int timeout;
     private final int lines;
-    private final boolean noColor;
     private final boolean complete;
     private final boolean verbose;
 
@@ -25,9 +25,9 @@ public class UserOptions {
         password = parser.option(String.class, "-p", "--pass", "--password");
         timeout = def(parser.option(Integer.class, "-t", "--timeout"), 10);
         lines = def(parser.option(Integer.class, "-n", "--lines"), 20);
+        format = def(parser.option(String.class, "-b", "--format"), "colored");
         follow = parser.flag("-f", "--follow");
         info = parser.flag("-i", "--info");
-        noColor = parser.flag("-b", "--no-color");
         complete = parser.flag("-c", "--complete");
         verbose = parser.flag("-v", "--verbose");
         query = parser.text();
@@ -89,9 +89,6 @@ public class UserOptions {
         return user == null || password == null;
     }
 
-    public boolean isNoColor() {
-        return noColor;
-    }
 
     public boolean isComplete() {
         return complete;
@@ -100,6 +97,11 @@ public class UserOptions {
     public boolean isVerbose() {
         return verbose;
     }
+
+    public String getFormat() {
+        return format;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -114,7 +116,7 @@ public class UserOptions {
                 Objects.equal(this.timeout, that.timeout) &&
                 Objects.equal(this.lines, that.lines) &&
                 Objects.equal(this.info, that.info) &&
-                Objects.equal(this.noColor, that.noColor) &&
+                Objects.equal(this.format, that.format) &&
                 Objects.equal(this.complete, that.complete) &&
                 Objects.equal(this.verbose, that.verbose) &&
                 Objects.equal(this.help, that.help);
@@ -122,9 +124,8 @@ public class UserOptions {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, noColor, complete, verbose, help);
+        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, format, complete, verbose, help);
     }
-
 
 
 }

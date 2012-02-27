@@ -1,11 +1,12 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli.formatters;
 
+import net.intelie.lognit.cli.input.UserConsole;
 import net.intelie.lognit.cli.model.Message;
 
-public class DefaultMessagePrinter implements MessagePrinter {
+public class PlainFormatter implements Formatter {
     private final UserConsole console;
 
-    public DefaultMessagePrinter(UserConsole console) {
+    public PlainFormatter(UserConsole console) {
         this.console = console;
     }
 

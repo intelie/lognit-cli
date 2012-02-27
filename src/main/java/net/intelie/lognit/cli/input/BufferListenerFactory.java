@@ -1,19 +1,17 @@
 package net.intelie.lognit.cli.input;
 
-public class BufferListenerFactory {
-    private final UserConsole console;
-    private final ColoredMessagePrinter coloredPrinter;
-    private final DefaultMessagePrinter defaultPrinter;
+import net.intelie.lognit.cli.formatters.ColoredFormatter;
+import net.intelie.lognit.cli.formatters.FormatterSelector;
+import net.intelie.lognit.cli.formatters.PlainFormatter;
 
-    public BufferListenerFactory(UserConsole console, ColoredMessagePrinter coloredPrinter, DefaultMessagePrinter defaultPrinter) {
-        this.console = console;
-        this.coloredPrinter = coloredPrinter;
-        this.defaultPrinter = defaultPrinter;
+public class BufferListenerFactory {
+    private final FormatterSelector selector;
+
+    public BufferListenerFactory(FormatterSelector selector) {
+        this.selector = selector;
     }
 
-    public BufferListener create(boolean forceNoColor, boolean verbose) {
-        if (!console.isTTY() || forceNoColor)
-            return new BufferListener(defaultPrinter, verbose);
-        return new BufferListener(coloredPrinter, verbose);
+    public BufferListener create(String format, boolean verbose) {
+        return new BufferListener(selector.select(format), verbose);
     }
 }

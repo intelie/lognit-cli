@@ -1,12 +1,13 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli.formatters;
 
 import jline.ANSIBuffer;
+import net.intelie.lognit.cli.input.UserConsole;
 import net.intelie.lognit.cli.model.Message;
 
-public class ColoredMessagePrinter implements MessagePrinter {
+public class ColoredFormatter implements Formatter {
     private final UserConsole console;
 
-    public ColoredMessagePrinter(UserConsole console) {
+    public ColoredFormatter(UserConsole console) {
         this.console = console;
     }
 

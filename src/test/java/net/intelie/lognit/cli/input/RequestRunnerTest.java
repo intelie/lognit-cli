@@ -53,18 +53,26 @@ public class RequestRunnerTest {
         verify(infoRunner).printInfo("someserver", summary);
     }
 
+    @Test
+    public void whenHasQueryExecutesUsingCorrectFormatter() throws Exception {
+        runner.run(new UserOptions("blablabla", "-n", "42", "-b", "plain"));
+        BufferListener listener = factory.create("plain", false);
+        verify(lognit).search("blablabla", 42, listener);
+        verify(lognit.search("blablabla", 42, listener)).close();
+    }
 
     @Test
     public void whenHasQueryExecutesSearchAndClose() throws Exception {
         runner.run(new UserOptions("blablabla", "-n", "42"));
-        verify(lognit).search("blablabla", 42, factory.create(false, false));
-        verify(lognit.search("blablabla", 42, factory.create(false, false))).close();
+        BufferListener listener = factory.create("colored", false);
+        verify(lognit).search("blablabla", 42, listener);
+        verify(lognit.search("blablabla", 42, listener)).close();
     }
 
     @Test
     public void whenHasQueryToFollowExecutesReleasesAndWait() throws Exception {
         runner.run(new UserOptions("blablabla", "-n", "42", "-f"));
-        BufferListener listener = factory.create(false, false);
+        BufferListener listener = factory.create("colored", false);
         verify(lognit).search("blablabla", 42, listener);
         verify(listener).releaseAll();
         verify(console).waitChar('q');
@@ -75,7 +83,7 @@ public class RequestRunnerTest {
     public void whenHasQueryToFollowExecutesReleasesAndWaitVerbosely() throws Exception {
         when(clock.currentMillis()).thenReturn(10L, 42L);
         runner.run(new UserOptions("blablabla", "-n", "42", "-f", "-v"));
-        BufferListener listener = factory.create(false, true);
+        BufferListener listener = factory.create("colored", true);
         verify(lognit).search("blablabla", 42, listener);
         verify(console).println(RequestRunner.HANDSHAKE, 32L);
         verify(listener).releaseAll();

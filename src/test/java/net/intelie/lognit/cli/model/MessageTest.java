@@ -4,6 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static net.intelie.lognit.cli.model.JsonHelpers.*;
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -16,7 +21,8 @@ public class MessageTest {
             "facility:'D', " +
             "severity:'E', " +
             "app:'F', " +
-            "id:'123'}";
+            "id:'123', " +
+            "_metadata:{'aaa': ['bbb', 'ccc']}}";
 
     @Test
     public void whenDeserializing() {
@@ -31,21 +37,28 @@ public class MessageTest {
         assertThat(message.getSeverity()).isEqualTo("E");
         assertThat(message.getApp()).isEqualTo("F");
         assertThat(message.getMessage()).isEqualTo("abc");
+        Map<String, List<String>> metadata = message.getMetadata();
+        assertThat(metadata.size()).isEqualTo(1);
+        assertThat(metadata.get("aaa")).containsExactly("bbb", "ccc");
     }
 
     @Test
     public void whenSerializing() {
-        JsonElement actual = jsonElement(new Message("123", "A", "B", "C", "D", "E", "F", "abc"));
+        Map<String, List<String>> metadata = new HashMap<String, List<String>>() {{
+            put("aaa", Arrays.asList("bbb", "ccc"));
+        }};
+
+        JsonElement actual = jsonElement(new Message("123", "A", "B", "C", "D", "E", "F", "abc", metadata));
 
         assertThat(actual).isEqualTo(jsonExpected(TEST_JSON));
     }
 
     @Test
     public void whenComparing() {
-        Message m1 = new Message("A", null, null, null, null, null, null, null);
-        Message m2 = new Message("a", null, null, null, null, null, null, null);
-        Message m3 = new Message("B", null, null, null, null, null, null, null);
-        Message m4 = new Message(null, null, null, null, null, null, null, null);
+        Message m1 = new Message("A");
+        Message m2 = new Message("a");
+        Message m3 = new Message("B");
+        Message m4 = new Message(null);
 
         assertThat(m1.compareTo(m2)).isZero();
 
@@ -64,17 +77,17 @@ public class MessageTest {
 
     @Test
     public void whenFormattingDateTime() {
-        Message message = new Message(null, null, "20120213", "182653", null, null, null, null);
+        Message message = new Message(null, null, "20120213", "182653", null, null, null, null, null);
 
         assertThat(message.formattedDateTime()).isEqualTo("Feb 13 18:26:53");
     }
 
     @Test
     public void whenFormattingDateTimeWrong() {
-        Message message1 = new Message(null, null, "2012021", "182653", null, null, null, null);
-        Message message2 = new Message(null, null, "20120213", "82653", null, null, null, null);
-        Message message3 = new Message(null, null, "20121313", "182653", null, null, null, null);
-        Message message4 = new Message(null, null, null, null, null, null, null, null);
+        Message message1 = new Message(null, null, "2012021", "182653", null, null, null, null, null);
+        Message message2 = new Message(null, null, "20120213", "82653", null, null, null, null, null);
+        Message message3 = new Message(null, null, "20121313", "182653", null, null, null, null, null);
+        Message message4 = new Message(null, null, null, null, null, null, null, null, null);
 
         assertThat(message1.formattedDateTime()).isEqualTo("2012021182653");
         assertThat(message2.formattedDateTime()).isEqualTo("2012021382653");

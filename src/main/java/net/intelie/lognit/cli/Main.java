@@ -2,6 +2,10 @@ package net.intelie.lognit.cli;
 
 import com.google.gson.Gson;
 import jline.ConsoleReader;
+import net.intelie.lognit.cli.formatters.ColoredFormatter;
+import net.intelie.lognit.cli.formatters.FormatterSelector;
+import net.intelie.lognit.cli.formatters.JsonFormatter;
+import net.intelie.lognit.cli.formatters.PlainFormatter;
 import net.intelie.lognit.cli.http.*;
 import net.intelie.lognit.cli.input.*;
 import net.intelie.lognit.cli.model.Lognit;
@@ -37,9 +41,12 @@ public class Main {
 
         final StateKeeper stateKeeper = new StateKeeper(restClient, storage);
 
-        final DefaultMessagePrinter defaultPrinter = new DefaultMessagePrinter(userConsole);
-        final ColoredMessagePrinter coloredPrinter = new ColoredMessagePrinter(userConsole);
-        final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(userConsole, coloredPrinter, defaultPrinter);
+        final PlainFormatter plainFormatter = new PlainFormatter(userConsole);
+        final ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
+        final JsonFormatter jsonFormatter = new JsonFormatter(userConsole, jsonizer);
+        final FormatterSelector selector = new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter);
+
+        final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(selector);
 
         final Lognit lognit = new Lognit(restClient);
         final Clock clock = new Clock();

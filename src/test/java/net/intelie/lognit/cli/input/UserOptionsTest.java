@@ -18,7 +18,7 @@ public class UserOptionsTest {
         assertThat(opts.getTimeout()).isEqualTo(10);
         assertThat(opts.getTimeoutInMilliseconds()).isEqualTo(10000);
         assertThat(opts.isFollow()).isEqualTo(false);
-        assertThat(opts.isNoColor()).isEqualTo(false);
+        assertThat(opts.getFormat()).isEqualTo("colored");
         assertThat(opts.isComplete()).isEqualTo(false);
         assertThat(opts.isUsage()).isEqualTo(false);
         assertThat(opts.isVerbose()).isEqualTo(false);
@@ -26,7 +26,7 @@ public class UserOptionsTest {
 
     @Test
     public void canConstructWithNonDefaults() {
-        UserOptions opts = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b", "-c", "-v");
+        UserOptions opts = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b", "plain", "-c", "-v");
         assertThat(opts.getServer()).isEqualTo("A");
         assertThat(opts.hasServer()).isEqualTo(true);
         assertThat(opts.getUser()).isEqualTo("B");
@@ -38,7 +38,7 @@ public class UserOptionsTest {
         assertThat(opts.getTimeoutInMilliseconds()).isEqualTo(42000);
         assertThat(opts.isFollow()).isEqualTo(true);
         assertThat(opts.isInfo()).isEqualTo(true);
-        assertThat(opts.isNoColor()).isEqualTo(true);
+        assertThat(opts.getFormat()).isEqualTo("plain");
         assertThat(opts.isComplete()).isEqualTo(true);
         assertThat(opts.isUsage()).isEqualTo(true);
         assertThat(opts.isVerbose()).isEqualTo(true);
@@ -72,19 +72,19 @@ public class UserOptionsTest {
 
     @Test
     public void whenAreDifferent() {
-        UserOptions opts1 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "-?", "-i", "-c", "-v");
-        UserOptions opts2 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "-?", "-c", "-v");
-        UserOptions opts3 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "-i", "-c", "-v");
-        UserOptions opts4 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-b", "-?", "-i", "-c", "-v");
-        UserOptions opts5 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-f", "-b", "-?", "-i", "-c", "-v");
-        UserOptions opts6 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-t", "42", "-f", "-b", "-?", "-i", "-c", "-v");
-        UserOptions opts7 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "-n", "43", "-t", "42", "-f", "-b", "-?", "-i", "-c", "-v");
-        UserOptions opts8 = new UserOptions("-s", "A", "-u", "B", "D", "-n", "43", "-t", "42", "-f", "-b", "-?", "-i", "-c", "-v");
-        UserOptions opts9 = new UserOptions("-s", "A", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "-?", "-i", "-c", "-v");
-        UserOptions opts10 = new UserOptions("-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "-?", "-i", "-c", "-v");
+        UserOptions opts1 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
+        UserOptions opts2 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-c", "-v");
+        UserOptions opts3 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-i", "-c", "-v");
+        UserOptions opts4 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-b", "plain", "-?", "-i", "-c", "-v");
+        UserOptions opts5 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
+        UserOptions opts6 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
+        UserOptions opts7 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
+        UserOptions opts8 = new UserOptions("-s", "A", "-u", "B", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
+        UserOptions opts9 = new UserOptions("-s", "A", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
+        UserOptions opts10 = new UserOptions("-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
         UserOptions opts11 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-c", "-v");
-        UserOptions opts12 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "-?", "-i", "-v");
-        UserOptions opts13 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "-?", "-i", "-c");
+        UserOptions opts12 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-v");
+        UserOptions opts13 = new UserOptions("-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c");
 
         assertThat(opts1).isNotEqualTo(opts2);
         assertThat(opts1).isNotEqualTo(opts3);
