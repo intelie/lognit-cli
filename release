@@ -1,0 +1,4 @@
+#!/bin/sh
+mvn versions:set -DnewVersion=$1
+git commit -am "release version $1"
+git tag $1
