@@ -22,7 +22,7 @@ public class MessageTest {
             "severity:'E', " +
             "app:'F', " +
             "id:'123', " +
-            "_metadata:{'aaa': ['bbb', 'ccc']}}";
+            "metadata:{'aaa': ['bbb', 'ccc']}}";
 
     @Test
     public void whenDeserializing() {

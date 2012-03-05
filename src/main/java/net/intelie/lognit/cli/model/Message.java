@@ -18,13 +18,13 @@ public class Message implements Comparable<Message> {
     private final String severity;
     private final String app;
     private final String message;
-    private final Map<String, List<String>> _metadata;
+    private final Map<String, List<String>> metadata;
 
     public Message(String id) {
         this(id, null, null, null, null, null, null, null, null);
     }
 
-    public Message(String id, String host, String date, String time, String facility, String severity, String app, String message, Map<String, List<String>> _metadata) {
+    public Message(String id, String host, String date, String time, String facility, String severity, String app, String message, Map<String, List<String>> metadata) {
         this.id = id;
         this.host = host;
         this.date = date;
@@ -33,7 +33,7 @@ public class Message implements Comparable<Message> {
         this.severity = severity;
         this.app = app;
         this.message = message;
-        this._metadata = _metadata;
+        this.metadata = metadata;
     }
 
     public String formattedDateTime() {
@@ -81,6 +81,6 @@ public class Message implements Comparable<Message> {
     }
 
     public Map<String, List<String>> getMetadata() {
-        return _metadata;
+        return metadata;
     }
 }

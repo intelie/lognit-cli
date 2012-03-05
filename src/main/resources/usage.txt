@@ -1,3 +1,4 @@
+Lognit Command Line Interface v${project.version}
 Usage: nit [QUERY] [OPTIONS]
 
 Options:
