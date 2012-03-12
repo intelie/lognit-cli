@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.model;
 
+import net.intelie.lognit.cli.http.Entity;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestListener;
 import net.intelie.lognit.cli.http.RestListenerHandle;
@@ -47,6 +48,14 @@ public class LognitTest {
         Welcome welcome = new Welcome("abc");
         when(client.get("/rest/users/welcome", Welcome.class)).thenReturn(welcome);
         assertThat(lognit.welcome()).isEqualTo(welcome);
+    }
+
+    @Test
+    public void testPurge() throws Exception {
+        Purge purge = new Purge("abc");
+        Entity entity = new Entity().add("expression", "qwe").add("windowLength", "42");
+        when(client.post("/rest/purge", entity, Purge.class)).thenReturn(purge);
+        assertThat(lognit.purge("qwe", 42)).isEqualTo(purge);
     }
 
     @Test

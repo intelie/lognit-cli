@@ -32,4 +32,30 @@ public class EntityTest {
         assertThat(empty).isNotSameAs(entity2);
         assertThat(entity1).isNotSameAs(entity2);
     }
+
+    @Test
+    public void whenAreEqual() {
+        Entity entity1 = new Entity().add("A", "B");
+        Entity entity2 = new Entity().add("A", "B");
+
+        assertThat(entity1).isEqualTo(entity1);
+        assertThat(entity1).isEqualTo(entity2);
+        assertThat(entity1.hashCode()).isEqualTo(entity1.hashCode());
+        assertThat(entity1.hashCode()).isEqualTo(entity2.hashCode());
+    }
+
+    @Test
+    public void whenAreDifferent() {
+        Entity entity1 = new Entity().add("A", "B");
+        Entity entity2 = new Entity().add("A", "C");
+        Entity entity3 = new Entity().add("B", "B");
+
+        assertThat(entity1).isNotEqualTo(entity2);
+        assertThat(entity1).isNotEqualTo(entity3);
+        assertThat(entity1).isNotEqualTo(new Object());
+
+        assertThat(entity1.hashCode()).isNotEqualTo(entity2.hashCode());
+        assertThat(entity1.hashCode()).isNotEqualTo(entity3.hashCode());
+        assertThat(entity1.hashCode()).isNotEqualTo(new Object().hashCode());
+    }
 }
