@@ -15,6 +15,7 @@ public class MainRunnerTest {
     private InfoRunner info;
     private SearchRunner search;
     private MainRunner main;
+    private PurgeRunner purge;
 
     @Before
     public void setUp() throws Exception {
@@ -23,39 +24,48 @@ public class MainRunnerTest {
         completion = mock(CompletionRunner.class);
         info = mock(InfoRunner.class);
         search = mock(SearchRunner.class);
-        main = new MainRunner(search, info, completion, usage, welcome);
+        purge = mock(PurgeRunner.class);
+        main = new MainRunner(search, info, completion, usage, welcome, purge);
     }
 
     @Test
     public void usageWillBe1InPriority() throws Exception {
-        UserOptions opts = new UserOptions("-i", "-c", "-?", "abc");
+        UserOptions opts = new UserOptions("--purge", "-i", "-c", "-?", "abc");
         main.run(opts);
         verify(usage).run(opts);
     }
 
     @Test
     public void infoWillBe2InPriority() throws Exception {
-        UserOptions opts = new UserOptions("-i", "-c", "abc");
+        UserOptions opts = new UserOptions("--purge", "-i", "-c", "abc");
         main.run(opts);
         verify(info).run(opts);
     }
 
     @Test
     public void completeWillBe3InPriority() throws Exception {
-        UserOptions opts = new UserOptions("-c", "abc");
+        UserOptions opts = new UserOptions("--purge", "-c", "abc");
         main.run(opts);
         verify(completion).run(opts);
     }
 
+
     @Test
-    public void searchWillBe4InPriority() throws Exception {
+    public void purgeWillBe4InPriority() throws Exception {
+        UserOptions opts = new UserOptions("--purge", "abc");
+        main.run(opts);
+        verify(purge).run(opts);
+    }
+
+    @Test
+    public void searchWillBeAlmostLastInPriority() throws Exception {
         UserOptions opts = new UserOptions("abc");
         main.run(opts);
         verify(search).run(opts);
     }
 
     @Test
-    public void welcomeWillBe5InPriority() throws Exception {
+    public void welcomeWillBeLastInPriority() throws Exception {
         UserOptions opts = new UserOptions();
         main.run(opts);
         verify(welcome).run(opts);

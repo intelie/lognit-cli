@@ -12,6 +12,7 @@ public class UserOptions {
     private final boolean follow;
     private final boolean info;
     private final boolean help;
+    private final boolean purge;
     private final int timeout;
     private final int lines;
     private final boolean complete;
@@ -26,6 +27,7 @@ public class UserOptions {
         timeout = def(parser.option(Integer.class, "-t", "--timeout"), 10);
         lines = def(parser.option(Integer.class, "-n", "--lines"), 20);
         format = def(parser.option(String.class, "-b", "--format"), "colored");
+        purge = parser.flag("--purge");
         follow = parser.flag("-f", "--follow");
         info = parser.flag("-i", "--info");
         complete = parser.flag("-c", "--complete");
@@ -94,14 +96,18 @@ public class UserOptions {
         return complete;
     }
 
+    public boolean isPurge() {
+        return purge;
+    }
+
     public boolean isVerbose() {
         return verbose;
     }
 
+
     public String getFormat() {
         return format;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -113,6 +119,7 @@ public class UserOptions {
                 Objects.equal(this.password, that.password) &&
                 Objects.equal(this.query, that.query) &&
                 Objects.equal(this.follow, that.follow) &&
+                Objects.equal(this.purge, that.purge) &&
                 Objects.equal(this.timeout, that.timeout) &&
                 Objects.equal(this.lines, that.lines) &&
                 Objects.equal(this.info, that.info) &&
@@ -122,10 +129,9 @@ public class UserOptions {
                 Objects.equal(this.help, that.help);
     }
 
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, user, password, query, follow, timeout, lines, info, format, complete, verbose, help);
+        return Objects.hashCode(server, user, password, query, follow, purge, timeout, lines, info, format, complete, verbose, help);
     }
-
-
 }

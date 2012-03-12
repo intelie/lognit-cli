@@ -23,37 +23,31 @@ public class Main {
     }
 
     public static EntryPoint resolveEntryPoint() throws IOException {
-        final File stateFile = new File(new File(System.getProperty("user.home"), ".lognit"), "state");
+        File stateFile = new File(new File(System.getProperty("user.home"), ".lognit"), "state");
 
-        final Jsonizer jsonizer = new Jsonizer();
+        Jsonizer jsonizer = new Jsonizer();
 
-        final UserConsole userConsole = makeUserConsole();
+        UserConsole userConsole = makeUserConsole();
 
-        final RestStateStorage storage = new RestStateStorage(stateFile, jsonizer);
+        RestStateStorage storage = new RestStateStorage(stateFile, jsonizer);
 
-        final HttpClient httpClient = new HttpClient();
-        final MethodFactory methodFactory = new MethodFactory();
-        final RestClient restClient = new RestClientImpl(httpClient, methodFactory, new BayeuxFactory(), jsonizer);
+        HttpClient httpClient = new HttpClient();
+        MethodFactory methodFactory = new MethodFactory();
+        RestClient restClient = new RestClientImpl(httpClient, methodFactory, new BayeuxFactory(), jsonizer);
 
-        final StateKeeper stateKeeper = new StateKeeper(restClient, storage);
+        StateKeeper stateKeeper = new StateKeeper(restClient, storage);
 
-        final FormatterSelector selector = makeFormatterSelector(jsonizer, userConsole);
+        FormatterSelector selector = makeFormatterSelector(jsonizer, userConsole);
 
-        final BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(selector);
+        BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(selector);
 
-        final Lognit lognit = new Lognit(restClient);
-        final Clock clock = new Clock();
-        final MainRunner mainRunner = makeMainRunner(userConsole, bufferListenerFactory, lognit, clock);
+        Lognit lognit = new Lognit(restClient);
+        Clock clock = new Clock();
+        MainRunner mainRunner = makeMainRunner(userConsole, bufferListenerFactory, lognit, clock);
 
-        final AuthenticatorRunner authenticatorRunner = new AuthenticatorRunner(userConsole, lognit, mainRunner);
+        AuthenticatorRunner authenticatorRunner = new AuthenticatorRunner(userConsole, lognit, mainRunner);
 
-
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                stateKeeper.end();
-            }
-        }));
+        stateKeeper.register(Runtime.getRuntime());
 
         return new EntryPoint(userConsole, stateKeeper, authenticatorRunner);
     }
@@ -67,19 +61,20 @@ public class Main {
     }
 
     private static FormatterSelector makeFormatterSelector(Jsonizer jsonizer, UserConsole userConsole) {
-        final PlainFormatter plainFormatter = new PlainFormatter(userConsole);
-        final ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
-        final JsonFormatter jsonFormatter = new JsonFormatter(userConsole, jsonizer);
-        final FlatJsonFormatter flatJsonFormatter = new FlatJsonFormatter(userConsole, jsonizer);
+        PlainFormatter plainFormatter = new PlainFormatter(userConsole);
+        ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
+        JsonFormatter jsonFormatter = new JsonFormatter(userConsole, jsonizer);
+        FlatJsonFormatter flatJsonFormatter = new FlatJsonFormatter(userConsole, jsonizer);
         return new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter, flatJsonFormatter);
     }
 
     private static MainRunner makeMainRunner(UserConsole userConsole, BufferListenerFactory bufferListenerFactory, Lognit lognit, Clock clock) {
-        final InfoRunner info = new InfoRunner(userConsole, lognit);
-        final SearchRunner search = new SearchRunner(userConsole, lognit, bufferListenerFactory, clock);
-        final CompletionRunner completion = new CompletionRunner(userConsole, lognit);
-        final UsageRunner usage = new UsageRunner(userConsole);
-        final WelcomeRunner welcome = new WelcomeRunner(userConsole, lognit);
-        return new MainRunner(search, info, completion, usage, welcome);
+        InfoRunner info = new InfoRunner(userConsole, lognit);
+        SearchRunner search = new SearchRunner(userConsole, lognit, bufferListenerFactory, clock);
+        CompletionRunner completion = new CompletionRunner(userConsole, lognit);
+        UsageRunner usage = new UsageRunner(userConsole);
+        WelcomeRunner welcome = new WelcomeRunner(userConsole, lognit);
+        PurgeRunner purge = new PurgeRunner();
+        return new MainRunner(search, info, completion, usage, welcome, purge);
     }
 }

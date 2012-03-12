@@ -4,6 +4,7 @@ import net.intelie.lognit.cli.http.RestClient;
 import org.apache.commons.httpclient.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -32,6 +33,19 @@ public class StateKeeperTest {
     @Test
     public void testEnd() throws Exception {
         keeper.end();
+        verify(storage).storeFrom(client);
+    }
+
+    @Test
+    public void testRegister() throws Exception {
+        Runtime runtime = mock(Runtime.class);
+        
+        keeper.register(runtime);
+
+        ArgumentCaptor<Thread> captor = ArgumentCaptor.forClass(Thread.class);
+        verify(runtime).addShutdownHook(captor.capture());
+        captor.getValue().run();
+        
         verify(storage).storeFrom(client);
     }
 }

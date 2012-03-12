@@ -18,4 +18,13 @@ public class StateKeeper {
     public void end() {
         storage.storeFrom(client);
     }
+
+    public void register(Runtime runtime) {
+        runtime.addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                StateKeeper.this.end();
+            }
+        });
+    }
 }

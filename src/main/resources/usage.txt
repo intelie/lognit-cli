@@ -16,6 +16,10 @@ Options:
   -v, --verbose               shows some stats while querying
   -?, --help                  shows this help
 
+Advanced:
+
+  --purge                     starts a purge process, instead of a search
+
 Examples:
 
   nit '*'                     searches everything
