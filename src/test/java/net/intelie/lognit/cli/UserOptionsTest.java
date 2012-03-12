@@ -27,6 +27,13 @@ public class UserOptionsTest {
     }
 
     @Test
+    public void defaultForLinesIs20millionWhenPurge() {
+        UserOptions opts = new UserOptions("--purge");
+        assertThat(opts.getLines()).isEqualTo(20000000);
+    }
+
+
+    @Test
     public void canConstructWithNonDefaults() {
         UserOptions opts = new UserOptions("--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b", "plain", "-c", "-v");
         assertThat(opts.getServer()).isEqualTo("A");

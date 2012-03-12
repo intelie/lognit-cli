@@ -172,6 +172,19 @@ public class RestClientImplTest {
     }
 
     @Test
+    public void willThrowOnUnsuccessfulRequest301() throws Exception {
+        mockGet("http://localhost/abc", "HTTP/1.0 301 OK", String.class, "BLABLA");
+
+        try {
+            rest.get("abc", String.class);
+            fail("should throw");
+        } catch (UnauthorizedException ex) {
+            assertThat(ex).isExactlyInstanceOf(UnauthorizedException.class);
+            assertThat(ex.getMessage()).isEqualTo("HTTP/1.0 301 OK");
+        }
+    }
+
+    @Test
     public void willThrowOnUnsuccessfulRequestLessThan100() throws Exception {
         mockGet("http://localhost/abc", "HTTP/1.0 101 OK", String.class, "BLABLA");
 

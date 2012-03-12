@@ -25,9 +25,9 @@ public class UserOptions {
         user = parser.option(String.class, "-u", "--user");
         password = parser.option(String.class, "-p", "--pass", "--password");
         timeout = def(parser.option(Integer.class, "-t", "--timeout"), 10);
-        lines = def(parser.option(Integer.class, "-n", "--lines"), 20);
-        format = def(parser.option(String.class, "-b", "--format"), "colored");
         purge = parser.flag("--purge");
+        lines = def(parser.option(Integer.class, "-n", "--lines"), purge ? 20000000 : 20);
+        format = def(parser.option(String.class, "-b", "--format"), "colored");
         follow = parser.flag("-f", "--follow");
         info = parser.flag("-i", "--info");
         complete = parser.flag("-c", "--complete");

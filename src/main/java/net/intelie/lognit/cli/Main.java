@@ -74,7 +74,7 @@ public class Main {
         CompletionRunner completion = new CompletionRunner(userConsole, lognit);
         UsageRunner usage = new UsageRunner(userConsole);
         WelcomeRunner welcome = new WelcomeRunner(userConsole, lognit);
-        PurgeRunner purge = new PurgeRunner();
+        PurgeRunner purge = new PurgeRunner(userConsole,  lognit);
         return new MainRunner(search, info, completion, usage, welcome, purge);
     }
 }

@@ -112,7 +112,7 @@ public class RestClientImpl implements RestClient {
 
         int response = client.executeMethod(method);
 
-        if (response >= 400 && response < 500)
+        if (response >= 300 && response < 500)
             throw new UnauthorizedException(method.getStatusLine());
 
         if (response < 200 || response >= 300)
