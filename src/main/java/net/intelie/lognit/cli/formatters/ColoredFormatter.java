@@ -1,7 +1,7 @@
 package net.intelie.lognit.cli.formatters;
 
 import jline.ANSIBuffer;
-import net.intelie.lognit.cli.input.UserConsole;
+import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.model.Message;
 
 public class ColoredFormatter implements Formatter {

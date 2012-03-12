@@ -1,6 +1,7 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli;
 
 import jline.ConsoleReader;
+import net.intelie.lognit.cli.UserConsole;
 import org.junit.Before;
 import org.junit.Test;
 

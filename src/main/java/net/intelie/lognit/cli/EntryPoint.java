@@ -1,19 +1,19 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli;
 
+import net.intelie.lognit.cli.runners.AuthenticatorRunner;
+import net.intelie.lognit.cli.runners.UsageRunner;
 import net.intelie.lognit.cli.state.StateKeeper;
 
 public class EntryPoint {
 
     private final UserConsole console;
     private final StateKeeper state;
-    private final RequestRunner request;
-    private final UsageRunner usage;
+    private final AuthenticatorRunner request;
 
-    public EntryPoint(UserConsole console, StateKeeper state, RequestRunner request, UsageRunner usage) {
+    public EntryPoint(UserConsole console, StateKeeper state, AuthenticatorRunner runner) {
         this.console = console;
         this.state = state;
-        this.request = request;
-        this.usage = usage;
+        this.request = runner;
     }
 
     public int run(String... args) {
@@ -21,10 +21,7 @@ public class EntryPoint {
 
         try {
             UserOptions options = new UserOptions(args);
-            if (options.isUsage())
-                return usage.run();
-            else
-                return request.run(options);
+            return request.run(options);
         } catch (Exception ex) {
             //put some verbose logging here
             console.println("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());

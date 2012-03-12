@@ -1,6 +1,6 @@
 package net.intelie.lognit.cli.formatters;
 
-import net.intelie.lognit.cli.input.UserConsole;
+import net.intelie.lognit.cli.UserConsole;
 
 public class FormatterSelector {
     private final UserConsole console;

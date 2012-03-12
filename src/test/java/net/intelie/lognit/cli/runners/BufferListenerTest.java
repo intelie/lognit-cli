@@ -1,4 +1,4 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli.runners;
 
 import net.intelie.lognit.cli.formatters.ColoredFormatter;
 import net.intelie.lognit.cli.model.Message;

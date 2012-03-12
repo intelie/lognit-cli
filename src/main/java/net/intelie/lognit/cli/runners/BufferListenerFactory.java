@@ -1,8 +1,6 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli.runners;
 
-import net.intelie.lognit.cli.formatters.ColoredFormatter;
 import net.intelie.lognit.cli.formatters.FormatterSelector;
-import net.intelie.lognit.cli.formatters.PlainFormatter;
 
 public class BufferListenerFactory {
     private final FormatterSelector selector;

@@ -1,5 +1,7 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli.runners;
 
+import net.intelie.lognit.cli.UserConsole;
+import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.model.Stats;
 import net.intelie.lognit.cli.model.StatsSummary;
 import org.junit.Before;
@@ -15,13 +17,15 @@ public class InfoRunnerTest {
 
     private UserConsole console;
     private InfoRunner runner;
+    private Lognit lognit;
     private InOrder orderly;
 
     @Before
     public void setUp() throws Exception {
         console = mock(UserConsole.class);
+        lognit = mock(Lognit.class);
         orderly = inOrder(console);
-        runner = new InfoRunner(console);
+        runner = new InfoRunner(console, lognit);
     }
 
     @Test
@@ -33,9 +37,10 @@ public class InfoRunnerTest {
                         new Stats("AA", 100, Arrays.asList("AAA", "BBB", "CCC"), null, null),
                         new Stats("BB", 50, Arrays.asList("DDD", "BBB", "CCC"), null, null)),
                 null, null, 0);
-
-        runner.printInfo("someserver", summary);
-
+        when(lognit.stats()).thenReturn(summary);
+        when(lognit.getServer()).thenReturn("someserver");
+        runner.run(null);
+        
         orderly.verify(console).printOut(InfoRunner.NO_MISSING_NODES, "someserver");
 
         orderly.verify(console).printOut("");
@@ -62,7 +67,9 @@ public class InfoRunnerTest {
                         new Stats("BB", 50, Arrays.asList("DDD", "BBB", "CCC"), null, null)),
                 null, null, 2);
 
-        runner.printInfo("someserver", summary);
+        when(lognit.stats()).thenReturn(summary);
+        when(lognit.getServer()).thenReturn("someserver");
+        runner.run(null);
 
         orderly.verify(console).printOut(InfoRunner.HAS_MISSING_NODES, "someserver", 2);
 
@@ -92,7 +99,9 @@ public class InfoRunnerTest {
                                 Arrays.asList(1L, 2L, 3L, 114L), Arrays.asList(1L*1024*1024, 2L*1024*1024, 3L*1024*1024, 114L*1024*1024))),
                 Arrays.asList(2L, 4L, 6L, 228L), Arrays.asList(2L*1024*1024, 4L*1024*1024, 6L*1024*1024, 228L*1024*1024), 0);
 
-        runner.printInfo("someserver", summary);
+        when(lognit.stats()).thenReturn(summary);
+        when(lognit.getServer()).thenReturn("someserver");
+        runner.run(null);
 
         orderly.verify(console).printOut(InfoRunner.NO_MISSING_NODES, "someserver");
 

@@ -1,5 +1,7 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli.runners;
 
+import net.intelie.lognit.cli.UserConsole;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -7,11 +9,18 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class UsageRunnerTest {
+
+    private UserConsole console;
+
+    @Before
+    public void setUp() throws Exception {
+        console = mock(UserConsole.class);
+    }
+
     @Test
     public void willPrintToConsole() {
-        UserConsole console = mock(UserConsole.class);
         UsageRunner printer = new UsageRunner(console);
-        assertThat(printer.run()).isEqualTo(0);
+        assertThat(printer.run(null)).isEqualTo(0);
         verify(console).println(anyString());
     }
 
@@ -20,7 +29,7 @@ public class UsageRunnerTest {
         UserConsole console = mock(UserConsole.class);
         doThrow(new RuntimeException()).when(console).println(anyString());
         UsageRunner printer = new UsageRunner(console);
-        printer.run();
+        printer.run(null);
         verify(console).println(anyString());
     }
 }

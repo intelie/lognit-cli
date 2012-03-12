@@ -64,7 +64,18 @@ public class RestClientImplTest {
     public void willExecuteSuccessfulRequest() throws Exception {
         HttpMethod method = mockReturn("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
 
-        assertThat(rest.request("abc", String.class)).isEqualTo("QWEQWE");
+        assertThat(rest.get("abc", String.class)).isEqualTo("QWEQWE");
+
+        verify(method, times(0)).getStatusLine();
+        verify(method).setDoAuthentication(false);
+        verify(client).executeMethod(methodFactory.get("http://localhost/abc"));
+    }
+
+    @Test
+    public void willExecuteSuccessfulRequestEvenIfIts201() throws Exception {
+        HttpMethod method = mockReturn("http://localhost/abc", "HTTP/1.0 201 OK", String.class, "QWEQWE");
+
+        assertThat(rest.get("abc", String.class)).isEqualTo("QWEQWE");
 
         verify(method, times(0)).getStatusLine();
         verify(method).setDoAuthentication(false);
@@ -78,7 +89,7 @@ public class RestClientImplTest {
 
         rest.setServer("someserver:9000");
         rest.authenticate("abc", "qwe");
-        assertThat(rest.request("abc", String.class)).isEqualTo("QWEQWE");
+        assertThat(rest.get("abc", String.class)).isEqualTo("QWEQWE");
 
         verify(method, times(0)).getStatusLine();
         verify(method, times(1)).setDoAuthentication(true);
@@ -91,7 +102,7 @@ public class RestClientImplTest {
 
         rest.setServer("someserver:9000");
         rest.authenticate("abc", "qwe");
-        assertThat(rest.request("/abc", String.class)).isEqualTo("QWEQWE");
+        assertThat(rest.get("/abc", String.class)).isEqualTo("QWEQWE");
 
         verify(method, times(0)).getStatusLine();
         verify(method, times(1)).setDoAuthentication(true);
@@ -120,14 +131,14 @@ public class RestClientImplTest {
         verify(client.getState()).addCookies(cookies);
 
         HttpMethod method = mockReturn("http://abcabc:1211/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
-        assertThat(rest.request("abc", String.class)).isEqualTo("QWEQWE");
+        assertThat(rest.get("abc", String.class)).isEqualTo("QWEQWE");
     }
 
     @Test
     public void willUseCompatibilityToHandleCookies() throws Exception {
         HttpMethod method = mockReturn("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "BLABLA");
 
-        rest.request("abc", String.class);
+        rest.get("abc", String.class);
 
         verify(method.getParams()).setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
     }
@@ -137,7 +148,7 @@ public class RestClientImplTest {
         mockReturn("http://localhost/abc", "HTTP/1.0 401 OK", String.class, "BLABLA");
 
         try {
-            rest.request("abc", String.class);
+            rest.get("abc", String.class);
             fail("should throw");
         } catch (UnauthorizedException ex) {
             assertThat(ex).isExactlyInstanceOf(UnauthorizedException.class);
@@ -150,7 +161,7 @@ public class RestClientImplTest {
         mockReturn("http://localhost/abc", "HTTP/1.0 501 OK", String.class, "BLABLA");
 
         try {
-            rest.request("abc", String.class);
+            rest.get("abc", String.class);
             fail("should throw");
         } catch (RequestFailedException ex) {
             assertThat(ex).isExactlyInstanceOf(RequestFailedException.class);

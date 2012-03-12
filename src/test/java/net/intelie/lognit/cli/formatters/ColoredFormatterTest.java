@@ -1,6 +1,6 @@
 package net.intelie.lognit.cli.formatters;
 
-import net.intelie.lognit.cli.input.UserConsole;
+import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.model.Message;
 import org.junit.Before;
 import org.junit.Test;

@@ -8,6 +8,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
 import org.cometd.client.BayeuxClient;
 
@@ -62,7 +63,7 @@ public class RestClientImpl implements RestClient {
     }
 
     @Override
-    public <T> T request(String uri, Class<T> responseClass) throws IOException {
+    public <T> T get(String uri, Class<T> responseClass) throws IOException {
         uri = prependServer(uri);
         HttpMethod method = execute(uri);
 
@@ -101,7 +102,7 @@ public class RestClientImpl implements RestClient {
         method.setDoAuthentication(authenticated);
 
         int response = client.executeMethod(method);
-        if (response == 200)
+        if (response >= 200 && response < 300)
             return method;
 
         if (response < 500)

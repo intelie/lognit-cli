@@ -32,20 +32,20 @@ public class Lognit {
     }
 
     public RestListenerHandle search(String query, int windowLength, RestListener<MessageBag> listener) throws IOException {
-        SearchChannel channel = client.request(make(URL_SEARCH, encode(query), windowLength), SearchChannel.class);
+        SearchChannel channel = client.get(make(URL_SEARCH, encode(query), windowLength), SearchChannel.class);
         return client.listen(channel.getChannel(), MessageBag.class, listener);
     }
 
     public Terms terms(String field, String term) throws IOException {
-        return client.request(make(URL_TERMS, encode(field), encode(term)), Terms.class);
+        return client.get(make(URL_TERMS, encode(field), encode(term)), Terms.class);
     }
 
     public Welcome welcome() throws IOException {
-        return client.request(URL_WELCOME, Welcome.class);
+        return client.get(URL_WELCOME, Welcome.class);
     }
 
     public StatsSummary stats() throws IOException {
-        return client.request(URL_STATS, StatsSummary.class);
+        return client.get(URL_STATS, StatsSummary.class);
     }
 
     private String encode(String value) throws UnsupportedEncodingException {

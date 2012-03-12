@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.model;
 
-import net.intelie.lognit.cli.http.BayeuxHandle;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestListener;
 import net.intelie.lognit.cli.http.RestListenerHandle;
@@ -46,21 +45,21 @@ public class LognitTest {
     @Test
     public void testWelcome() throws Exception {
         Welcome welcome = new Welcome("abc");
-        when(client.request("/rest/users/welcome", Welcome.class)).thenReturn(welcome);
+        when(client.get("/rest/users/welcome", Welcome.class)).thenReturn(welcome);
         assertThat(lognit.welcome()).isEqualTo(welcome);
     }
 
     @Test
     public void testStats() throws Exception {
         StatsSummary summary = mock(StatsSummary.class);
-        when(client.request("/rest/stats", StatsSummary.class)).thenReturn(summary);
+        when(client.get("/rest/stats", StatsSummary.class)).thenReturn(summary);
         assertThat(lognit.stats()).isEqualTo(summary);
     }
 
     @Test
     public void testTerms() throws Exception {
         Terms terms = new Terms(Arrays.asList("AAA", "BBB", "CCC"));
-        when(client.request("/rest/terms?field=abc+qwe&term=123+456&avoidColons=true&size=100", Terms.class)).thenReturn(terms);
+        when(client.get("/rest/terms?field=abc+qwe&term=123+456&avoidColons=true&size=100", Terms.class)).thenReturn(terms);
         assertThat(lognit.terms("abc qwe", "123 456")).isEqualTo(terms);
     }
 
@@ -70,7 +69,7 @@ public class LognitTest {
         RestListenerHandle handle = mock(RestListenerHandle.class);
         RestListener<MessageBag> listener = mock(RestListener.class);
 
-        when(client.request("/rest/search?expression=qwe+asd&windowLength=20", SearchChannel.class)).thenReturn(channel);
+        when(client.get("/rest/search?expression=qwe+asd&windowLength=20", SearchChannel.class)).thenReturn(channel);
         when(client.listen("lalala", MessageBag.class, listener)).thenReturn(handle);
 
         assertThat(lognit.search("qwe asd", 20, listener)).isEqualTo(handle);

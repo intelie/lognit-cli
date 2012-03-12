@@ -1,4 +1,4 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli.runners;
 
 import com.google.common.collect.Lists;
 import net.intelie.lognit.cli.formatters.Formatter;

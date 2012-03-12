@@ -1,11 +1,17 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli.runners;
 
+import net.intelie.lognit.cli.Runner;
+import net.intelie.lognit.cli.UserConsole;
+import net.intelie.lognit.cli.UserOptions;
+import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.model.Stats;
 import net.intelie.lognit.cli.model.StatsSummary;
+import net.intelie.lognit.cli.model.Welcome;
 
+import java.io.IOException;
 import java.util.Collection;
 
-public class InfoRunner {
+public class InfoRunner implements Runner{
     public static final String HAS_MISSING_NODES = "(%s): %d node(s) did not respond";
     public static final String NO_MISSING_NODES = "(%s): all nodes responded";
     public static final String NODE_TEXT = "node '%s':";
@@ -16,12 +22,18 @@ public class InfoRunner {
 
 
     private final UserConsole console;
+    private final Lognit lognit;
 
-    public InfoRunner(UserConsole console) {
+    public InfoRunner(UserConsole console, Lognit lognit) {
         this.console = console;
+        this.lognit = lognit;
     }
 
-    public void printInfo(String server, StatsSummary summary) {
+    @Override
+    public int run(UserOptions options) throws IOException {
+        StatsSummary summary = lognit.stats();
+        String server = lognit.getServer();
+
         if (summary.getMissing() > 0)
             console.printOut(HAS_MISSING_NODES, server, summary.getMissing());
         else
@@ -40,6 +52,8 @@ public class InfoRunner {
         console.printOut(INFO_TEXT, summary.getQueries().size(), summary.getTotalDocs());
         printLoad(DOCS_TEXT, summary.getDocsRate(), 1);
         printLoad(BYTES_TEXT, summary.getBytesRate(), 1024 * 1024);
+
+        return 0;
     }
 
     private void printLoad(String text, Collection<Long> load, double factor) {

@@ -1,6 +1,6 @@
 package net.intelie.lognit.cli.formatters;
 
-import net.intelie.lognit.cli.input.UserConsole;
+import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.model.Message;
 
 public class PlainFormatter implements Formatter {

@@ -1,4 +1,4 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli;
 
 import com.google.common.base.Objects;
 import org.apache.commons.lang.StringUtils;

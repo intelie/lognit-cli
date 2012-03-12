@@ -1,5 +1,6 @@
-package net.intelie.lognit.cli.input;
+package net.intelie.lognit.cli;
 
+import net.intelie.lognit.cli.UserOptions;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;

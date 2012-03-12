@@ -13,7 +13,7 @@ public interface RestClient {
 
     void authenticate(String username, String password);
 
-    <T> T request(String uri, Class<T> type) throws IOException;
+    <T> T get(String uri, Class<T> type) throws IOException;
 
     <T> RestListenerHandle listen(String uri, Class<T> type, RestListener<T> listener) throws IOException;
 }
