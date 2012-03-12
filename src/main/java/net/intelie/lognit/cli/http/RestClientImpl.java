@@ -8,6 +8,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
 import org.cometd.client.BayeuxClient;
@@ -63,12 +64,22 @@ public class RestClientImpl implements RestClient {
     }
 
     @Override
-    public <T> T get(String uri, Class<T> responseClass) throws IOException {
-        uri = prependServer(uri);
-        HttpMethod method = execute(uri);
+    public <T> T get(String uri, Class<T> type) throws IOException {
+        GetMethod method = methods.get(prependServer(uri));
+        execute(method);
 
         String body = IOUtils.toString(method.getResponseBodyAsStream());
-        return jsonizer.from(body, responseClass);
+        return jsonizer.from(body, type);
+    }
+
+    @Override
+    public <T> T post(String uri, Entity entity, Class<T> type) throws IOException {
+        PostMethod method = methods.post(prependServer(uri));
+        entity.executeOn(method);
+        execute(method);
+
+        String body = IOUtils.toString(method.getResponseBodyAsStream());
+        return jsonizer.from(body, type);
     }
 
     @Override
@@ -94,21 +105,18 @@ public class RestClientImpl implements RestClient {
         return uri;
     }
 
-    private HttpMethod execute(String uri) throws IOException {
-        HttpMethod method = methods.get(uri);
-
+    private void execute(HttpMethod method) throws IOException {
         method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 
         method.setDoAuthentication(authenticated);
 
         int response = client.executeMethod(method);
-        if (response >= 200 && response < 300)
-            return method;
 
-        if (response < 500)
+        if (response >= 400 && response < 500)
             throw new UnauthorizedException(method.getStatusLine());
 
-        throw new RequestFailedException(method.getStatusLine());
+        if (response < 200 || response >= 300)
+            throw new RequestFailedException(method.getStatusLine());
     }
 
 }

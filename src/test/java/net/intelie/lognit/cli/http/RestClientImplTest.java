@@ -4,6 +4,8 @@ import net.intelie.lognit.cli.json.Jsonizer;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 import org.junit.Before;
@@ -62,7 +64,7 @@ public class RestClientImplTest {
 
     @Test
     public void willExecuteSuccessfulRequest() throws Exception {
-        HttpMethod method = mockReturn("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
+        HttpMethod method = mockGet("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
 
         assertThat(rest.get("abc", String.class)).isEqualTo("QWEQWE");
 
@@ -72,8 +74,21 @@ public class RestClientImplTest {
     }
 
     @Test
+    public void willExecuteSuccessfulPost() throws Exception {
+        PostMethod method = mockPost("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
+        Entity entity = mock(Entity.class);
+        
+        assertThat(rest.post("abc", entity, String.class)).isEqualTo("QWEQWE");
+        verify(entity).executeOn(method);
+
+        verify(method, times(0)).getStatusLine();
+        verify(method).setDoAuthentication(false);
+        verify(client).executeMethod(methodFactory.post("http://localhost/abc"));
+    }
+
+    @Test
     public void willExecuteSuccessfulRequestEvenIfIts201() throws Exception {
-        HttpMethod method = mockReturn("http://localhost/abc", "HTTP/1.0 201 OK", String.class, "QWEQWE");
+        HttpMethod method = mockGet("http://localhost/abc", "HTTP/1.0 201 OK", String.class, "QWEQWE");
 
         assertThat(rest.get("abc", String.class)).isEqualTo("QWEQWE");
 
@@ -85,7 +100,7 @@ public class RestClientImplTest {
 
     @Test
     public void willExecuteSuccessfulRequestAuthenticating() throws Exception {
-        HttpMethod method = mockReturn("http://someserver:9000/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
+        HttpMethod method = mockGet("http://someserver:9000/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
 
         rest.setServer("someserver:9000");
         rest.authenticate("abc", "qwe");
@@ -98,7 +113,7 @@ public class RestClientImplTest {
 
     @Test
     public void willIgnoreExtraSlash() throws Exception {
-        HttpMethod method = mockReturn("http://someserver:9000/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
+        HttpMethod method = mockGet("http://someserver:9000/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
 
         rest.setServer("someserver:9000");
         rest.authenticate("abc", "qwe");
@@ -130,13 +145,13 @@ public class RestClientImplTest {
         verify(client.getState()).clearCookies();
         verify(client.getState()).addCookies(cookies);
 
-        HttpMethod method = mockReturn("http://abcabc:1211/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
+        HttpMethod method = mockGet("http://abcabc:1211/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
         assertThat(rest.get("abc", String.class)).isEqualTo("QWEQWE");
     }
 
     @Test
     public void willUseCompatibilityToHandleCookies() throws Exception {
-        HttpMethod method = mockReturn("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "BLABLA");
+        HttpMethod method = mockGet("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "BLABLA");
 
         rest.get("abc", String.class);
 
@@ -145,7 +160,7 @@ public class RestClientImplTest {
 
     @Test
     public void willThrowOnUnsuccessfulRequest() throws Exception {
-        mockReturn("http://localhost/abc", "HTTP/1.0 401 OK", String.class, "BLABLA");
+        mockGet("http://localhost/abc", "HTTP/1.0 401 OK", String.class, "BLABLA");
 
         try {
             rest.get("abc", String.class);
@@ -157,8 +172,21 @@ public class RestClientImplTest {
     }
 
     @Test
+    public void willThrowOnUnsuccessfulRequestLessThan100() throws Exception {
+        mockGet("http://localhost/abc", "HTTP/1.0 101 OK", String.class, "BLABLA");
+
+        try {
+            rest.get("abc", String.class);
+            fail("should throw");
+        } catch (RequestFailedException ex) {
+            assertThat(ex).isExactlyInstanceOf(RequestFailedException.class);
+            assertThat(ex.getMessage()).isEqualTo("HTTP/1.0 101 OK");
+        }
+    }
+
+    @Test
     public void willThrowOnUnsuccessfulRequest501() throws Exception {
-        mockReturn("http://localhost/abc", "HTTP/1.0 501 OK", String.class, "BLABLA");
+        mockGet("http://localhost/abc", "HTTP/1.0 501 OK", String.class, "BLABLA");
 
         try {
             rest.get("abc", String.class);
@@ -169,9 +197,20 @@ public class RestClientImplTest {
         }
     }
 
-    private <T> HttpMethod mockReturn(String url, String line, Class<T> type, T object) throws IOException {
-        HttpMethod method = methodFactory.get(url);
+    private <T> GetMethod mockGet(String url, String line, Class<T> type, T object) throws IOException {
+        GetMethod method = methodFactory.get(url);
+        mockMethod(line, type, object, method);
+        return method;
+    }
 
+    private <T> PostMethod mockPost(String url, String line, Class<T> type, T object) throws IOException {
+        PostMethod method = methodFactory.post(url);
+        mockMethod(line, type, object, method);
+        return method;
+    }
+
+
+    private <T> void mockMethod(String line, Class<T> type, T object, HttpMethod method) throws IOException {
         when(method.getResponseBodyAsStream()).thenReturn(new ByteArrayInputStream("BLABLA".getBytes()));
 
         StatusLine statusLine = new StatusLine(line);
@@ -179,7 +218,6 @@ public class RestClientImplTest {
         when(client.executeMethod(method)).thenReturn(statusLine.getStatusCode());
 
         when(jsonizer.from("BLABLA", type)).thenReturn(object);
-        return method;
     }
 
     @Test
