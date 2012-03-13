@@ -5,6 +5,7 @@ import jline.ConsoleReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class UserConsole {
     private final ConsoleReader console;
@@ -40,6 +41,7 @@ public class UserConsole {
 
     public void printStill(String format, Object... args) {
         try {
+            console.getCursorBuffer().clearBuffer();
             console.redrawLine();
             console.printString(reallyFormat(format, args));
             console.flushConsole();

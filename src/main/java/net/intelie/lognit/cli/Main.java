@@ -43,11 +43,12 @@ public class Main {
 
         Lognit lognit = new Lognit(restClient);
         Clock clock = new Clock();
-        MainRunner mainRunner = makeMainRunner(userConsole, bufferListenerFactory, lognit, clock);
+        Runtime runtime = Runtime.getRuntime();
+        MainRunner mainRunner = makeMainRunner(userConsole, bufferListenerFactory, lognit, clock, runtime);
 
         AuthenticatorRunner authenticatorRunner = new AuthenticatorRunner(userConsole, lognit, mainRunner);
 
-        stateKeeper.register(Runtime.getRuntime());
+        stateKeeper.register(runtime);
 
         return new EntryPoint(userConsole, stateKeeper, authenticatorRunner);
     }
@@ -68,13 +69,13 @@ public class Main {
         return new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter, flatJsonFormatter);
     }
 
-    private static MainRunner makeMainRunner(UserConsole userConsole, BufferListenerFactory bufferListenerFactory, Lognit lognit, Clock clock) {
+    private static MainRunner makeMainRunner(UserConsole userConsole, BufferListenerFactory bufferListenerFactory, Lognit lognit, Clock clock, Runtime runtime) {
         InfoRunner info = new InfoRunner(userConsole, lognit);
         SearchRunner search = new SearchRunner(userConsole, lognit, bufferListenerFactory, clock);
         CompletionRunner completion = new CompletionRunner(userConsole, lognit);
         UsageRunner usage = new UsageRunner(userConsole);
         WelcomeRunner welcome = new WelcomeRunner(userConsole, lognit);
-        PurgeRunner purge = new PurgeRunner(userConsole,  lognit);
+        PurgeRunner purge = new PurgeRunner(userConsole, lognit, clock, runtime);
         return new MainRunner(search, info, completion, usage, welcome, purge);
     }
 }

@@ -74,6 +74,20 @@ public class RestClientImplTest {
     }
 
     @Test
+    public void willExecuteSuccessfulRequestWithNoBody() throws Exception {
+        mockGet("http://localhost/abc", "HTTP/1.0 200 OK", String.class, null);
+
+        assertThat(rest.get("abc", String.class)).isNull();
+    }
+
+    @Test
+    public void willExecuteSuccessfulRequestPostWithNoBody() throws Exception {
+        mockPost("http://localhost/abc", "HTTP/1.0 200 OK", String.class, null);
+
+        assertThat(rest.post("abc", new Entity(), String.class)).isNull();
+    }
+
+    @Test
     public void willExecuteSuccessfulPost() throws Exception {
         PostMethod method = mockPost("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "QWEQWE");
         Entity entity = mock(Entity.class);
@@ -224,7 +238,10 @@ public class RestClientImplTest {
 
 
     private <T> void mockMethod(String line, Class<T> type, T object, HttpMethod method) throws IOException {
-        when(method.getResponseBodyAsStream()).thenReturn(new ByteArrayInputStream("BLABLA".getBytes()));
+        if (object != null)
+            when(method.getResponseBodyAsStream()).thenReturn(new ByteArrayInputStream("BLABLA".getBytes()));
+        else
+            when(method.getResponseBodyAsStream()).thenReturn(null);
 
         StatusLine statusLine = new StatusLine(line);
         when(method.getStatusLine()).thenReturn(statusLine);

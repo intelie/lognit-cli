@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.cometd.client.BayeuxClient;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 
 public class RestClientImpl implements RestClient {
@@ -67,9 +68,7 @@ public class RestClientImpl implements RestClient {
     public <T> T get(String uri, Class<T> type) throws IOException {
         GetMethod method = methods.get(prependServer(uri));
         execute(method);
-
-        String body = IOUtils.toString(method.getResponseBodyAsStream());
-        return jsonizer.from(body, type);
+        return deserializeBody(method, type);
     }
 
     @Override
@@ -77,8 +76,14 @@ public class RestClientImpl implements RestClient {
         PostMethod method = methods.post(prependServer(uri));
         entity.executeOn(method);
         execute(method);
+        return deserializeBody(method, type);
+    }
 
-        String body = IOUtils.toString(method.getResponseBodyAsStream());
+    private <T> T deserializeBody(HttpMethod method, Class<T> type) throws IOException {
+        InputStream stream = method.getResponseBodyAsStream();
+        if (stream == null)
+            return null;
+        String body = IOUtils.toString(stream);
         return jsonizer.from(body, type);
     }
 

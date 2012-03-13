@@ -66,6 +66,12 @@ public class LognitTest {
     }
 
     @Test
+    public void cancelPurge() throws Exception {
+        lognit.cancelPurge("abc");
+        verify(client).post("/rest/purge/cancel/abc", new Entity(), Void.class);
+    }
+
+    @Test
     public void testStats() throws Exception {
         StatsSummary summary = mock(StatsSummary.class);
         when(client.get("/rest/stats", StatsSummary.class)).thenReturn(summary);
