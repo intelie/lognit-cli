@@ -24,14 +24,6 @@ public class SearchRunner implements Runner {
         this.clock = clock;
     }
 
-    private RestListenerHandle handshake(UserOptions options, BufferListener listener) throws IOException {
-        long start = clock.currentMillis();
-        RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
-        if (options.isVerbose())
-            console.println(HANDSHAKE, clock.currentMillis() - start);
-        return handle;
-    }
-
     @Override
     public int run(UserOptions options) throws IOException {
         BufferListener listener = factory.create(options.getFormat(), options.isVerbose());
@@ -46,5 +38,13 @@ public class SearchRunner implements Runner {
         handle.close();
 
         return 0;
+    }
+
+    private RestListenerHandle handshake(UserOptions options, BufferListener listener) throws IOException {
+        long start = clock.currentMillis();
+        RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
+        if (options.isVerbose())
+            console.println(HANDSHAKE, clock.currentMillis() - start);
+        return handle;
     }
 }
