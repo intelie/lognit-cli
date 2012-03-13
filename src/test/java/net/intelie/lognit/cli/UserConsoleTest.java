@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli;
 
+import jline.ConsoleOperations;
 import jline.ConsoleReader;
 import net.intelie.lognit.cli.UserConsole;
 import org.junit.Before;
@@ -38,6 +39,13 @@ public class UserConsoleTest {
         input.println("abc%d", 1);
 
         assertThat(err.toString()).isEqualTo(safe("abc1\n"));
+    }
+
+    @Test
+    public void willPrintStillToStderr() throws Exception {
+        UserConsole input = new UserConsole(console, null);
+        input.printStill("abc%d", 1);
+        assertThat(err.toString()).isEqualTo(safe(ConsoleOperations.RESET_LINE + "abc1"));
     }
 
     @Test
@@ -91,8 +99,7 @@ public class UserConsoleTest {
 
         UserConsole input = new UserConsole(new ConsoleReader(null, out), null);
         input.println("abc");
-        
-        verify(out).write(any(char[].class));
+        input.printStill("abc");
     }
 
     private InputStream mockIn(String text) {

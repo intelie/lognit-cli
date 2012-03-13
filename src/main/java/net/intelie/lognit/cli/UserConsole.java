@@ -38,6 +38,15 @@ public class UserConsole {
         }
     }
 
+    public void printStill(String format, Object... args) {
+        try {
+            console.redrawLine();
+            console.printString(reallyFormat(format, args));
+            console.flushConsole();
+        } catch (IOException e) {
+        }
+    }
+
     public void println(String format, Object... args) {
         try {
             console.printString(reallyFormat(format, args));

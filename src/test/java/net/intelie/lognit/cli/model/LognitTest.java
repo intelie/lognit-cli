@@ -51,6 +51,13 @@ public class LognitTest {
     }
 
     @Test
+    public void testPurgeInfo() throws Exception {
+        PurgeInfo info = mock(PurgeInfo.class);
+        when(client.get("/rest/purge/abc", PurgeInfo.class)).thenReturn(info);
+        assertThat(lognit.purgeInfo("abc")).isEqualTo(info);
+    }
+
+    @Test
     public void testPurge() throws Exception {
         Purge purge = new Purge("abc");
         Entity entity = new Entity().add("expression", "qwe").add("windowLength", "42");
