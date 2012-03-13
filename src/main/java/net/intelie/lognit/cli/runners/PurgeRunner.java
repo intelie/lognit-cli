@@ -45,8 +45,9 @@ public class PurgeRunner implements Runner {
             }
         });
 
-        while (printStatus(purge.getId()))
+        do {
             clock.sleep(INTERVAL);
+        } while (printStatus(purge.getId()));
         console.println("");
 
         return 0;

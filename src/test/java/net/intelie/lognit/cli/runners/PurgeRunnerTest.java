@@ -48,9 +48,11 @@ public class PurgeRunnerTest {
 
         orderly.verify(runtime).addShutdownHook(any(Thread.class));
 
+        orderly.verify(clock).sleep(1000);
         orderly.verify(lognit).purgeInfo("qwe");
         orderly.verify(console).printStill(PurgeRunner.STATUS, PurgeInfo.Status.RUNNING, 2, 3, 200.0 / 3, 1);
 
+        orderly.verify(clock).sleep(1000);
         orderly.verify(lognit).purgeInfo("qwe");
         orderly.verify(console).printStill(PurgeRunner.STATUS, PurgeInfo.Status.CANCELLED, 3, 3, 100.0, 1);
 
