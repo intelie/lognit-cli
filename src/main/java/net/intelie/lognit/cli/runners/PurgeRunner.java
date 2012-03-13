@@ -11,8 +11,7 @@ import net.intelie.lognit.cli.state.Clock;
 import java.io.IOException;
 
 public class PurgeRunner implements Runner {
-    public static final String PURGE_DESC = "Purging files that match '%s'...";
-    public static final String PURGE_ID = "Task %s";
+    public static final String PURGE_ID = "(%s): Task '%s'";
     public static final int INTERVAL = 1000;
     public static final String STATUS = "%s: %d/%d (%.0f%%). %d errors.";
 
@@ -32,9 +31,19 @@ public class PurgeRunner implements Runner {
     public int run(UserOptions options) throws Exception {
         final Purge purge = lognit.purge(options.getQuery(), options.getLines());
 
-        console.println(PURGE_DESC, options.getQuery());
-        console.println(PURGE_ID, purge.getId());
+        console.println(PURGE_ID, lognit.getServer(), purge.getId());
 
+        registerShutdownHook(purge);
+
+        do {
+            clock.sleep(INTERVAL);
+        } while (printStatus(purge.getId()));
+        console.println("");
+
+        return 0;
+    }
+
+    private void registerShutdownHook(final Purge purge) {
         runtime.addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -44,13 +53,6 @@ public class PurgeRunner implements Runner {
                 }
             }
         });
-
-        do {
-            clock.sleep(INTERVAL);
-        } while (printStatus(purge.getId()));
-        console.println("");
-
-        return 0;
     }
 
     private boolean printStatus(String id) throws IOException {

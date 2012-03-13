@@ -38,13 +38,13 @@ public class PurgeRunnerTest {
                 new PurgeInfo(PurgeInfo.Status.RUNNING, "aaa", 1, 2, 3),
                 new PurgeInfo(PurgeInfo.Status.CANCELLED, "bbb", 1, 3, 3)
         );
-
+        when(lognit.getServer()).thenReturn("server");
+        
         assertThat(runner.run(new UserOptions("abc", "-n", "42"))).isZero();
 
         InOrder orderly = inOrder(console, lognit, clock, runtime);
         orderly.verify(lognit).purge("abc", 42);
-        orderly.verify(console).println(PurgeRunner.PURGE_DESC, "abc");
-        orderly.verify(console).println(PurgeRunner.PURGE_ID, "qwe");
+        orderly.verify(console).println(PurgeRunner.PURGE_ID, "server", "qwe");
 
         orderly.verify(runtime).addShutdownHook(any(Thread.class));
 
