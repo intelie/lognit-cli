@@ -3,16 +3,10 @@ package net.intelie.lognit.cli.runners;
 import net.intelie.lognit.cli.Runner;
 import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.UserOptions;
-import net.intelie.lognit.cli.http.RestListenerHandle;
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
-import net.intelie.lognit.cli.state.Clock;
-import org.apache.commons.lang.StringUtils;
 
-import java.io.IOException;
-import java.util.Collection;
-
-public class AuthenticatorRunner implements Runner{
+public class AuthenticatorRunner implements Runner {
     private final UserConsole console;
     private final Lognit lognit;
     private final MainRunner runner;

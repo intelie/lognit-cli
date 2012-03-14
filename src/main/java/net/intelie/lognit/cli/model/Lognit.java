@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 public class Lognit {
     public static final String URL_WELCOME = "/rest/users/welcome";
     public static final String URL_PURGE = "/rest/purge";
+    public static final String URL_UNPURGE = "/rest/purge/unpurge";
     public static final String URL_PURGE_INFO = "/rest/purge/%s";
     public static final String URL_PURGE_CANCEL = "/rest/purge/cancel/%s";
     public static final String URL_STATS = "/rest/stats";
@@ -45,6 +46,10 @@ public class Lognit {
                 .add("expression", query)
                 .add("windowLength", Integer.toString(windowLength));
         return client.post(URL_PURGE, entity, Purge.class);
+    }
+
+    public Purge unpurge() throws IOException {
+        return client.post(URL_UNPURGE, new Entity(), Purge.class);
     }
 
     public PurgeInfo purgeInfo(String id) throws IOException {

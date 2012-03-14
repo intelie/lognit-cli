@@ -58,6 +58,13 @@ public class MainRunnerTest {
     }
 
     @Test
+    public void unpurgeIsSameAsPurge() throws Exception {
+        UserOptions opts = new UserOptions("--unpurge", "abc");
+        main.run(opts);
+        verify(purge).run(opts);
+    }
+
+    @Test
     public void searchWillBeAlmostLastInPriority() throws Exception {
         UserOptions opts = new UserOptions("abc");
         main.run(opts);

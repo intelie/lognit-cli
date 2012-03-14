@@ -40,7 +40,7 @@ public class PurgeRunnerTest {
         );
         when(lognit.getServer()).thenReturn("server");
         
-        assertThat(runner.run(new UserOptions("abc", "-n", "42"))).isZero();
+        assertThat(runner.run(new UserOptions("abc", "-n", "42", "--purge"))).isZero();
 
         InOrder orderly = inOrder(console, lognit, clock, runtime);
         orderly.verify(lognit).purge("abc", 42);
@@ -62,12 +62,24 @@ public class PurgeRunnerTest {
     }
 
     @Test
+    public void willGetUnpurgeIfItsNotPurge() throws Exception {
+        when(lognit.unpurge()).thenReturn(new Purge("qwe"));
+        when(lognit.getServer()).thenReturn("server");
+        when(lognit.purgeInfo("qwe")).thenReturn(
+                new PurgeInfo(PurgeInfo.Status.CANCELLED, "bbb", 1, 3, 3));
+
+        assertThat(runner.run(new UserOptions("abc", "-n", "42", "--unpurge"))).isZero();
+
+        verify(lognit).unpurge();
+    }
+
+    @Test
     public void willRegisterHookThatCancelsPurge() throws Exception {
         when(lognit.purge("abc", 42)).thenReturn(new Purge("qwe"));
         when(lognit.purgeInfo("qwe")).thenReturn(
                 new PurgeInfo(PurgeInfo.Status.CANCELLED, "bbb", 1, 3, 3));
 
-        assertThat(runner.run(new UserOptions("abc", "-n", "42"))).isZero();
+        assertThat(runner.run(new UserOptions("abc", "-n", "42", "--purge"))).isZero();
 
         ArgumentCaptor<Thread> captor = ArgumentCaptor.forClass(Thread.class);
         verify(runtime).addShutdownHook(captor.capture());
@@ -84,7 +96,7 @@ public class PurgeRunnerTest {
                 new PurgeInfo(PurgeInfo.Status.CANCELLED, "bbb", 1, 3, 3));
         doThrow(new RuntimeException()).when(lognit).cancelPurge("qwe");
         
-        assertThat(runner.run(new UserOptions("abc", "-n", "42"))).isZero();
+        assertThat(runner.run(new UserOptions("abc", "-n", "42", "--purge"))).isZero();
 
         ArgumentCaptor<Thread> captor = ArgumentCaptor.forClass(Thread.class);
         verify(runtime).addShutdownHook(captor.capture());

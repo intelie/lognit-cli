@@ -66,6 +66,13 @@ public class LognitTest {
     }
 
     @Test
+    public void testUnPurge() throws Exception {
+        Purge purge = new Purge("abc");
+        when(client.post("/rest/purge/unpurge", new Entity(), Purge.class)).thenReturn(purge);
+        assertThat(lognit.unpurge()).isEqualTo(purge);
+    }
+
+    @Test
     public void cancelPurge() throws Exception {
         lognit.cancelPurge("abc");
         verify(client).post("/rest/purge/cancel/abc", new Entity(), Void.class);

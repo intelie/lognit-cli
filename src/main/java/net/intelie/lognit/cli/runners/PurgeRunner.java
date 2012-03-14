@@ -29,7 +29,7 @@ public class PurgeRunner implements Runner {
 
     @Override
     public int run(UserOptions options) throws Exception {
-        final Purge purge = lognit.purge(options.getQuery(), options.getLines());
+        final Purge purge = runOption(options);
 
         console.println(PURGE_ID, lognit.getServer(), purge.getId());
 
@@ -41,6 +41,12 @@ public class PurgeRunner implements Runner {
         console.println("");
 
         return 0;
+    }
+
+    private Purge runOption(UserOptions options) throws IOException {
+        return options.isPurge() ?
+                lognit.purge(options.getQuery(), options.getLines()) :
+                lognit.unpurge();
     }
 
     private void registerShutdownHook(final Purge purge) {

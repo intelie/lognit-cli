@@ -33,7 +33,7 @@ public class MainRunner implements Runner {
             return info.run(options);
         else if (options.isComplete())
             return completion.run(options);
-        else if (options.isPurge()) 
+        else if (options.isPurge() || options.isUnpurge())
             return purge.run(options);
         else if (options.hasQuery())
             return search.run(options);
