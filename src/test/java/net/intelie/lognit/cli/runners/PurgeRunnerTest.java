@@ -74,6 +74,13 @@ public class PurgeRunnerTest {
     }
 
     @Test
+    public void cancelAllHasHighestPriority() throws Exception {
+        assertThat(runner.run(new UserOptions("--purge", "--unpurge", "--cancel-purges"))).isZero();
+
+        verify(lognit).cancelAllPurges();
+    }
+
+    @Test
     public void willRegisterHookThatCancelsPurge() throws Exception {
         when(lognit.purge("abc", 42)).thenReturn(new Purge("qwe"));
         when(lognit.purgeInfo("qwe")).thenReturn(

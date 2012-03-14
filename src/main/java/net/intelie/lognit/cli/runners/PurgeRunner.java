@@ -29,6 +29,10 @@ public class PurgeRunner implements Runner {
 
     @Override
     public int run(UserOptions options) throws Exception {
+        if (options.isCancelPurges())
+            return runCancelAll();
+
+        
         final Purge purge = runOption(options);
 
         console.println(PURGE_ID, lognit.getServer(), purge.getId());
@@ -40,6 +44,12 @@ public class PurgeRunner implements Runner {
         } while (printStatus(purge.getId()));
         console.println("");
 
+        return 0;
+    }
+
+    private int runCancelAll() throws IOException {
+        lognit.cancelAllPurges();
+        console.println("All purges cancelled.");
         return 0;
     }
 

@@ -15,6 +15,7 @@ public class Lognit {
     public static final String URL_UNPURGE = "/rest/purge/unpurge";
     public static final String URL_PURGE_INFO = "/rest/purge/%s";
     public static final String URL_PURGE_CANCEL = "/rest/purge/cancel/%s";
+    public static final String URL_PURGE_CANCEL_ALL = "/rest/purge/cancel-all";
     public static final String URL_STATS = "/rest/stats";
     public static final String URL_SEARCH = "/rest/search?expression=%s&windowLength=%d";
     public static final String URL_TERMS = "/rest/terms?field=%s&term=%s&avoidColons=true&size=100";
@@ -59,6 +60,11 @@ public class Lognit {
     public void cancelPurge(String id) throws IOException {
         client.post(make(URL_PURGE_CANCEL, id), new Entity(), Void.class);
     }
+
+    public void cancelAllPurges() throws IOException {
+        client.post(URL_PURGE_CANCEL_ALL, new Entity(), Void.class);
+    }
+
 
     public Terms terms(String field, String term) throws IOException {
         return client.get(make(URL_TERMS, encode(field), encode(term)), Terms.class);

@@ -14,6 +14,7 @@ public class UserOptions {
     private final boolean help;
     private final boolean purge;
     private final boolean unpurge;
+    private final boolean cancelPurges;
     private final int timeout;
     private final int lines;
     private final boolean complete;
@@ -28,6 +29,7 @@ public class UserOptions {
         timeout = def(parser.option(Integer.class, "-t", "--timeout"), 10);
         purge = parser.flag("--purge");
         unpurge = parser.flag("--unpurge");
+        cancelPurges = parser.flag("--cancel-purges");
         lines = def(parser.option(Integer.class, "-n", "--lines"), purge ? 20000000 : 20);
         format = def(parser.option(String.class, "-b", "--format"), "colored");
         follow = parser.flag("-f", "--follow");
@@ -123,6 +125,7 @@ public class UserOptions {
                 Objects.equal(this.follow, that.follow) &&
                 Objects.equal(this.purge, that.purge) &&
                 Objects.equal(this.unpurge, that.unpurge) &&
+                Objects.equal(this.cancelPurges, that.cancelPurges) &&
                 Objects.equal(this.timeout, that.timeout) &&
                 Objects.equal(this.lines, that.lines) &&
                 Objects.equal(this.info, that.info) &&
@@ -135,10 +138,14 @@ public class UserOptions {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, user, password, query, follow, purge, unpurge, timeout, lines, info, format, complete, verbose, help);
+        return Objects.hashCode(server, user, password, query, follow, purge, unpurge, cancelPurges, timeout, lines, info, format, complete, verbose, help);
     }
 
     public boolean isUnpurge() {
         return unpurge;
+    }
+
+    public boolean isCancelPurges() {
+        return cancelPurges;
     }
 }
