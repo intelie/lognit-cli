@@ -19,12 +19,15 @@ public class EntryPoint {
     public int run(String... args) {
         state.begin();
 
+        UserOptions options = null;
         try {
-            UserOptions options = new UserOptions(args);
+            options = new UserOptions(args);
             return request.run(options);
         } catch (Exception ex) {
             //put some verbose logging here
             console.println("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());
+            if (options != null && options.isVerbose())
+                ex.printStackTrace();
             console.println("run the command with --help for usage help");
             return 3;
         } finally {

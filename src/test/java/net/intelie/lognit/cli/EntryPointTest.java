@@ -60,5 +60,19 @@ public class EntryPointTest {
         orderly.verifyNoMoreInteractions();
     }
 
+    @Test
+    public void willCatchExceptionsInVerboseMode() throws Exception {
+        doThrow(new RuntimeException("abc")).when(request).run(new UserOptions("-a", "-b", "c", "-v"));
+
+        assertThat(entry.run("-a", "-b", "c", "-v")).isEqualTo(3);
+
+        orderly.verify(state).begin();
+        orderly.verify(request).run(new UserOptions("-a", "-b", "c", "-v"));
+        orderly.verify(console).println("%s: %s", "RuntimeException", "abc");
+        orderly.verify(console).println(anyString());
+        orderly.verify(state).end();
+        orderly.verifyNoMoreInteractions();
+    }
+
 
 }
