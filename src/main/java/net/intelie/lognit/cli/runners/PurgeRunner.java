@@ -13,7 +13,7 @@ import java.io.IOException;
 public class PurgeRunner implements Runner {
     public static final String PURGE_ID = "(%s): Task '%s'";
     public static final int INTERVAL = 1000;
-    public static final String STATUS = "%s: %d/%d (%.0f%%). %d errors.";
+    public static final String STATUS = "%s: %d/%d (%.0f%%). %d errors. ETA: %ds";
 
     private final UserConsole console;
     private final Lognit lognit;
@@ -39,9 +39,10 @@ public class PurgeRunner implements Runner {
 
         registerShutdownHook(purge);
 
+        int run = 0;
         do {
             clock.sleep(INTERVAL);
-        } while (printStatus(purge.getId()));
+        } while (printStatus(++run, purge.getId()));
         console.println("");
 
         return 0;
@@ -71,14 +72,17 @@ public class PurgeRunner implements Runner {
         });
     }
 
-    private boolean printStatus(String id) throws IOException {
+    private boolean printStatus(int run, String id) throws IOException {
         PurgeInfo info = lognit.purgeInfo(id);
         console.printStill(STATUS,
                 info.getStatus(),
                 info.getPurged(),
                 info.getExpected(),
                 getPercentage(info),
-                info.getFailed());
+                info.getFailed(),
+                (int)Math.ceil ((info.getExpected() - info.getPurged()) /
+                (info.getPurged() / (double)run)) );
+        
         return !info.getStatus().isFinished();
     }
 
