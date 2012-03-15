@@ -2,6 +2,7 @@ package net.intelie.lognit.cli;
 
 import jline.ConsoleOperations;
 import jline.ConsoleReader;
+import jline.CursorBuffer;
 import net.intelie.lognit.cli.UserConsole;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,8 +44,14 @@ public class UserConsoleTest {
 
     @Test
     public void willPrintStillToStderr() throws Exception {
+        CursorBuffer buffer = mock(CursorBuffer.class);
+        when(console.getCursorBuffer()).thenReturn(buffer);
+
         UserConsole input = new UserConsole(console, null);
         input.printStill("abc%d", 1);
+        
+        verify(buffer).clearBuffer();
+        verify(console).setDefaultPrompt(null);
         assertThat(err.toString()).isEqualTo(safe(ConsoleOperations.RESET_LINE + "abc1"));
     }
 

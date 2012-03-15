@@ -42,6 +42,7 @@ public class UserConsole {
     public void printStill(String format, Object... args) {
         try {
             console.getCursorBuffer().clearBuffer();
+            console.setDefaultPrompt(null);
             console.redrawLine();
             console.printString(reallyFormat(format, args));
             console.flushConsole();
