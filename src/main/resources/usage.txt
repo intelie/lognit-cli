@@ -33,3 +33,5 @@ Examples:
                               following new messages
   nit 'abcd' -t 1             searches for 'abcd', but waits only 1
                               second to all lognit nodes to respond.
+  nit '*' --purge             purge all documents from current node only
+  nit '*' --purge --all       purge all documents from all cluster nodes
