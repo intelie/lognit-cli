@@ -21,7 +21,7 @@ Advanced:
   --purge                     starts a purge process, instead of a search
   --unpurge                   reindexes all files purged recently
   --cancel-purges             panic button, cancel ALL purges
-  --all                       run any advanced command at every node
+  --all                       runs advanced command at all cluster nodes
 
 Examples:
 
