@@ -1,6 +1,10 @@
 package net.intelie.lognit.cli;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -20,6 +24,8 @@ public class UserOptionsTest {
         assertThat(opts.isFollow()).isEqualTo(false);
         assertThat(opts.isAll()).isEqualTo(false);
         assertThat(opts.isPurge()).isEqualTo(false);
+        assertThat(opts.isPause()).isEqualTo(false);
+        assertThat(opts.isResume()).isEqualTo(false);
         assertThat(opts.isUnpurge()).isEqualTo(false);
         assertThat(opts.isCancelPurges()).isEqualTo(false);
         assertThat(opts.getFormat()).isEqualTo("colored");
@@ -37,7 +43,7 @@ public class UserOptionsTest {
 
     @Test
     public void canConstructWithNonDefaults() {
-        UserOptions opts = new UserOptions("--purge", "--unpurge", "--all", "--cancel-purges", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b", "plain", "-c", "-v");
+        UserOptions opts = new UserOptions("--purge", "--unpurge", "--pause", "--resume", "--all", "--cancel-purges", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b", "plain", "-c", "-v");
         assertThat(opts.getServer()).isEqualTo("A");
         assertThat(opts.hasServer()).isEqualTo(true);
         assertThat(opts.getUser()).isEqualTo("B");
@@ -51,6 +57,8 @@ public class UserOptionsTest {
         assertThat(opts.isAll()).isEqualTo(true);
         assertThat(opts.isPurge()).isEqualTo(true);
         assertThat(opts.isUnpurge()).isEqualTo(true);
+        assertThat(opts.isPause()).isEqualTo(true);
+        assertThat(opts.isResume()).isEqualTo(true);
         assertThat(opts.isCancelPurges()).isEqualTo(true);
         assertThat(opts.isInfo()).isEqualTo(true);
         assertThat(opts.getFormat()).isEqualTo("plain");
@@ -87,34 +95,18 @@ public class UserOptionsTest {
 
     @Test
     public void whenAreDifferent() {
-        UserOptions opts1 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts2 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-c", "-v");
-        UserOptions opts3 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-i", "-c", "-v");
-        UserOptions opts4 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts5 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts6 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts7 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts8 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts9 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts10 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts11 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-c", "-v");
-        UserOptions opts12 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-v");
-        UserOptions opts13 = new UserOptions("--all", "--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c");
-        UserOptions opts14 = new UserOptions("--all", "--cancel-purges", "--unpurge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts15 = new UserOptions("--all", "--cancel-purges", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts16 = new UserOptions("--all", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
-        UserOptions opts17 = new UserOptions("--cancel-purges", "--unpurge", "--purge", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?", "-i", "-c", "-v");
+        String[] original = {"--all", "--pause", "--resume", "--cancel-purges", "--unpurge", "--purge",
+                "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?",
+                "-i", "-c", "-v"};
+        UserOptions opts1 = new UserOptions(original);
 
-        assertNotEqual(opts1,
-                opts2, opts3, opts4, opts5, opts6, opts7, opts8,
-                opts9, opts10, opts11, opts12, opts13, opts14,
-                opts15, opts16, opts17);
-
-    }
-
-    private void assertNotEqual(UserOptions opt1, Object... otherOpts) {
-        for (Object opt2 : otherOpts) {
-            assertThat(opt1.hashCode()).isNotEqualTo(opt2.hashCode());
+        for (int i = 0; i < original.length; i++) {
+            ArrayList<String> list = Lists.newArrayList(original);
+            list.remove(i);
+            UserOptions opts2 = new UserOptions(Iterables.toArray(list, String.class));
+            assertThat(opts2).isNotEqualTo(opts1);
+            assertThat(opts2.hashCode()).isNotEqualTo(opts1.hashCode());
         }
     }
+
 }

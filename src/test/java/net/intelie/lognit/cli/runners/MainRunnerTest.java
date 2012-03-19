@@ -16,6 +16,7 @@ public class MainRunnerTest {
     private SearchRunner search;
     private MainRunner main;
     private PurgeRunner purge;
+    private PauseRunner pause;
 
     @Before
     public void setUp() throws Exception {
@@ -25,26 +26,27 @@ public class MainRunnerTest {
         info = mock(InfoRunner.class);
         search = mock(SearchRunner.class);
         purge = mock(PurgeRunner.class);
-        main = new MainRunner(search, info, completion, usage, welcome, purge);
+        pause = mock(PauseRunner.class);
+        main = new MainRunner(search, info, completion, usage, welcome, purge, pause);
     }
 
     @Test
     public void usageWillBe1InPriority() throws Exception {
-        UserOptions opts = new UserOptions("--purge", "-i", "-c", "-?", "abc");
+        UserOptions opts = new UserOptions("--pause", "--purge", "-i", "-c", "-?", "abc");
         main.run(opts);
         verify(usage).run(opts);
     }
 
     @Test
     public void infoWillBe2InPriority() throws Exception {
-        UserOptions opts = new UserOptions("--purge", "-i", "-c", "abc");
+        UserOptions opts = new UserOptions("--pause", "--purge", "-i", "-c", "abc");
         main.run(opts);
         verify(info).run(opts);
     }
 
     @Test
     public void completeWillBe3InPriority() throws Exception {
-        UserOptions opts = new UserOptions("--purge", "-c", "abc");
+        UserOptions opts = new UserOptions("--pause", "--purge", "-c", "abc");
         main.run(opts);
         verify(completion).run(opts);
     }
@@ -52,25 +54,38 @@ public class MainRunnerTest {
 
     @Test
     public void purgeWillBe4InPriority() throws Exception {
-        UserOptions opts = new UserOptions("--purge", "abc");
+        UserOptions opts = new UserOptions("--pause", "--purge", "abc");
         main.run(opts);
         verify(purge).run(opts);
     }
 
     @Test
     public void unpurgeIsSameAsPurge() throws Exception {
-        UserOptions opts = new UserOptions("--unpurge", "abc");
+        UserOptions opts = new UserOptions("--pause", "--unpurge", "abc");
         main.run(opts);
         verify(purge).run(opts);
     }
 
     @Test
     public void cancelPurgesIsSameAsPurge() throws Exception {
-        UserOptions opts = new UserOptions("--cancel-purges", "abc");
+        UserOptions opts = new UserOptions("--pause", "--cancel-purges", "abc");
         main.run(opts);
         verify(purge).run(opts);
     }
 
+    @Test
+    public void pauseWillBe5InPriority() throws Exception {
+        UserOptions opts = new UserOptions("--pause", "abc");
+        main.run(opts);
+        verify(pause).run(opts);
+    }
+
+    @Test
+    public void resumeWillBe5InPriority() throws Exception {
+        UserOptions opts = new UserOptions("--resume", "abc");
+        main.run(opts);
+        verify(pause).run(opts);
+    }
 
     @Test
     public void searchWillBeAlmostLastInPriority() throws Exception {

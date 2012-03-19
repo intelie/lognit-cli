@@ -76,6 +76,7 @@ public class Main {
         UsageRunner usage = new UsageRunner(userConsole);
         WelcomeRunner welcome = new WelcomeRunner(userConsole, lognit);
         PurgeRunner purge = new PurgeRunner(userConsole, lognit, clock, runtime);
-        return new MainRunner(search, info, completion, usage, welcome, purge);
+        PauseRunner pause = new PauseRunner(userConsole, lognit);
+        return new MainRunner(search, info, completion, usage, welcome, purge, pause);
     }
 }

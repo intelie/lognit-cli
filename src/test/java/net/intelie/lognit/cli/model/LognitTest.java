@@ -88,6 +88,22 @@ public class LognitTest {
     }
 
     @Test
+    public void testPause() throws Exception {
+        Pause pause = new Pause(42);
+        Entity entity = new Entity().add("all", "true");
+        when(client.post("/rest/pause", entity, Pause.class)).thenReturn(pause);
+        assertThat(lognit.pause(true)).isEqualTo(pause);
+    }
+
+    @Test
+    public void testResume() throws Exception {
+        Pause pause = new Pause(42);
+        Entity entity = new Entity().add("all", "false");
+        when(client.post("/rest/pause/resume", entity, Pause.class)).thenReturn(pause);
+        assertThat(lognit.resume(false)).isEqualTo(pause);
+    }
+
+    @Test
     public void testStats() throws Exception {
         StatsSummary summary = mock(StatsSummary.class);
         when(client.get("/rest/stats", StatsSummary.class)).thenReturn(summary);

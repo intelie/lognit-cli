@@ -16,6 +16,8 @@ public class UserOptions {
     private final boolean unpurge;
     private final boolean cancelPurges;
     private final boolean all;
+    private final boolean pause;
+    private final boolean resume;
     private final int timeout;
     private final int lines;
     private final boolean complete;
@@ -38,6 +40,8 @@ public class UserOptions {
         info = parser.flag("-i", "--info");
         complete = parser.flag("-c", "--complete");
         verbose = parser.flag("-v", "--verbose");
+        pause = parser.flag("--pause");
+        resume = parser.flag("--resume");
         query = parser.text();
     }
 
@@ -128,6 +132,8 @@ public class UserOptions {
                 Objects.equal(this.all, that.all) &&
                 Objects.equal(this.purge, that.purge) &&
                 Objects.equal(this.unpurge, that.unpurge) &&
+                Objects.equal(this.pause, that.pause) &&
+                Objects.equal(this.resume, that.resume) &&
                 Objects.equal(this.cancelPurges, that.cancelPurges) &&
                 Objects.equal(this.timeout, that.timeout) &&
                 Objects.equal(this.lines, that.lines) &&
@@ -141,7 +147,7 @@ public class UserOptions {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, user, password, query, follow, all, purge, unpurge, cancelPurges, timeout, lines, info, format, complete, verbose, help);
+        return Objects.hashCode(server, user, password, query, follow, all, pause, resume, purge, unpurge, cancelPurges, timeout, lines, info, format, complete, verbose, help);
     }
 
     public boolean isUnpurge() {
@@ -154,5 +160,13 @@ public class UserOptions {
 
     public boolean isAll() {
         return all;
+    }
+
+    public boolean isResume() {
+        return resume;
+    }
+
+    public boolean isPause() {
+        return pause;
     }
 }

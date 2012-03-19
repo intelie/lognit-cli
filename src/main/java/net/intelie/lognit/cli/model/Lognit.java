@@ -11,6 +11,8 @@ import java.net.URLEncoder;
 
 public class Lognit {
     public static final String URL_WELCOME = "/rest/users/welcome";
+    public static final String URL_PAUSE = "/rest/pause";
+    public static final String URL_RESUME = "/rest/pause/resume";
     public static final String URL_PURGE = "/rest/purge";
     public static final String URL_UNPURGE = "/rest/purge/unpurge";
     public static final String URL_PURGE_INFO = "/rest/purge/%s?all=%s";
@@ -68,6 +70,16 @@ public class Lognit {
     public void cancelAllPurges(boolean all) throws IOException {
         Entity entity = new Entity().add("all", Boolean.toString(all));
         client.post(make(URL_PURGE_CANCEL_ALL), entity, Void.class);
+    }
+
+    public Pause pause(boolean all) throws IOException {
+        Entity entity = new Entity().add("all", Boolean.toString(all));
+        return client.post(make(URL_PAUSE), entity, Pause.class);
+    }
+
+    public Pause resume(boolean all) throws IOException {
+        Entity entity = new Entity().add("all", Boolean.toString(all));
+        return client.post(make(URL_RESUME), entity, Pause.class);
     }
 
     public Terms terms(String field, String term) throws IOException {
