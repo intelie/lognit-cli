@@ -33,8 +33,8 @@ public class PurgeRunnerTest {
 
     @Test
     public void willRunUntilItsFinished() throws Exception {
-        when(lognit.purge("abc", 42)).thenReturn(new Purge("qwe"));
-        when(lognit.purgeInfo("qwe")).thenReturn(
+        when(lognit.purge("abc", 42, false)).thenReturn(new Purge("qwe"));
+        when(lognit.purgeInfo("qwe", false)).thenReturn(
                 new PurgeInfo(PurgeInfo.Status.RUNNING, "aaa", 1, 2, 3),
                 new PurgeInfo(PurgeInfo.Status.CANCELLED, "bbb", 1, 3, 3)
         );
@@ -43,17 +43,17 @@ public class PurgeRunnerTest {
         assertThat(runner.run(new UserOptions("abc", "-n", "42", "--purge"))).isZero();
 
         InOrder orderly = inOrder(console, lognit, clock, runtime);
-        orderly.verify(lognit).purge("abc", 42);
+        orderly.verify(lognit).purge("abc", 42, false);
         orderly.verify(console).println(PurgeRunner.PURGE_ID, "server", "qwe");
 
         orderly.verify(runtime).addShutdownHook(any(Thread.class));
 
         orderly.verify(clock).sleep(1000);
-        orderly.verify(lognit).purgeInfo("qwe");
+        orderly.verify(lognit).purgeInfo("qwe", false);
         orderly.verify(console).printStill(PurgeRunner.STATUS, PurgeInfo.Status.RUNNING, 2, 3, 200.0 / 3, 1, 1);
 
         orderly.verify(clock).sleep(1000);
-        orderly.verify(lognit).purgeInfo("qwe");
+        orderly.verify(lognit).purgeInfo("qwe", false);
         orderly.verify(console).printStill(PurgeRunner.STATUS, PurgeInfo.Status.CANCELLED, 3, 3, 100.0, 1, 0);
 
         orderly.verify(console).println("");
@@ -63,8 +63,8 @@ public class PurgeRunnerTest {
 
     @Test
     public void willCalculateETA() throws Exception {
-        when(lognit.purge("abc", 42)).thenReturn(new Purge("qwe"));
-        when(lognit.purgeInfo("qwe")).thenReturn(
+        when(lognit.purge("abc", 42, false)).thenReturn(new Purge("qwe"));
+        when(lognit.purgeInfo("qwe", false)).thenReturn(
                 new PurgeInfo(PurgeInfo.Status.RUNNING, "aaa", 0, 10, 100),
                 new PurgeInfo(PurgeInfo.Status.RUNNING, "aaa", 0, 50, 100),
                 new PurgeInfo(PurgeInfo.Status.COMPLETED, "bbb", 0, 100, 100)
@@ -74,21 +74,21 @@ public class PurgeRunnerTest {
         assertThat(runner.run(new UserOptions("abc", "-n", "42", "--purge"))).isZero();
 
         InOrder orderly = inOrder(console, lognit, clock, runtime);
-        orderly.verify(lognit).purge("abc", 42);
+        orderly.verify(lognit).purge("abc", 42, false);
         orderly.verify(console).println(PurgeRunner.PURGE_ID, "server", "qwe");
 
         orderly.verify(runtime).addShutdownHook(any(Thread.class));
 
         orderly.verify(clock).sleep(1000);
-        orderly.verify(lognit).purgeInfo("qwe");
+        orderly.verify(lognit).purgeInfo("qwe", false);
         orderly.verify(console).printStill(PurgeRunner.STATUS, PurgeInfo.Status.RUNNING, 10, 100, 10.0, 0, 9);
 
         orderly.verify(clock).sleep(1000);
-        orderly.verify(lognit).purgeInfo("qwe");
+        orderly.verify(lognit).purgeInfo("qwe", false);
         orderly.verify(console).printStill(PurgeRunner.STATUS, PurgeInfo.Status.RUNNING, 50, 100, 50.0, 0, 2);
 
         orderly.verify(clock).sleep(1000);
-        orderly.verify(lognit).purgeInfo("qwe");
+        orderly.verify(lognit).purgeInfo("qwe", false);
         orderly.verify(console).printStill(PurgeRunner.STATUS, PurgeInfo.Status.COMPLETED, 100, 100, 100.0, 0, 0);
 
         orderly.verify(console).println("");
@@ -98,27 +98,27 @@ public class PurgeRunnerTest {
 
     @Test
     public void willGetUnpurgeIfItsNotPurge() throws Exception {
-        when(lognit.unpurge()).thenReturn(new Purge("qwe"));
+        when(lognit.unpurge(false)).thenReturn(new Purge("qwe"));
         when(lognit.getServer()).thenReturn("server");
-        when(lognit.purgeInfo("qwe")).thenReturn(
+        when(lognit.purgeInfo("qwe", false)).thenReturn(
                 new PurgeInfo(PurgeInfo.Status.CANCELLED, "bbb", 1, 3, 3));
 
         assertThat(runner.run(new UserOptions("abc", "-n", "42", "--unpurge"))).isZero();
 
-        verify(lognit).unpurge();
+        verify(lognit).unpurge(false);
     }
 
     @Test
     public void cancelAllHasHighestPriority() throws Exception {
         assertThat(runner.run(new UserOptions("--purge", "--unpurge", "--cancel-purges"))).isZero();
 
-        verify(lognit).cancelAllPurges();
+        verify(lognit).cancelAllPurges(false);
     }
 
     @Test
     public void willRegisterHookThatCancelsPurge() throws Exception {
-        when(lognit.purge("abc", 42)).thenReturn(new Purge("qwe"));
-        when(lognit.purgeInfo("qwe")).thenReturn(
+        when(lognit.purge("abc", 42, false)).thenReturn(new Purge("qwe"));
+        when(lognit.purgeInfo("qwe", false)).thenReturn(
                 new PurgeInfo(PurgeInfo.Status.CANCELLED, "bbb", 1, 3, 3));
 
         assertThat(runner.run(new UserOptions("abc", "-n", "42", "--purge"))).isZero();
@@ -127,16 +127,16 @@ public class PurgeRunnerTest {
         verify(runtime).addShutdownHook(captor.capture());
 
         captor.getValue().run();
-        verify(lognit).cancelPurge("qwe");
+        verify(lognit).cancelPurge("qwe", false);
 
     }
 
     @Test
     public void willRegisterHookThatCancelsPurgeEvenIfHookFails() throws Exception {
-        when(lognit.purge("abc", 42)).thenReturn(new Purge("qwe"));
-        when(lognit.purgeInfo("qwe")).thenReturn(
+        when(lognit.purge("abc", 42, false)).thenReturn(new Purge("qwe"));
+        when(lognit.purgeInfo("qwe", false)).thenReturn(
                 new PurgeInfo(PurgeInfo.Status.CANCELLED, "bbb", 1, 3, 3));
-        doThrow(new RuntimeException()).when(lognit).cancelPurge("qwe");
+        doThrow(new RuntimeException()).when(lognit).cancelPurge("qwe", false);
         
         assertThat(runner.run(new UserOptions("abc", "-n", "42", "--purge"))).isZero();
 
@@ -144,6 +144,6 @@ public class PurgeRunnerTest {
         verify(runtime).addShutdownHook(captor.capture());
 
         captor.getValue().run();
-        verify(lognit).cancelPurge("qwe");
+        verify(lognit).cancelPurge("qwe", false);
     }
 }

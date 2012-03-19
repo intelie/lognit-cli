@@ -53,35 +53,38 @@ public class LognitTest {
     @Test
     public void testPurgeInfo() throws Exception {
         PurgeInfo info = mock(PurgeInfo.class);
-        when(client.get("/rest/purge/abc", PurgeInfo.class)).thenReturn(info);
-        assertThat(lognit.purgeInfo("abc")).isEqualTo(info);
+        when(client.get("/rest/purge/abc?all=true", PurgeInfo.class)).thenReturn(info);
+        assertThat(lognit.purgeInfo("abc", true)).isEqualTo(info);
     }
 
     @Test
     public void testPurge() throws Exception {
         Purge purge = new Purge("abc");
-        Entity entity = new Entity().add("expression", "qwe").add("windowLength", "42");
+        Entity entity = new Entity().add("expression", "qwe").add("windowLength", "42").add("all", "false");
         when(client.post("/rest/purge", entity, Purge.class)).thenReturn(purge);
-        assertThat(lognit.purge("qwe", 42)).isEqualTo(purge);
+        assertThat(lognit.purge("qwe", 42, false)).isEqualTo(purge);
     }
 
     @Test
     public void testUnPurge() throws Exception {
         Purge purge = new Purge("abc");
-        when(client.post("/rest/purge/unpurge", new Entity(), Purge.class)).thenReturn(purge);
-        assertThat(lognit.unpurge()).isEqualTo(purge);
+        Entity entity = new Entity().add("all", "true");
+        when(client.post("/rest/purge/unpurge", entity, Purge.class)).thenReturn(purge);
+        assertThat(lognit.unpurge(true)).isEqualTo(purge);
     }
 
     @Test
     public void cancelPurge() throws Exception {
-        lognit.cancelPurge("abc");
-        verify(client).post("/rest/purge/cancel/abc", new Entity(), Void.class);
+        lognit.cancelPurge("abc", false);
+        Entity entity = new Entity().add("all", "false");
+        verify(client).post("/rest/purge/cancel/abc", entity, Void.class);
     }
 
     @Test
     public void cancelAllPurges() throws Exception {
-        lognit.cancelAllPurges();
-        verify(client).post("/rest/purge/cancel-all", new Entity(), Void.class);
+        Entity entity = new Entity().add("all", "true");
+        lognit.cancelAllPurges(true);
+        verify(client).post("/rest/purge/cancel-all", entity, Void.class);
     }
 
     @Test

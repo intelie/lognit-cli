@@ -30,50 +30,50 @@ public class PurgeRunner implements Runner {
     @Override
     public int run(UserOptions options) throws Exception {
         if (options.isCancelPurges())
-            return runCancelAll();
+            return runCancelAll(options);
 
         
         final Purge purge = runOption(options);
 
         console.println(PURGE_ID, lognit.getServer(), purge.getId());
 
-        registerShutdownHook(purge);
+        registerShutdownHook(purge, options);
 
         int run = 0;
         do {
             clock.sleep(INTERVAL);
-        } while (printStatus(++run, purge.getId()));
+        } while (printStatus(++run, purge.getId(), options));
         console.println("");
 
         return 0;
     }
 
-    private int runCancelAll() throws IOException {
-        lognit.cancelAllPurges();
+    private int runCancelAll(UserOptions options) throws IOException {
+        lognit.cancelAllPurges(options.isAll());
         console.println("All purges cancelled.");
         return 0;
     }
 
     private Purge runOption(UserOptions options) throws IOException {
         return options.isPurge() ?
-                lognit.purge(options.getQuery(), options.getLines()) :
-                lognit.unpurge();
+                lognit.purge(options.getQuery(), options.getLines(), options.isAll()) :
+                lognit.unpurge(options.isAll());
     }
 
-    private void registerShutdownHook(final Purge purge) {
+    private void registerShutdownHook(final Purge purge, final UserOptions options) {
         runtime.addShutdownHook(new Thread() {
             @Override
             public void run() {
                 try {
-                    lognit.cancelPurge(purge.getId());
+                    lognit.cancelPurge(purge.getId(), options.isAll());
                 } catch (Exception e) {
                 }
             }
         });
     }
 
-    private boolean printStatus(int run, String id) throws IOException {
-        PurgeInfo info = lognit.purgeInfo(id);
+    private boolean printStatus(int run, String id, UserOptions options) throws IOException {
+        PurgeInfo info = lognit.purgeInfo(id, options.isAll());
         console.printStill(STATUS,
                 info.getStatus(),
                 info.getPurged(),
