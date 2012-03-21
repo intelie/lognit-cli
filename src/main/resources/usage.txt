@@ -14,7 +14,7 @@ Options:
   -b, --format <format>       sets message output format, must be "colored",
                               "plain", "json" or "flat-json"
   -v, --verbose               shows some stats while querying
-  -?, --help                  shows this help
+  -?, -h, --help              shows this help
 
 Advanced:
 

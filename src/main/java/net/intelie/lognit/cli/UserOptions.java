@@ -25,7 +25,7 @@ public class UserOptions {
 
     public UserOptions(String... args) {
         ArgsParser parser = new ArgsParser(args);
-        help = parser.flag("-?", "--help");
+        help = parser.flag("-?", "-h", "--help");
         server = parser.option(String.class, "-s", "--server");
         user = parser.option(String.class, "-u", "--user");
         password = parser.option(String.class, "-p", "--pass", "--password");
