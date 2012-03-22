@@ -23,6 +23,28 @@ public class EntityTest {
     }
 
     @Test
+    public void willExecuteOnHttpPostWithToString() {
+        Entity entity = new Entity().add("A", 1).add("C", true);
+
+        PostMethod post = mock(PostMethod.class);
+        entity.executeOn(post);
+
+        verify(post).addParameter(new NameValuePair("A", "1"));
+        verify(post).addParameter(new NameValuePair("C", "true"));
+        verifyNoMoreInteractions(post);
+    }
+
+    @Test
+    public void willExecuteOnHttpPostWithNull() {
+        Entity entity = new Entity().add("A", null).add("C", null);
+
+        PostMethod post = mock(PostMethod.class);
+        entity.executeOn(post);
+
+        verifyNoMoreInteractions(post);
+    }
+
+    @Test
     public void isImmutable() {
         Entity empty = new Entity();
         Entity entity1 = empty.add("A", "B");

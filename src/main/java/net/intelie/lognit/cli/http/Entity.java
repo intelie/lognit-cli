@@ -17,8 +17,10 @@ public class Entity {
         this.previous = previous;
     }
 
-    public Entity add(String name, String value) {
-        return new Entity(this, new NameValuePair(name, value));
+    public Entity add(String name, Object value) {
+        if (value == null)
+            return this;
+        return new Entity(this, new NameValuePair(name, value.toString()));
     }
 
     public void executeOn(PostMethod post) {
