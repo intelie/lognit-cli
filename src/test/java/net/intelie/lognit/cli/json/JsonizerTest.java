@@ -1,14 +1,17 @@
 package net.intelie.lognit.cli.json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.Welcome;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import static net.intelie.lognit.cli.JsonHelpers.jsonParse;
@@ -43,5 +46,25 @@ public class JsonizerTest {
         String welcome = "{message:'abc'}";
         assertThat(json.from(welcome, Welcome.class).getMessage()).isEqualTo("abc");
 
+    }
+
+    @Test
+    public void testFromStream() throws Exception {
+        ByteArrayInputStream stream = new ByteArrayInputStream("{message:'abc'}\n{message:'qwe'}{message:'asd'}".getBytes());
+        Iterator<Welcome> iterator = json.from(stream, Welcome.class);
+        
+        assertThat(iterator.next().getMessage()).isEqualTo("abc");
+        assertThat(iterator.next().getMessage()).isEqualTo("qwe");
+        assertThat(iterator.next().getMessage()).isEqualTo("asd");
+        assertThat(iterator.hasNext()).isFalse();
+    }
+
+    @Test(expected = JsonSyntaxException.class)
+    public void testFromStreamMalformed() throws Exception {
+        ByteArrayInputStream stream = new ByteArrayInputStream("{message:'abc'}\n{messa".getBytes());
+        Iterator<Welcome> iterator = json.from(stream, Welcome.class);
+
+        assertThat(iterator.next().getMessage()).isEqualTo("abc");
+        iterator.next();
     }
 }
