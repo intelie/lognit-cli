@@ -24,7 +24,6 @@ public class EntryPoint {
             options = new UserOptions(args);
             return request.run(options);
         } catch (Exception ex) {
-            //put some verbose logging here
             console.fixCursor();
             console.println("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());
             if (options != null && options.isVerbose())
