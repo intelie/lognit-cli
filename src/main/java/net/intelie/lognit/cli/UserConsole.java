@@ -5,7 +5,6 @@ import jline.ConsoleReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 public class UserConsole {
     private final ConsoleReader console;
@@ -41,13 +40,32 @@ public class UserConsole {
 
     public void printStill(String format, Object... args) {
         try {
-            console.getCursorBuffer().clearBuffer();
             console.setDefaultPrompt(null);
-            console.redrawLine();
-            console.printString(reallyFormat(format, args));
+            console.setCursorPosition(0);
+            console.killLine();
+            console.getCursorBuffer().clearBuffer();
+            console.putString(reallyFormat(format, args));
             console.flushConsole();
         } catch (IOException e) {
         }
+    }
+
+    public void fixCursor() {
+        try {
+            if (console.getCursorBuffer().cursor != 0)
+                console.printNewline();
+            console.getCursorBuffer().clearBuffer();
+        } catch (IOException e) {
+        }
+    }
+
+    public void registerFix(Runtime runtime) {
+        runtime.addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                fixCursor();
+            }
+        });
     }
 
     public void println(String format, Object... args) {

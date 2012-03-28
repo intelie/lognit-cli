@@ -39,16 +39,15 @@ public class Main {
 
         FormatterSelector selector = makeFormatterSelector(jsonizer, userConsole);
 
-        BufferListenerFactory bufferListenerFactory = new BufferListenerFactory(selector);
-
         Lognit lognit = new Lognit(restClient);
         Clock clock = new Clock();
         Runtime runtime = Runtime.getRuntime();
-        MainRunner mainRunner = makeMainRunner(userConsole, bufferListenerFactory, lognit, clock, runtime);
+        MainRunner mainRunner = makeMainRunner(userConsole, lognit, clock, runtime, selector);
 
         AuthenticatorRunner authenticatorRunner = new AuthenticatorRunner(userConsole, lognit, mainRunner);
 
         stateKeeper.register(runtime);
+        userConsole.registerFix(runtime);
 
         return new EntryPoint(userConsole, stateKeeper, authenticatorRunner);
     }
@@ -69,14 +68,15 @@ public class Main {
         return new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter, flatJsonFormatter);
     }
 
-    private static MainRunner makeMainRunner(UserConsole userConsole, BufferListenerFactory bufferListenerFactory, Lognit lognit, Clock clock, Runtime runtime) {
+    private static MainRunner makeMainRunner(UserConsole userConsole, Lognit lognit, Clock clock, Runtime runtime, FormatterSelector selector) {
         InfoRunner info = new InfoRunner(userConsole, lognit);
-        SearchRunner search = new SearchRunner(userConsole, lognit, bufferListenerFactory, clock);
+        SearchRunner search = new SearchRunner(userConsole, lognit, new BufferListenerFactory(selector), clock);
         CompletionRunner completion = new CompletionRunner(userConsole, lognit);
         UsageRunner usage = new UsageRunner(userConsole);
         WelcomeRunner welcome = new WelcomeRunner(userConsole, lognit);
         PurgeRunner purge = new PurgeRunner(userConsole, lognit, clock, runtime);
         PauseRunner pause = new PauseRunner(userConsole, lognit);
-        return new MainRunner(search, info, completion, usage, welcome, purge, pause);
+        DownloadRunner download = new DownloadRunner(userConsole, lognit, selector, clock);
+        return new MainRunner(search, info, completion, usage, welcome, purge, pause, download);
     }
 }

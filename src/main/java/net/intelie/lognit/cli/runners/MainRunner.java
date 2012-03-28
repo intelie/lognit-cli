@@ -11,6 +11,7 @@ public class MainRunner implements Runner {
     private final WelcomeRunner welcome;
     private final PurgeRunner purge;
     private final PauseRunner pause;
+    private final DownloadRunner download;
 
     public MainRunner(SearchRunner search,
                       InfoRunner info,
@@ -18,7 +19,8 @@ public class MainRunner implements Runner {
                       UsageRunner usage,
                       WelcomeRunner welcome,
                       PurgeRunner purge,
-                      PauseRunner pause) {
+                      PauseRunner pause,
+                      DownloadRunner download) {
         this.search = search;
         this.info = info;
         this.completion = completion;
@@ -26,6 +28,7 @@ public class MainRunner implements Runner {
         this.welcome = welcome;
         this.purge = purge;
         this.pause = pause;
+        this.download = download;
     }
 
     @Override
@@ -40,6 +43,8 @@ public class MainRunner implements Runner {
             return purge.run(options);
         else if (options.isPause() || options.isResume())
             return pause.run(options);
+        else if (options.isDownload())
+            return download.run(options);
         else if (options.hasQuery())
             return search.run(options);
         else

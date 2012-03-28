@@ -1,9 +1,6 @@
 package net.intelie.lognit.cli.model;
 
-import net.intelie.lognit.cli.http.Entity;
-import net.intelie.lognit.cli.http.RestClient;
-import net.intelie.lognit.cli.http.RestListener;
-import net.intelie.lognit.cli.http.RestListenerHandle;
+import net.intelie.lognit.cli.http.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -20,6 +17,7 @@ public class Lognit {
     public static final String URL_PURGE_CANCEL_ALL = "/rest/purge/cancel-all";
     public static final String URL_STATS = "/rest/stats";
     public static final String URL_SEARCH = "/rest/search?expression=%s&windowLength=%s";
+    public static final String URL_DOWNLOAD = "/rest/search/download?expression=%s&windowLength=%s";
     public static final String URL_TERMS = "/rest/terms?field=%s&term=%s&avoidColons=true&size=100";
     private final RestClient client;
 
@@ -44,6 +42,10 @@ public class Lognit {
         return client.listen(channel.getChannel(), MessageBag.class, listener);
     }
 
+    public RestStream<DownloadBag> download(String query, int windowLength) throws IOException {
+        return client.getStream(make(URL_DOWNLOAD, query, windowLength), DownloadBag.class);
+    }
+    
     public Purge purge(String query, int windowLength, boolean all) throws IOException {
         Entity entity = new Entity()
                 .add("expression", query)

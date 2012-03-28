@@ -21,6 +21,7 @@ public class UserOptions {
     private final int timeout;
     private final int lines;
     private final boolean complete;
+    private final boolean download;
     private final boolean verbose;
 
     public UserOptions(String... args) {
@@ -34,15 +35,20 @@ public class UserOptions {
         purge = parser.flag("--purge");
         unpurge = parser.flag("--unpurge");
         cancelPurges = parser.flag("--cancel-purges");
-        lines = def(parser.option(Integer.class, "-n", "--lines"), purge ? 20000000 : 20);
         format = def(parser.option(String.class, "-b", "--format"), "colored");
         follow = parser.flag("-f", "--follow");
         info = parser.flag("-i", "--info");
         complete = parser.flag("-c", "--complete");
+        download = parser.flag("-d", "--download");
+        lines = def(parser.option(Integer.class, "-n", "--lines"), defaultLine(purge, download));
         verbose = parser.flag("-v", "--verbose");
         pause = parser.flag("--pause");
         resume = parser.flag("--resume");
         query = parser.text();
+    }
+
+    private int defaultLine(boolean purge, boolean download) {
+        return purge ? 20000000 : download ? 2000 : 20;
     }
 
     private <T> T def(T value, T def) {
@@ -140,6 +146,7 @@ public class UserOptions {
                 Objects.equal(this.info, that.info) &&
                 Objects.equal(this.format, that.format) &&
                 Objects.equal(this.complete, that.complete) &&
+                Objects.equal(this.download, that.download) &&
                 Objects.equal(this.verbose, that.verbose) &&
                 Objects.equal(this.help, that.help);
     }
@@ -147,7 +154,7 @@ public class UserOptions {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, user, password, query, follow, all, pause, resume, purge, unpurge, cancelPurges, timeout, lines, info, format, complete, verbose, help);
+        return Objects.hashCode(server, user, password, query, follow, all, pause, resume, purge, unpurge, cancelPurges, timeout, lines, info, format, complete, download, verbose, help);
     }
 
     public boolean isUnpurge() {
@@ -168,5 +175,9 @@ public class UserOptions {
 
     public boolean isPause() {
         return pause;
+    }
+
+    public boolean isDownload() {
+        return download;
     }
 }

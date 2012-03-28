@@ -1,9 +1,6 @@
 package net.intelie.lognit.cli.model;
 
-import net.intelie.lognit.cli.http.Entity;
-import net.intelie.lognit.cli.http.RestClient;
-import net.intelie.lognit.cli.http.RestListener;
-import net.intelie.lognit.cli.http.RestListenerHandle;
+import net.intelie.lognit.cli.http.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -127,5 +124,12 @@ public class LognitTest {
         when(client.listen("lalala", MessageBag.class, listener)).thenReturn(handle);
 
         assertThat(lognit.search("qwe asd", 20, listener)).isEqualTo(handle);
+    }
+
+    @Test
+    public void testDownload() throws Exception {
+        RestStream<DownloadBag> stream = mock(RestStream.class);
+        when(client.getStream("/rest/search/download?expression=qwe+asd&windowLength=20", DownloadBag.class)).thenReturn(stream);
+        assertThat((Object)lognit.download("qwe asd", 20)).isEqualTo(stream);
     }
 }

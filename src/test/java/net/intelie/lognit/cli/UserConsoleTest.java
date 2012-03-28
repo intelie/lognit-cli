@@ -6,6 +6,7 @@ import jline.CursorBuffer;
 import net.intelie.lognit.cli.UserConsole;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.io.*;
 
@@ -52,7 +53,43 @@ public class UserConsoleTest {
         
         verify(buffer).clearBuffer();
         verify(console).setDefaultPrompt(null);
-        assertThat(err.toString()).isEqualTo(safe(ConsoleOperations.RESET_LINE + "abc1"));
+        verify(console).killLine();
+        assertThat(err.toString()).isEqualTo(safe("abc1"));
+    }
+
+    @Test
+    public void willFixUnfinishedLines() throws Exception {
+        UserConsole input = new UserConsole(console, null);
+
+        input.fixCursor();
+        assertThat(err.toString()).isEqualTo(safe(""));
+
+        input.printStill("abc");
+
+        assertThat(err.toString()).isEqualTo(safe("abc"));
+        input.fixCursor();
+        assertThat(err.toString()).isEqualTo(safe("abc\n"));
+
+        input.println("abc");
+        assertThat(err.toString()).isEqualTo(safe("abc\nabc\n"));
+
+        input.fixCursor();
+        assertThat(err.toString()).isEqualTo(safe("abc\nabc\n"));
+    }
+
+    @Test
+    public void willRegisterFixAtRuntime() throws Exception {
+        Runtime runtime = mock(Runtime.class);
+        UserConsole input = new UserConsole(console, null);
+        input.registerFix(runtime);
+
+        input.printStill("abc");
+
+        ArgumentCaptor<Thread> captor = ArgumentCaptor.forClass(Thread.class);
+        verify(runtime).addShutdownHook(captor.capture());
+        captor.getValue().run();
+        
+        assertThat(err.toString()).isEqualTo(safe("abc\n"));
     }
 
     @Test

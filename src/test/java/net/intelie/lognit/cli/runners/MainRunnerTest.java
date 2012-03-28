@@ -17,6 +17,7 @@ public class MainRunnerTest {
     private MainRunner main;
     private PurgeRunner purge;
     private PauseRunner pause;
+    private DownloadRunner download;
 
     @Before
     public void setUp() throws Exception {
@@ -27,7 +28,8 @@ public class MainRunnerTest {
         search = mock(SearchRunner.class);
         purge = mock(PurgeRunner.class);
         pause = mock(PauseRunner.class);
-        main = new MainRunner(search, info, completion, usage, welcome, purge, pause);
+        download = mock(DownloadRunner.class);
+        main = new MainRunner(search, info, completion, usage, welcome, purge, pause, download);
     }
 
     @Test
@@ -85,6 +87,14 @@ public class MainRunnerTest {
         UserOptions opts = new UserOptions("--resume", "abc");
         main.run(opts);
         verify(pause).run(opts);
+    }
+
+
+    @Test
+    public void downloadWillBe6InPriority() throws Exception {
+        UserOptions opts = new UserOptions("abc", "--download");
+        main.run(opts);
+        verify(download).run(opts);
     }
 
     @Test
