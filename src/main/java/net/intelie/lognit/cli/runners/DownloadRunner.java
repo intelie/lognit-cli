@@ -29,12 +29,14 @@ public class DownloadRunner implements Runner {
         RestStream<DownloadBag> stream = lognit.download(options.getQuery(), options.getLines());
         Formatter formatter = formatters.select(options.getFormat());
         int messages = 0;
+
+
         try {
             while (stream.hasNext()) {
                 DownloadBag bag = stream.next();
                 for (Message message : bag.getItems())
                     formatter.printMessage(message);
-                console.printStill("%d %d", bag.getItems().size(), bag.getRemainingDocs());
+                console.printStill("Downloaded %d messages. Still %d files to analyze.", messages += bag.getItems().size(), bag.getRemainingDocs());
             }
         } finally {
             stream.close();

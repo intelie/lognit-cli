@@ -1,7 +1,6 @@
 package net.intelie.lognit.cli;
 
 import net.intelie.lognit.cli.runners.AuthenticatorRunner;
-import net.intelie.lognit.cli.runners.UsageRunner;
 import net.intelie.lognit.cli.state.StateKeeper;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +53,7 @@ public class EntryPointTest {
 
         orderly.verify(state).begin();
         orderly.verify(request).run(new UserOptions("-a", "-b", "c"));
+        orderly.verify(console).fixCursor();
         orderly.verify(console).println("%s: %s", "RuntimeException", "abc");
         orderly.verify(console).println(anyString());
         orderly.verify(state).end();
@@ -68,6 +68,7 @@ public class EntryPointTest {
 
         orderly.verify(state).begin();
         orderly.verify(request).run(new UserOptions("-a", "-b", "c", "-v"));
+        orderly.verify(console).fixCursor();
         orderly.verify(console).println("%s: %s", "RuntimeException", "abc");
         orderly.verify(console).println(anyString());
         orderly.verify(state).end();
