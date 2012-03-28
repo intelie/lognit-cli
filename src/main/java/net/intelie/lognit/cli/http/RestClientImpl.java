@@ -1,6 +1,8 @@
 package net.intelie.lognit.cli.http;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import net.intelie.lognit.cli.json.Jsonizer;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
@@ -16,6 +18,7 @@ import org.cometd.client.BayeuxClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 
 public class RestClientImpl implements RestClient {
     private final HttpClient client;
@@ -72,11 +75,25 @@ public class RestClientImpl implements RestClient {
     }
 
     @Override
+    public <T> RestStream<T> getStream(String uri, Class<T> type) throws IOException {
+        GetMethod method = methods.get(prependServer(uri));
+        execute(method);
+        return deserializeBodyStream(method, type);
+    }
+
+    @Override
     public <T> T post(String uri, Entity entity, Class<T> type) throws IOException {
         PostMethod method = methods.post(prependServer(uri));
         entity.executeOn(method);
         execute(method);
         return deserializeBody(method, type);
+    }
+
+    private <T> RestStream<T> deserializeBodyStream(HttpMethod method, Class<T> type) throws IOException {
+        InputStream stream = method.getResponseBodyAsStream();
+        if (stream == null)
+            return new RestStream<T>(Iterators.<T>emptyIterator(), null);
+        return new RestStream<T>(jsonizer.from(stream, type), stream);
     }
 
     private <T> T deserializeBody(HttpMethod method, Class<T> type) throws IOException {

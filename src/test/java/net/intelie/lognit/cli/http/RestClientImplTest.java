@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import static junit.framework.Assert.fail;
 import static org.fest.assertions.Assertions.assertThat;
@@ -74,15 +75,33 @@ public class RestClientImplTest {
     }
 
     @Test
+    public void willExecuteSuccessfulGetStream() throws Exception {
+        HttpMethod method = mockGet("http://localhost/abc", "HTTP/1.0 200 OK", String.class, "ABC", "QWE");
+
+        RestStream<String> stream = rest.getStream("abc", String.class);
+        assertThat(stream.next()).isEqualTo("ABC");
+        assertThat(stream.next()).isEqualTo("QWE");
+        assertThat(stream.hasNext()).isFalse();
+    }
+
+    @Test
+    public void willExecuteSuccessfulGetStreamWithNoBody() throws Exception {
+        HttpMethod method = mockGet("http://localhost/abc", "HTTP/1.0 200 OK", String.class);
+
+        RestStream<String> stream = rest.getStream("abc", String.class);
+        assertThat(stream.hasNext()).isFalse();
+    }
+
+    @Test
     public void willExecuteSuccessfulRequestWithNoBody() throws Exception {
-        mockGet("http://localhost/abc", "HTTP/1.0 200 OK", String.class, null);
+        mockGet("http://localhost/abc", "HTTP/1.0 200 OK", String.class);
 
         assertThat(rest.get("abc", String.class)).isNull();
     }
 
     @Test
     public void willExecuteSuccessfulRequestPostWithNoBody() throws Exception {
-        mockPost("http://localhost/abc", "HTTP/1.0 200 OK", String.class, null);
+        mockPost("http://localhost/abc", "HTTP/1.0 200 OK", String.class);
 
         assertThat(rest.post("abc", new Entity(), String.class)).isNull();
     }
@@ -224,22 +243,23 @@ public class RestClientImplTest {
         }
     }
 
-    private <T> GetMethod mockGet(String url, String line, Class<T> type, T object) throws IOException {
+    private <T> GetMethod mockGet(String url, String line, Class<T> type, T... objects) throws IOException {
         GetMethod method = methodFactory.get(url);
-        mockMethod(line, type, object, method);
+        mockMethod(line, type, method, objects);
         return method;
     }
 
-    private <T> PostMethod mockPost(String url, String line, Class<T> type, T object) throws IOException {
+    private <T> PostMethod mockPost(String url, String line, Class<T> type, T... objects) throws IOException {
         PostMethod method = methodFactory.post(url);
-        mockMethod(line, type, object, method);
+        mockMethod(line, type, method, objects);
         return method;
     }
 
 
-    private <T> void mockMethod(String line, Class<T> type, T object, HttpMethod method) throws IOException {
-        if (object != null)
-            when(method.getResponseBodyAsStream()).thenReturn(new ByteArrayInputStream("BLABLA".getBytes()));
+    private <T> void mockMethod(String line, Class<T> type, HttpMethod method, T... objects) throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream("BLABLA".getBytes());
+        if (objects.length > 0)
+            when(method.getResponseBodyAsStream()).thenReturn(stream);
         else
             when(method.getResponseBodyAsStream()).thenReturn(null);
 
@@ -247,8 +267,12 @@ public class RestClientImplTest {
         when(method.getStatusLine()).thenReturn(statusLine);
         when(client.executeMethod(method)).thenReturn(statusLine.getStatusCode());
 
-        when(jsonizer.from("BLABLA", type)).thenReturn(object);
+        if (objects.length == 1)
+            when(jsonizer.from("BLABLA", type)).thenReturn(objects[0]);
+        else if(objects.length > 1)
+            when(jsonizer.from(stream, type)).thenReturn(Arrays.asList(objects).iterator());
     }
+
 
     @Test
     public void willSetCookiesToCometdServer() throws Exception {
