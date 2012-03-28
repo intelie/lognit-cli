@@ -15,6 +15,7 @@ import net.intelie.lognit.cli.state.StateKeeper;
 import org.apache.commons.httpclient.HttpClient;
 
 import java.io.*;
+import java.util.Timer;
 
 public class Main {
     public static void main(String... args) throws Exception {
@@ -42,7 +43,8 @@ public class Main {
         Lognit lognit = new Lognit(restClient);
         Clock clock = new Clock();
         Runtime runtime = Runtime.getRuntime();
-        MainRunner mainRunner = makeMainRunner(userConsole, lognit, clock, runtime, selector);
+        Timer timer = new Timer();
+        MainRunner mainRunner = makeMainRunner(userConsole, lognit, clock, timer, runtime, selector);
 
         AuthenticatorRunner authenticatorRunner = new AuthenticatorRunner(userConsole, lognit, mainRunner);
 
@@ -68,7 +70,7 @@ public class Main {
         return new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter, flatJsonFormatter);
     }
 
-    private static MainRunner makeMainRunner(UserConsole userConsole, Lognit lognit, Clock clock, Runtime runtime, FormatterSelector selector) {
+    private static MainRunner makeMainRunner(UserConsole userConsole, Lognit lognit, Clock clock, Timer timer, Runtime runtime, FormatterSelector selector) {
         InfoRunner info = new InfoRunner(userConsole, lognit);
         SearchRunner search = new SearchRunner(userConsole, lognit, new BufferListenerFactory(selector), clock);
         CompletionRunner completion = new CompletionRunner(userConsole, lognit);
@@ -76,7 +78,7 @@ public class Main {
         WelcomeRunner welcome = new WelcomeRunner(userConsole, lognit);
         PurgeRunner purge = new PurgeRunner(userConsole, lognit, clock, runtime);
         PauseRunner pause = new PauseRunner(userConsole, lognit);
-        DownloadRunner download = new DownloadRunner(userConsole, lognit, selector, clock);
+        DownloadRunner download = new DownloadRunner(userConsole, lognit, selector, timer);
         return new MainRunner(search, info, completion, usage, welcome, purge, pause, download);
     }
 }
