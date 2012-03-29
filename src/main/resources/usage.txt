@@ -8,6 +8,7 @@ Options:
   -p, --pass <password>       authenticates with <password>
   -n, --lines <number>        outputs last <number> lines (default: 20)
   -t, --timeout <seconds>     timeout for history search (default: 10)
+  -d, --download              downloads entire query results
   -c, --complete              shows completion options for query
   -f, --follow                outputs new messages as they arrive
   -i, --info                  shows cluster summary info
