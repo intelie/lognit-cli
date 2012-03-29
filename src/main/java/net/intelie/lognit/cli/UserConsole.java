@@ -30,7 +30,7 @@ public class UserConsole {
         return System.console() != null && console.getTerminal().isANSISupported();
     }
 
-    public char waitChar(char... allowed) {
+    public synchronized char waitChar(char... allowed) {
         try {
             return (char) console.readCharacter(allowed);
         } catch (IOException e) {
@@ -38,7 +38,7 @@ public class UserConsole {
         }
     }
 
-    public void printStill(String format, Object... args) {
+    public synchronized void printStill(String format, Object... args) {
         try {
             console.setDefaultPrompt(null);
             console.setCursorPosition(0);
@@ -50,7 +50,7 @@ public class UserConsole {
         }
     }
 
-    public void fixCursor() {
+    public synchronized void fixCursor() {
         try {
             if (console.getCursorBuffer().cursor != 0)
                 console.printNewline();
@@ -59,7 +59,7 @@ public class UserConsole {
         }
     }
 
-    public void registerFix(Runtime runtime) {
+    public synchronized void registerFix(Runtime runtime) {
         runtime.addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -68,7 +68,7 @@ public class UserConsole {
         });
     }
 
-    public void println(String format, Object... args) {
+    public synchronized void println(String format, Object... args) {
         try {
             console.printString(reallyFormat(format, args));
             console.printNewline();
