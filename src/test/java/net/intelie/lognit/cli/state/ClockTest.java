@@ -19,7 +19,7 @@ public class ClockTest {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                clock.sleep(10);
+                clock.sleep(50);
             }
         });
 
@@ -27,7 +27,7 @@ public class ClockTest {
         t.start();
         t.join();
         long difference = Math.abs(System.currentTimeMillis() - start);
-        assertThat(difference).isGreaterThanOrEqualTo(10);
+        assertThat(difference).isGreaterThanOrEqualTo(50);
     }
 
     @Test(timeout = 100)
@@ -36,7 +36,7 @@ public class ClockTest {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                clock.sleep(10);
+                clock.sleep(50);
             }
         });
         
@@ -45,6 +45,6 @@ public class ClockTest {
         t.interrupt();
         t.join();
         long difference = Math.abs(System.currentTimeMillis() - start);
-        assertThat(difference).isLessThanOrEqualTo(10);
+        assertThat(difference).isLessThanOrEqualTo(50);
     }
 }
