@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.model;
 
+import com.google.common.base.Objects;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
 
@@ -74,6 +75,21 @@ public class Message implements Comparable<Message> {
     @Override
     public int compareTo(Message that) {
         return COMPARATOR.compare(this.id, that.id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Message)) return false;
+
+        Message that = (Message) o;
+
+        return Objects.equal(this.id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     public String getSeverity() {

@@ -70,6 +70,29 @@ public class MessageTest {
     }
 
     @Test
+    public void whenAreEqual() {
+        Message m1 = new Message("A");
+        Message m2 = new Message("A");
+
+        assertThat(m1).isEqualTo(m1);
+        assertThat(m1).isEqualTo(m2);
+        assertThat(m1.hashCode()).isEqualTo(m1.hashCode());
+        assertThat(m1.hashCode()).isEqualTo(m2.hashCode());
+    }
+
+    @Test
+    public void whenAreDifferent() {
+        Message m1 = new Message("A");
+        Message m2 = new Message("B");
+
+        assertThat(m1).isNotEqualTo(m2);
+        assertThat(m1).isNotEqualTo(new Object());
+        assertThat(m1.hashCode()).isNotEqualTo(m2.hashCode());
+        assertThat(m1.hashCode()).isNotEqualTo(new Object().hashCode());
+    }
+
+
+    @Test
     public void fullTest() {
         JsonElement actual = jsonParse(TEST_JSON, Message.class);
         assertThat(actual).isEqualTo(jsonParse(TEST_JSON));

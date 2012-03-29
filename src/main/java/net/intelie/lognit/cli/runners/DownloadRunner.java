@@ -15,6 +15,7 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DownloadRunner implements Runner {
+    public static final String DOWNLOAD_STATUS = "Downloaded %d messages. %d/s. Still %d files to analyze. ETA: %.0fs";
     private final UserConsole console;
     private final Lognit lognit;
     private final FormatterSelector formatters;
@@ -63,7 +64,7 @@ public class DownloadRunner implements Runner {
             public void run() {
                 int currentMessages = messages.get();
                 int currentFiles = files.get();
-                console.printStill("Downloaded %d messages. %d/s. Still %d files to analyze. ETA: %.0fs",
+                console.printStill(DOWNLOAD_STATUS,
                         currentMessages,
                         currentMessages - lastMessages,
                         currentFiles,
