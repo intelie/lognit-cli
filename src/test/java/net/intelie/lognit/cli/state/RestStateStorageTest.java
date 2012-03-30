@@ -1,8 +1,8 @@
 package net.intelie.lognit.cli.state;
 
-import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.http.RestClient;
 import net.intelie.lognit.cli.http.RestState;
+import net.intelie.lognit.cli.json.Jsonizer;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,16 +23,21 @@ public class RestStateStorageTest {
         client = mock(RestClient.class, RETURNS_DEEP_STUBS);
     }
 
+
     @Test
     public void whenStoringFromClientVerifyIfTheArrayWasSaved() throws Exception {
         when(jsonizer.to(client.getState())).thenReturn("42");
 
         File file = File.createTempFile("test", "tmp");
 
-        RestStateStorage storage = new RestStateStorage(file, jsonizer);
-        storage.storeFrom(client);
+        try {
+            RestStateStorage storage = new RestStateStorage(file, jsonizer);
+            storage.storeFrom(client);
 
-        assertThat(FileUtils.readFileToString(file)).isEqualTo("42");
+            assertThat(FileUtils.readFileToString(file)).isEqualTo("42");
+        } finally {
+            file.delete();
+        }
     }
 
     @Test
@@ -40,61 +45,87 @@ public class RestStateStorageTest {
         when(jsonizer.to(client.getState())).thenReturn("42");
 
         File file = spy(File.createTempFile("test", "tmp"));
-        when(file.getParentFile()).thenThrow(new RuntimeException());
+        try {
+            when(file.getParentFile()).thenThrow(new RuntimeException());
 
-        RestStateStorage storage = new RestStateStorage(file, jsonizer);
-        storage.storeFrom(client);
+            RestStateStorage storage = new RestStateStorage(file, jsonizer);
+            storage.storeFrom(client);
 
-        assertThat(FileUtils.readFileToString(file)).isEmpty();
+            assertThat(FileUtils.readFileToString(file)).isEmpty();
+        } finally {
+            file.delete();
+        }
     }
 
     @Test
     public void whenStoringNonExistingFileCheckIfItWasCreated() throws Exception {
         when(jsonizer.to(client.getState())).thenReturn("42");
 
-        File file = new File(File.createTempFile("test", "tmp").getAbsolutePath() + ".dir", "test/dir");
+        File tempFile = File.createTempFile("test", "tmp");
+        String tempDir = tempFile.getAbsolutePath() + ".dir";
+        try {
+            File file = new File(tempDir, "test/dir");
 
-        RestStateStorage storage = new RestStateStorage(file, jsonizer);
-        storage.storeFrom(client);
+            RestStateStorage storage = new RestStateStorage(file, jsonizer);
+            storage.storeFrom(client);
 
-        assertThat(FileUtils.readFileToString(file)).isEqualTo("42");
+            assertThat(FileUtils.readFileToString(file)).isEqualTo("42");
+        } finally {
+            FileUtils.deleteDirectory(new File(tempDir));
+            tempFile.delete();
+        }
     }
 
     @Test
     public void whenRecoveringCookiesFromFile() throws Exception {
         RestState state = mock(RestState.class);
         File file = File.createTempFile("test", "tmp");
-        FileUtils.writeStringToFile(file, "42");
+        try {
+            FileUtils.writeStringToFile(file, "42");
 
-        when(jsonizer.from("42", RestState.class)).thenReturn(state);
+            when(jsonizer.from("42", RestState.class)).thenReturn(state);
 
-        RestStateStorage storage = new RestStateStorage(file, jsonizer);
-        storage.recoverTo(client);
+            RestStateStorage storage = new RestStateStorage(file, jsonizer);
+            storage.recoverTo(client);
 
-        verify(client).setState(state);
+            verify(client).setState(state);
+        } finally {
+            file.delete();
+        }
     }
 
     @Test
     public void whenRecoveringCookiesWithNonExistingFile() throws Exception {
-        File file = new File(File.createTempFile("test", "tmp").getAbsolutePath() + ".dir", "test/dir");
+        File tempFile = File.createTempFile("test", "tmp");
+        String tempDir = tempFile.getAbsolutePath() + ".dir";
+        try {
+            File file = new File(tempDir, "test/dir");
 
-        RestStateStorage storage = new RestStateStorage(file, jsonizer);
-        storage.recoverTo(client);
-        verifyNoMoreInteractions(client);
+            RestStateStorage storage = new RestStateStorage(file, jsonizer);
+            storage.recoverTo(client);
+            verifyNoMoreInteractions(client);
+        } finally {
+            tempFile.delete();
+            FileUtils.deleteDirectory(new File(tempDir));
+        }
     }
 
     @Test
     public void whenRecoveringCookiesFromNonCookieSerializedData() throws Exception {
         RestState state = mock(RestState.class);
         File file = File.createTempFile("test", "tmp");
-        FileUtils.writeStringToFile(file, "42");
+        try {
+            FileUtils.writeStringToFile(file, "42");
 
-        when(jsonizer.from("42", RestState.class)).thenThrow(new RuntimeException());
+            when(jsonizer.from("42", RestState.class)).thenThrow(new RuntimeException());
 
-        RestStateStorage storage = new RestStateStorage(file, jsonizer);
-        storage.recoverTo(client);
+            RestStateStorage storage = new RestStateStorage(file, jsonizer);
+            storage.recoverTo(client);
 
-        verifyNoMoreInteractions(client);
+            verifyNoMoreInteractions(client);
+        } finally {
+            file.delete();
+        }
     }
 
 }
