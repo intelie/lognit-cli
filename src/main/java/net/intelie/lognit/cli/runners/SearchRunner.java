@@ -25,17 +25,20 @@ public class SearchRunner implements Runner {
     }
 
     @Override
-    public int run(UserOptions options) throws IOException {
+    public int run(UserOptions options) throws Exception {
         BufferListener listener = factory.create(options.getFormat(), options.isVerbose());
 
         RestListenerHandle handle = handshake(options, listener);
 
-        listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
-        if (options.isFollow()) {
-            listener.releaseAll();
-            console.waitChar('q');
+        try {
+            listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
+            if (options.isFollow()) {
+                listener.releaseAll();
+                clock.sleep(Integer.MAX_VALUE);
+            }
+        } finally {
+            handle.close();
         }
-        handle.close();
 
         return 0;
     }

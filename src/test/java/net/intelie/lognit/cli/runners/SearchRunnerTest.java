@@ -49,7 +49,7 @@ public class SearchRunnerTest {
         BufferListener listener = factory.create("colored", false);
         verify(lognit).search("blablabla", 42, listener);
         verify(listener).releaseAll();
-        verify(console).waitChar('q');
+        verify(clock).sleep(Integer.MAX_VALUE);
         verify(lognit.search("blablabla", 42, listener)).close();
     }
 
@@ -61,7 +61,7 @@ public class SearchRunnerTest {
         verify(lognit).search("blablabla", 42, listener);
         verify(console).println(SearchRunner.HANDSHAKE, 32L);
         verify(listener).releaseAll();
-        verify(console).waitChar('q');
+        verify(clock).sleep(Integer.MAX_VALUE);
         verify(lognit.search("blablabla", 42, listener)).close();
     }
 }
