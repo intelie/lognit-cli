@@ -14,9 +14,11 @@ def hash(host):
     return reduce(lambda x,y: x*31+ord(y), host, 0)%128
 ```
 
-A message bag location should look something like this
+A message bag location should look something like this:
 
+```
 /106/example/20120329/18/08/55/1367f16a4fca8ee5
+```
 
 These files are stored in a protobuf format. The proto file is provided here.
 
