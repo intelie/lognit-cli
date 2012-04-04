@@ -1,0 +1,5 @@
+Test using samples:
+
+python read.py samples/compressed
+
+python read.py samples/normal
