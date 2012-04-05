@@ -49,8 +49,8 @@ _nit()
     fi
 
     COMPREPLY=( $(nitr get "terms?field=${field}&term=${cur}&avoidColons=true&size=100" | 
-        sed -re 's/\{"terms":\[(.*)\]\}/\1/g' | 
-        awk -v k=text '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed -re 's/"(.*)"/\1/g') )
+        sed -E 's/\{"terms":\[(.*)\]\}/\1/g' | 
+        awk -v k=text '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed -E 's/"(.*)"/\1/g') )
     return 0
 }
 complete -F _nit nit
