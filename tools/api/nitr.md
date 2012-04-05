@@ -1,7 +1,7 @@
 #nitr command
 
-nitr is a command designed to ease the call of rest API of lognit. It uses the
-already logged session from nit.
+nitr is a command designed to ease the task of calling the rest API of lognit. 
+It uses the already logged session from nit.
 
 The basic usage is:
 
