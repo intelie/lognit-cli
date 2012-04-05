@@ -28,7 +28,7 @@ server=$(echo ${state} | sed -E 's/.*"server":"([^"]*)".*/\1/g')
 sessionid=$(echo ${state} | sed -E 's/.*"name":"JSESSIONID","value":"([^"]*)".*/\1/g')
 verb=$1; shift
 resource=$1; shift
-curl -X ${verb} -s -L -w \\n -b JSESSIONID=${sessionid} "http://${server}/rest/${resource}" $@
+curl -X ${verb} -s -L -H 'Content-Type:application/json' -w \\n -b JSESSIONID=${sessionid} "http://${server}/rest/${resource}" $@
 __END__
 mv /tmp/nitr /usr/bin/nitr
 chmod a+x /usr/bin/nitr
