@@ -24,12 +24,10 @@ if [ $# -lt 2 ]; then
 fi
 
 state=$(cat ~/.lognit/state)
-server=$(echo ${state} | sed -r 's/.*"server":"(.*)"}/\1/g')
-sessionid=$(echo ${state} | sed -r 's/.*"name":"JSESSIONID","value":"(\w*)".*/\1/g')
-verb=$1
-shift
-resource=$1
-shift
+server=$(echo ${state} | sed -E 's/.*"server":"([^"]*)".*/\1/g')
+sessionid=$(echo ${state} | sed -E 's/.*"name":"JSESSIONID".*"value":"([^"]*)".*/\1/g')
+verb=$1; shift
+resource=$1; shift
 curl -X ${verb} -s -L -w \\n -b JSESSIONID=${sessionid} "http://${server}/rest/${resource}" $@
 __END__
 mv /tmp/nitr /usr/bin/nitr
