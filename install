@@ -25,7 +25,7 @@ fi
 
 state=$(cat ~/.lognit/state)
 server=$(echo ${state} | sed -E 's/.*"server":"([^"]*)".*/\1/g')
-sessionid=$(echo ${state} | sed -E 's/.*"name":"JSESSIONID".*"value":"([^"]*)".*/\1/g')
+sessionid=$(echo ${state} | sed -E 's/.*"name":"JSESSIONID","value":"([^"]*)".*/\1/g')
 verb=$1; shift
 resource=$1; shift
 curl -X ${verb} -s -L -w \\n -b JSESSIONID=${sessionid} "http://${server}/rest/${resource}" $@
