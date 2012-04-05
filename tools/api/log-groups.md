@@ -10,7 +10,10 @@ $ cat << '__END__' | nitr post log-groups -d @-
         filters: [{expressions:[{key:"a",value:"b"}]}]
     }
 __END__
+```
 
+That returns:
+```
 {"id":"ff8081813682d0a101368450a92b0018","name":"test log group","metadata":[{"key":"d","value":"e"}],"patterns":[{"expression":"c"}],"templates":[{"position":123,"property":"f"}],"filters":[{"id":"ff8081813682d0a101368450a92c0019","expressions":[{"id":"ff8081813682d0a101368450a92c001a",key:"a",value:"b"}]}],"spaces":[]}
 ```
 
@@ -18,7 +21,10 @@ __END__
 
 ``` bash
 $ nitr get log-groups/ff8081813682d0a101368450a92b0018
+```
 
+That returns:
+```
 {"id":"ff8081813682d0a101368450a92b0018","name":"test log group","metadata":[{"key":"d","value":"e"}],"patterns":[{"expression":"c"}],"templates":[{"position":123,"property":"f"}],"filters":[{"id":"ff8081813682d0a101368450a92c0019","expressions":[{"id":"ff8081813682d0a101368450a92c001a",key:"a",value:"b"}]}],"spaces":[]}
 ```
 
@@ -34,7 +40,10 @@ $ cat << '__END__' | nitr put log-groups/ff8081813682d0a101368450a92b0018 -d @-
         filters: [{expressions:[{key:"a",value:"b"}]}]
     }
 __END__
+```
 
+That returns:
+```
 {"id":"ff8081813682d0a101368450a92b0018","name":"test log group (modified)","metadata":[{"key":"d","value":"e"}],"patterns":[{"expression":"c"}],"templates":[{"position":123,"property":"f"}],"filters":[{"id":"ff8081813682d0a101368452140d001b","expressions":[{"id":"ff8081813682d0a101368452140d001c",key:"a",value:"b"}]}],"spaces":[]}
 ```
 
@@ -42,6 +51,9 @@ __END__
 
 ``` bash
 $ nitr delete log-groups/ff8081813682d0a101368450a92b0018
+```
 
+That returns:
+```
 {"id":"ff8081813682d0a101368450a92b0018","name":"test log group (modified)","metadata":[{"key":"d","value":"e"}],"patterns":[{"expression":"c"}],"templates":[{"position":123,"property":"f"}],"filters":[{"id":"ff8081813682d0a101368452140d001b","expressions":[{"id":"ff8081813682d0a101368452140d001c",key:"a",value:"b"}]}],"spaces":[]}
 ```
