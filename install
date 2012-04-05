@@ -15,6 +15,26 @@ else
     chmod a+x /usr/bin/nit
 fi
 
+cat << '__END__' > /tmp/nitr
+#!/bin/sh
+if [ $# -lt 2 ]; then
+    echo 'nitr <verb> <resource> [<curl params>]'
+    echo 'nitr get users/welcome -v'
+    exit 0
+fi
+
+state=$(cat ~/.lognit/state)
+server=$(echo ${state} | sed -r 's/.*"server":"(.*)"}/\1/g')
+sessionid=$(echo ${state} | sed -r 's/.*"name":"JSESSIONID","value":"(\w*)".*/\1/g')
+verb=$1
+shift
+resource=$1
+shift
+curl -X ${verb} -s -L -w \\n -b JSESSIONID=${sessionid} "http://${server}/rest/${resource}" $@
+__END__
+mv /tmp/nitr /usr/bin/nitr
+chmod a+x /usr/bin/nitr
+
 cat << '__END__' > /tmp/_nit  
 _nit()
 {
@@ -30,10 +50,7 @@ _nit()
         cur=
     fi
 
-	server=$(cat ~/.lognit/state | sed -r 's/.*"server":"(.*)"}/\1/g')
-	sessionid=$(cat ~/.lognit/state | sed -r 's/.*"name":"JSESSIONID","value":"(\w*)".*/\1/g')
-
-    COMPREPLY=( $(curl -s -b JSESSIONID=${sessionid} "http://${server}/rest/terms?field=${field}&term=${cur}&avoidColons=true&size=100" | 
+    COMPREPLY=( $(nitr get "terms?field=${field}&term=${cur}&avoidColons=true&size=100" | 
         sed -re 's/\{"terms":\[(.*)\]\}/\1/g' | 
         awk -v k=text '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed -re 's/"(.*)"/\1/g') )
     return 0

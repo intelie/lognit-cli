@@ -4,6 +4,12 @@
 sudo sh < <(curl -s https://raw.github.com/intelie/lognit-cli/master/install)
 ```
 
+Installing an snapshot version:
+
+```
+sudo sh -s 0.4.1-SNAPSHOT < <(curl -s https://raw.github.com/intelie/lognit-cli/master/install) 
+```
+
 # Usage
 
 First, connect to a server:
