@@ -1,4 +1,4 @@
-#nitr command
+#nitr - Lognit REST API Command Line Client
 
 nitr is a command designed to ease the task of calling the rest API of lognit. 
 It uses the already logged session from nit.
