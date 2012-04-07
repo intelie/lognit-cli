@@ -1,4 +1,6 @@
-#Creating a new log group
+#Log Groups REST API
+
+##Create
 
 ``` bash
 $ nitr post log-groups -d@- << '__END__' 
@@ -18,7 +20,7 @@ That returns:
 {"id":"ff8081813682d0a101368450a92b0018","name":"test log group","metadata":[{"key":"d","value":"e"}],"patterns":[{"expression":"c"}],"templates":[{"position":123,"property":"f"}],"filters":[{"id":"ff8081813682d0a101368450a92c0019","expressions":[{"id":"ff8081813682d0a101368450a92c001a",key:"a",value:"b"}]}],"spaces":[]}
 ```
 
-#Returning log group info
+##Read
 
 ``` bash
 $ nitr get log-groups/ff8081813682d0a101368450a92b0018
@@ -30,7 +32,7 @@ That returns:
 {"id":"ff8081813682d0a101368450a92b0018","name":"test log group","metadata":[{"key":"d","value":"e"}],"patterns":[{"expression":"c"}],"templates":[{"position":123,"property":"f"}],"filters":[{"id":"ff8081813682d0a101368450a92c0019","expressions":[{"id":"ff8081813682d0a101368450a92c001a",key:"a",value:"b"}]}],"spaces":[]}
 ```
 
-#Updating log group
+##Update
 
 ``` bash
 $ nitr put log-groups/ff8081813682d0a101368450a92b0018 -d@- << '__END__' 
@@ -50,7 +52,7 @@ That returns:
 {"id":"ff8081813682d0a101368450a92b0018","name":"test log group (modified)","metadata":[{"key":"d","value":"e"}],"patterns":[{"expression":"c"}],"templates":[{"position":123,"property":"f"}],"filters":[{"id":"ff8081813682d0a101368452140d001b","expressions":[{"id":"ff8081813682d0a101368452140d001c",key:"a",value:"b"}]}],"spaces":[]}
 ```
 
-#Deleting log group
+##Delete
 
 ``` bash
 $ nitr delete log-groups/ff8081813682d0a101368450a92b0018
