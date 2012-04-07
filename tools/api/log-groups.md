@@ -1,7 +1,7 @@
 #Creating a new log group
 
 ``` bash
-$ cat << '__END__' | nitr post log-groups -d @-
+$ nitr post log-groups -d@- << '__END__' 
     {
         name:"test log group",
         metadata: [{key:"d",value:"e"}],
@@ -33,7 +33,7 @@ That returns:
 #Updating log group
 
 ``` bash
-$ cat << '__END__' | nitr put log-groups/ff8081813682d0a101368450a92b0018 -d @-
+$ nitr put log-groups/ff8081813682d0a101368450a92b0018 -d@- << '__END__' 
     {
         name:"test log group (modified)",
         metadata: [{key:"d",value:"e"}],

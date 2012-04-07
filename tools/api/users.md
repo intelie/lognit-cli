@@ -1,7 +1,7 @@
 #Creating a new user
 
 ``` bash
-$ cat << '__END__' | nitr post users -d @-
+$ nitr post users -d@- << '__END__' 
     {
         email:'test@test.com',
         displayName:'Test da Silva'
@@ -30,7 +30,7 @@ That returns:
 #Updating user
 
 ``` bash
-$ cat << '__END__' | nitr put users/ff8081813682d0a10136847099300024 -d @-
+$ nitr put users/ff8081813682d0a10136847099300024 -d@- << '__END__' 
     {
         id: 'ff8081813682d0a10136847099300024',
         email:'test@test.com',
