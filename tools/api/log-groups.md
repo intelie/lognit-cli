@@ -63,3 +63,26 @@ That returns:
 ```
 {"id":"ff8081813682d0a101368450a92b0018","name":"test log group (modified)","metadata":[{"key":"d","value":"e"}],"patterns":[{"expression":"c"}],"templates":[{"position":123,"property":"f"}],"filters":[{"id":"ff8081813682d0a101368452140d001b","expressions":[{"id":"ff8081813682d0a101368452140d001c",key:"a",value:"b"}]}],"spaces":[]}
 ```
+
+##Simulating Reception
+
+``` bash
+$ nitr post log-groups/simulate -d@- << '__END__' 
+    {
+        name:"test log group",
+        metadata: [{key:"d",value:"e"}],
+        patterns: [{expression:"c"}],
+        templates: [{position:123,property:"f"}],
+        filters: [{expressions:[{key:"a",value:"b"}]}]
+    }
+__END__
+```
+
+That returns:
+
+```
+{"channel":"/search/1664b86e-ff6d-4444-abb4-0ea039b4c36e"}
+```
+
+Where "channel" is a Bayeux channel that will return any matching results.
+
