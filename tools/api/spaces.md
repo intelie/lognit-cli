@@ -6,7 +6,7 @@
 $ nitr post spaces -d@- << '__END__' 
     {
         name:"teste",
-        logGroups:[{"id":"ff808181355a836601355a8648760005"}]
+        logGroups:[{id:"ff808181355a836601355a8648760005"}]
     }
 __END__
 ```
@@ -35,7 +35,7 @@ That returns:
 $ nitr put spaces/ff808181368eb86401368eca6a02000c -d@- << '__END__' 
     {
         name:"teste (modified)",
-        logGroups:[{"id":"ff808181355a836601355a8648760005"}]
+        logGroups:[{id:"ff808181355a836601355a8648760005"}]
     }
 __END__
 ```
