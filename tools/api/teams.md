@@ -1,6 +1,6 @@
 #Teams REST API
 
-##Creating
+##Create
 
 ``` bash
 $ nitr post teams -d@- << '__END__' 

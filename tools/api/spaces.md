@@ -1,6 +1,6 @@
 #Spaces REST API
 
-##Creating
+##Create
 
 ``` bash
 $ nitr post spaces -d@- << '__END__' 

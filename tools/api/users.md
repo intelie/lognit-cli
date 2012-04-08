@@ -1,6 +1,6 @@
 #Users REST API
 
-##Creating
+##Create
 
 ``` bash
 $ nitr post users -d@- << '__END__' 
