@@ -1,5 +1,18 @@
 #Spaces REST API
 
+
+##List
+
+``` bash
+$ nitr get spaces?page=1
+```
+
+That returns:
+
+```
+{"data":[{"id":"ff8081813697fd9401369801bc720004","name":"teste","logGroups":[{"id":"ff808181355a836601355a8648760005","name":"teste"}]}],"total":1,"page":1,"pageSize":10}
+```
+
 ##Create
 
 ``` bash

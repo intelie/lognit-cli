@@ -1,5 +1,17 @@
 #Users REST API
 
+##List
+
+``` bash
+$ nitr get users?page=1
+```
+
+That returns:
+
+```
+{"data":[{"id":"f478d640307946398d0b81c74bbe0761","email":"lognit@intelie.net","displayName":"Administrator"},{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva"}],"total":2,"page":1,"pageSize":10}
+```
+
 ##Create
 
 ``` bash
