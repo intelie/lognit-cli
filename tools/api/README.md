@@ -11,4 +11,4 @@ further info [here](nitr.md).
 
 ##Resources
 
-[Log Group](log-groups.md)
+[Log Group](./log-groups.md)
