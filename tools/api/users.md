@@ -9,7 +9,7 @@ $ nitr get users?page=1
 That returns:
 
 ```
-{"data":[{"id":"f478d640307946398d0b81c74bbe0761","email":"lognit@intelie.net","displayName":"Administrator"},{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva"}],"total":2,"page":1,"pageSize":10}
+{"data":[{"id":"f478d640307946398d0b81c74bbe0761","email":"lognit@intelie.net","displayName":"Administrator","teams":[]},{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva","teams":[]}],"total":2,"page":1,"pageSize":10}
 ```
 
 ##Create
@@ -26,7 +26,7 @@ __END__
 That returns:
 
 ```
-{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva"}
+{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva","teams":[]}
 ```
 
 ##Read
@@ -38,7 +38,7 @@ $ nitr get users/ff8081813682d0a10136847099300024
 That returns:
 
 ```
-{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva"}
+{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva","teams":[]}
 ```
 
 ##Update
@@ -56,7 +56,7 @@ __END__
 That returns:
 
 ```
-{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva (modified)"}
+{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva (modified)","teams":[]}
 ```
 
 ##Delete
@@ -68,5 +68,5 @@ $ nitr delete users/ff8081813682d0a10136847099300024
 That returns:
 
 ```
-{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva (modified)"}
+{"id":"ff8081813682d0a10136847099300024","email":"test@test.com","displayName":"Test da Silva (modified)","teams":[]}
 ```
