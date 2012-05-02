@@ -17,15 +17,6 @@ Options:
   -v, --verbose               shows some stats while querying
   -?, -h, --help              shows this help
 
-Advanced:
-
-  --purge                     starts a purge process, instead of a search
-  --unpurge                   reindexes all files purged recently
-  --cancel-purges             panic button, cancel ALL purges
-  --pause                     temporarily pauses lognit indexing
-  --resume                    resume previously paused indexing
-  --all                       runs advanced command at all cluster nodes
-
 Examples:
 
   nit '*'                     searches everything
