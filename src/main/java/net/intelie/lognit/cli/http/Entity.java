@@ -5,8 +5,8 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 public class Entity {
-    private NameValuePair current;
-    private Entity previous;
+    private final NameValuePair current;
+    private final Entity previous;
 
     public Entity() {
         this(null, null);
