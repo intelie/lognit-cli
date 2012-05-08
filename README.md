@@ -4,10 +4,10 @@
 sudo sh < <(curl -s https://raw.github.com/intelie/lognit-cli/master/install)
 ```
 
-Installing a snapshot version:
+Installing another version:
 
 ```
-sudo sh -s 0.4.1-SNAPSHOT < <(curl -s https://raw.github.com/intelie/lognit-cli/master/install) 
+sudo sh -s 0.4 < <(curl -s https://raw.github.com/intelie/lognit-cli/master/install) 
 ```
 
 # Usage
