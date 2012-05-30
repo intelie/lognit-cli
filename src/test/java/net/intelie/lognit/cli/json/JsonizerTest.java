@@ -54,6 +54,13 @@ public class JsonizerTest {
     }
 
     @Test
+    public void testFromMapTypeUsingDoubles() throws Exception {
+        AggregatedItem map = json.from("{abc:123.456}", AggregatedItem.class);
+        assertThat(map.get("abc")).isEqualTo(new BigDecimal("123.456"));
+
+    }
+
+    @Test
     public void testFromStream() throws Exception {
         ByteArrayInputStream stream = new ByteArrayInputStream("{message:'abc'}\n{message:'qwe'}{message:'asd'}".getBytes());
         Iterator<Welcome> iterator = json.from(stream, Welcome.class);
