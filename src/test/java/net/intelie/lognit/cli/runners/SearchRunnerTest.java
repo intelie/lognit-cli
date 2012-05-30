@@ -2,10 +2,13 @@ package net.intelie.lognit.cli.runners;
 
 import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.UserOptions;
+import net.intelie.lognit.cli.http.BayeuxHandle;
 import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.state.Clock;
+import org.cometd.client.BayeuxClient;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.mockito.Mockito.*;
 
@@ -15,6 +18,7 @@ public class SearchRunnerTest {
     private SearchRunner runner;
     private BufferListenerFactory factory;
     private Clock clock;
+    private Runtime runtime;
 
     @Before
     public void setUp() throws Exception {
@@ -22,7 +26,8 @@ public class SearchRunnerTest {
         lognit = mock(Lognit.class, RETURNS_DEEP_STUBS);
         factory = mock(BufferListenerFactory.class, RETURNS_DEEP_STUBS);
         clock = mock(Clock.class);
-        runner = new SearchRunner(console, lognit, factory, clock);
+        runtime = mock(Runtime.class);
+        runner = new SearchRunner(console, lognit, factory, clock, runtime);
     }
 
     @Test
@@ -51,6 +56,21 @@ public class SearchRunnerTest {
         verify(listener).releaseAll();
         verify(clock).sleep(Integer.MAX_VALUE);
         verify(lognit.search("blablabla", 42, listener)).close();
+    }
+
+    @Test
+    public void whenHasQueryToFollowRegisterShutdown() throws Exception {
+        runner.run(new UserOptions("blablabla", "-n", "42", "-f"));
+        BufferListener listener = factory.create("colored", false);
+        verify(lognit).search("blablabla", 42, listener);
+        verify(listener).releaseAll();
+        verify(clock).sleep(Integer.MAX_VALUE);
+
+        ArgumentCaptor<Thread> captor = ArgumentCaptor.forClass(Thread.class);
+        verify(runtime).addShutdownHook(captor.capture());
+
+        captor.getValue().run();
+        verify(lognit.search("blablabla", 42, listener), times(2)).close();
     }
 
     @Test

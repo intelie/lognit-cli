@@ -16,12 +16,14 @@ public class SearchRunner implements Runner {
     private final Lognit lognit;
     private final BufferListenerFactory factory;
     private final Clock clock;
+    private final Runtime runtime;
 
-    public SearchRunner(UserConsole console, Lognit lognit, BufferListenerFactory factory, Clock clock) {
+    public SearchRunner(UserConsole console, Lognit lognit, BufferListenerFactory factory, Clock clock, Runtime runtime) {
         this.console = console;
         this.lognit = lognit;
         this.factory = factory;
         this.clock = clock;
+        this.runtime = runtime;
     }
 
     @Override
@@ -46,8 +48,19 @@ public class SearchRunner implements Runner {
     private RestListenerHandle handshake(UserOptions options, BufferListener listener) throws IOException {
         long start = clock.currentMillis();
         RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), listener);
+        registerRuntime(handle);
+
         if (options.isVerbose())
             console.println(HANDSHAKE, clock.currentMillis() - start);
         return handle;
+    }
+
+    private void registerRuntime(final RestListenerHandle handle) {
+        runtime.addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                handle.close();
+            }
+        });
     }
 }

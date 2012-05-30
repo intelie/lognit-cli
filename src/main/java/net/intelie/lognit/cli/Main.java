@@ -72,7 +72,7 @@ public class Main {
 
     private static MainRunner makeMainRunner(UserConsole userConsole, Lognit lognit, Clock clock, Timer timer, Runtime runtime, FormatterSelector selector) {
         InfoRunner info = new InfoRunner(userConsole, lognit);
-        SearchRunner search = new SearchRunner(userConsole, lognit, new BufferListenerFactory(selector), clock);
+        SearchRunner search = new SearchRunner(userConsole, lognit, new BufferListenerFactory(selector), clock, runtime);
         CompletionRunner completion = new CompletionRunner(userConsole, lognit);
         UsageRunner usage = new UsageRunner(userConsole);
         WelcomeRunner welcome = new WelcomeRunner(userConsole, lognit);
