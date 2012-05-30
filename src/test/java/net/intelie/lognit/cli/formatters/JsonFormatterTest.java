@@ -1,7 +1,10 @@
 package net.intelie.lognit.cli.formatters;
 
+import net.intelie.lognit.cli.AggregatedItemHelper;
 import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.json.Jsonizer;
+import net.intelie.lognit.cli.model.Aggregated;
+import net.intelie.lognit.cli.model.AggregatedItem;
 import net.intelie.lognit.cli.model.Message;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +31,19 @@ public class JsonFormatterTest {
         when(jsonizer.to(message)).thenReturn("abc");
         printer.printMessage(message);
         verify(console).printOut("%s", "abc");
+    }
+
+    @Test
+    public void testAggregated() throws Exception {
+        AggregatedItem item1 = AggregatedItemHelper.map("abc", 123);
+        AggregatedItem item2 = AggregatedItemHelper.map("abc", 124);
+        Aggregated aggr = new Aggregated(item1, item2);
+
+        when(jsonizer.to(item1)).thenReturn("abc");
+        when(jsonizer.to(item2)).thenReturn("qwe");
+        printer.printAggregated(aggr);
+        verify(console).printOut("%s", "abc");
+        verify(console).printOut("%s", "qwe");
     }
 
     @Test

@@ -1,6 +1,8 @@
 package net.intelie.lognit.cli.runners;
 
 import net.intelie.lognit.cli.formatters.ColoredFormatter;
+import net.intelie.lognit.cli.http.RestListener;
+import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.MessageBag;
 import org.junit.Before;
@@ -8,6 +10,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static net.intelie.lognit.cli.AggregatedItemHelper.map;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -40,6 +43,20 @@ public class BufferListenerTest {
         verify(printer).printMessage(mB);
         verifyNoMoreInteractions(printer);
     }
+
+    @Test(timeout = 1000)
+    public void canReceiveAsRestListener() {
+        RestListener restListener = (RestListener) listener;
+        Message mA = m("A"), mB = m("B");
+        restListener.receive(ms(false, true, 2, mB, mA));
+        assertThat(listener.waitHistoric(50, 3)).isFalse();
+
+        verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
+        verify(printer).printMessage(mA);
+        verify(printer).printMessage(mB);
+        verifyNoMoreInteractions(printer);
+    }
+
 
     @Test(timeout = 1000)
     public void whenOnlyOneOfTwoMessagesAriveOnTimeAndTheThreadInterrupts() throws Exception {
@@ -111,6 +128,21 @@ public class BufferListenerTest {
         verify(printer).printMessage(mC);
         verify(printer).printMessage(mA);
         verify(printer).printMessage(mB);
+        verifyNoMoreInteractions(printer);
+        listener.releaseAll();
+        verifyNoMoreInteractions(printer);
+    }
+
+    @Test(timeout = 1000)
+    public void willNotHoldAnymoreAfterFirstReleaseAllPrintingAggregation() {
+        Aggregated aggregated = new Aggregated(
+                map("abc", 123), map("qwe", 234));
+
+        Message mA = m("A"), mB = m("B"), mC = m("C");
+        listener.releaseAll();
+        listener.receive(ms(true, true, "node", 2L, aggregated));
+
+        verify(printer).printAggregated(aggregated);
         verifyNoMoreInteractions(printer);
         listener.releaseAll();
         verifyNoMoreInteractions(printer);
@@ -194,13 +226,19 @@ public class BufferListenerTest {
         verifyNoMoreInteractions(printer);
     }
 
+
     private MessageBag ms(boolean realtime, boolean success, int nodes, Message... messages) {
         return ms(realtime, success, null, 0L, nodes, messages);
     }
 
     private MessageBag ms(boolean realtime, boolean success, String node, Long time, int nodes, Message... messages) {
-        return new MessageBag(Arrays.asList(messages), node, time, null, success, realtime, nodes, 0);
+        return new MessageBag(Arrays.asList(messages), null, node, time, null, success, realtime, nodes, 0);
     }
+
+    private MessageBag ms(boolean realtime, boolean success, String node, Long time, Aggregated aggregated) {
+        return new MessageBag(null, aggregated, node, time, null, success, realtime, 0, 0);
+    }
+
 
     private Message m(String id) {
         return new Message(id);

@@ -28,6 +28,7 @@ public class MessageBagTest {
         assertThat(messages.isRealtime()).isTrue();
         assertThat(messages.isHistoric()).isFalse();
         assertThat(messages.getMessage()).isEqualTo("some message");
+        assertThat(messages.getAggregated()).isNull();
         assertThat(messages.getTotalNodes()).isEqualTo(42);
         assertThat(messages.getTotalItems()).isEqualTo(200);
         assertThat(messages.getItems().size()).isEqualTo(2);
@@ -37,7 +38,7 @@ public class MessageBagTest {
 
     @Test
     public void whenSerializing() {
-        MessageBag messages = new MessageBag(Arrays.asList(new Message("abc1"), new Message("abc2")),
+        MessageBag messages = new MessageBag(Arrays.asList(new Message("abc1"), new Message("abc2")), null,
                 "abc", 42L, "some message", true, true, 42, 200);
         JsonElement actual = jsonElement(messages);
 

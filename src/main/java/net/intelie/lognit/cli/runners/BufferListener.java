@@ -105,11 +105,18 @@ public class BufferListener implements RestListener<MessageBag> {
     }
 
     private void printBag(MessageBag bag) {
-        if (bag.isSuccess())
-            for (Message message : Lists.reverse(bag.getItems()))
-                printer.printMessage(message);
-        else
+        if (bag.isSuccess()) {
+            if (bag.getItems() != null) {
+                for (Message message : Lists.reverse(bag.getItems()))
+                    printer.printMessage(message);
+            }
+
+            if (bag.getAggregated() != null) {
+                printer.printAggregated(bag.getAggregated());
+            }
+        } else {
             printer.printStatus(QUERY_CANCELLED, bag.getMessage());
+        }
     }
 
     public Formatter getFormatter() {

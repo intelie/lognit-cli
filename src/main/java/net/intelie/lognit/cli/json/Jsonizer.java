@@ -1,13 +1,23 @@
 package net.intelie.lognit.cli.json;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.internal.bind.MiniGson;
+import com.google.gson.internal.bind.ObjectTypeAdapter;
+import com.google.gson.internal.bind.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
+import net.intelie.lognit.cli.model.Aggregated;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
+import java.math.BigDecimal;
 import java.util.Iterator;
+import java.util.Map;
 
 public class Jsonizer {
     private final Gson gson = new Gson();
@@ -22,9 +32,10 @@ public class Jsonizer {
     }
 
     public <T> T from(String json, Class<T> type) {
-        return gson.fromJson(json, type);
+        T value = gson.fromJson(json, type);
+        return value;
     }
-    
+
     public <T> Iterator<T> from(final InputStream stream, final Class<T> type) {
         final PushbackInputStream pushStream = new PushbackInputStream(stream, 1);
         final InputStreamReader reader = new InputStreamReader(pushStream);

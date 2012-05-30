@@ -2,7 +2,11 @@ package net.intelie.lognit.cli.formatters;
 
 import jline.ANSIBuffer;
 import net.intelie.lognit.cli.UserConsole;
+import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.Message;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ColoredFormatter implements Formatter {
     private final UserConsole console;
@@ -32,5 +36,22 @@ public class ColoredFormatter implements Formatter {
         buffer.append(message.getMessage());
 
         console.printOut(buffer.toString());
+    }
+
+    @Override
+    public void printAggregated(Aggregated aggregated) {
+        for (LinkedHashMap<String, Object> map : aggregated) {
+            ANSIBuffer buffer = new ANSIBuffer();
+            int count = 0;
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                if (count++ > 0)
+                    buffer.append(" ");
+                buffer.append(entry.getKey());
+                buffer.append(":");
+                buffer.green("" + entry.getValue());
+            }
+            console.printOut(buffer.toString());
+        }
+
     }
 }

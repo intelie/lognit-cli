@@ -1,12 +1,16 @@
 package net.intelie.lognit.cli.formatters;
 
+import net.intelie.lognit.cli.AggregatedItemHelper;
 import net.intelie.lognit.cli.UserConsole;
+import net.intelie.lognit.cli.model.Aggregated;
+import net.intelie.lognit.cli.model.AggregatedItem;
 import net.intelie.lognit.cli.model.Message;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class PlainFormatterTest {
     private PlainFormatter printer;
@@ -23,6 +27,17 @@ public class PlainFormatterTest {
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
         printer.printMessage(message);
         verify(console).printOut("%s %s %s %s %s %s", "A", "Nov 11 11:11:11", "D", "E", "F", "abc");
+    }
+
+    @Test
+    public void testAggregated() throws Exception {
+        AggregatedItem item1 = AggregatedItemHelper.map("abc", 123, "abd", 42);
+        AggregatedItem item2 = AggregatedItemHelper.map("abc", 124, "abd", "qwe");
+        Aggregated aggr = new Aggregated(item1, item2);
+
+        printer.printAggregated(aggr);
+        verify(console).printOut("abc:123 abd:42");
+        verify(console).printOut("abc:124 abd:qwe");
     }
 
     @Test

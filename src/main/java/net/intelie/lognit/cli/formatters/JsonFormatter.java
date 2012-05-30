@@ -2,7 +2,10 @@ package net.intelie.lognit.cli.formatters;
 
 import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.json.Jsonizer;
+import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.Message;
+
+import java.util.LinkedHashMap;
 
 public class JsonFormatter implements Formatter {
     private final Jsonizer json;
@@ -21,5 +24,12 @@ public class JsonFormatter implements Formatter {
     @Override
     public void printMessage(Message message) {
         console.printOut("%s", json.to(message));
+    }
+
+    @Override
+    public void printAggregated(Aggregated aggregated) {
+        for (LinkedHashMap<String, Object> map : aggregated) {
+            console.printOut("%s", json.to(map));
+        }
     }
 }

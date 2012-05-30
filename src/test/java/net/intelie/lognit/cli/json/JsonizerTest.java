@@ -2,17 +2,15 @@ package net.intelie.lognit.cli.json;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import net.intelie.lognit.cli.json.Jsonizer;
+import net.intelie.lognit.cli.model.AggregatedItem;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.Welcome;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 import static net.intelie.lognit.cli.JsonHelpers.jsonParse;
 import static org.fest.assertions.Assertions.assertThat;
@@ -49,10 +47,17 @@ public class JsonizerTest {
     }
 
     @Test
+    public void testFromMapTypeUsingNumbers() throws Exception {
+        AggregatedItem map = json.from("{abc:123}", AggregatedItem.class);
+        assertThat(map.get("abc")).isEqualTo(new BigDecimal(123));
+
+    }
+
+    @Test
     public void testFromStream() throws Exception {
         ByteArrayInputStream stream = new ByteArrayInputStream("{message:'abc'}\n{message:'qwe'}{message:'asd'}".getBytes());
         Iterator<Welcome> iterator = json.from(stream, Welcome.class);
-        
+
         assertThat(iterator.next().getMessage()).isEqualTo("abc");
         assertThat(iterator.next().getMessage()).isEqualTo("qwe");
         assertThat(iterator.next().getMessage()).isEqualTo("asd");
