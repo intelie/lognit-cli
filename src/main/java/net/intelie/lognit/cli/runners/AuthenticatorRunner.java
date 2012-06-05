@@ -22,17 +22,18 @@ public class AuthenticatorRunner implements Runner {
 
     @Override
     public int run(UserOptions options) throws Exception {
-        prepare(options);
-
         int retries = options.askPassword() ? 4 : 1;
         while (retries-- > 0) {
             try {
+                prepare(options);
                 return runner.run(options);
             } catch (RetryConnectionException e) {
                 stacktrace(options, e);
                 console.println("(%s): %s", lognit.getServer(), e.getMessage());
                 clock.sleep(2000);
                 options = e.options();
+                if (e.getCause() instanceof UnauthorizedException && options.askPassword())
+                    askPassword(options.getUser());
                 retries++;
             } catch (UnauthorizedException e) {
                 stacktrace(options, e);

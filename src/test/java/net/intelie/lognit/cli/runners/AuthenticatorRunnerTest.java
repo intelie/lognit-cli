@@ -152,4 +152,49 @@ public class AuthenticatorRunnerTest {
         verifyNoMoreInteractions(lognit, console, clock);
     }
 
+    @Test
+    public void whenReceivesUnauthorizedAndHasUserAndPasswordButExceptionIsRetryWithUnauthorizedTriesForever() throws Exception {
+        UserOptions opts = new UserOptions("-u", "someuser", "-p", "somepass");
+        when(main.run(any(UserOptions.class)))
+                .thenThrow(new RetryConnectionException(opts, new UnauthorizedException(new StatusLine("HTTP/1.0 401 OK"))))
+                .thenThrow(new RetryConnectionException(opts, new UnauthorizedException(new StatusLine("HTTP/1.0 402 OK"))))
+                .thenReturn(0);
+
+        runner.run(opts);
+
+        verify(lognit, times(2)).getServer();
+        verify(lognit, times(3)).authenticate("someuser", "somepass");
+        verify(main, times(3)).run(opts);
+        verify(clock, times(2)).sleep(2000);
+        verify(console).println("(%s): %s", null, "HTTP/1.0 401 OK");
+        verify(console).println("(%s): %s", null, "HTTP/1.0 402 OK");
+        verifyNoMoreInteractions(lognit, console, clock);
+    }
+
+    @Test
+    public void whenReceivesUnauthorizedAndHasntUserAndPasswordButExceptionIsRetryWithUnauthorizedTriesForever() throws Exception {
+        UserOptions opts = new UserOptions("abc");
+        when(main.run(any(UserOptions.class)))
+                .thenThrow(new RetryConnectionException(opts, new UnauthorizedException(new StatusLine("HTTP/1.0 401 OK"))))
+                .thenThrow(new RetryConnectionException(opts, new UnauthorizedException(new StatusLine("HTTP/1.0 402 OK"))))
+                .thenReturn(0);
+
+        when(console.readLine("login: ")).thenReturn("somelogin2");
+        when(console.readPassword("%s's password: ", "somelogin2")).thenReturn("somepass2");
+
+        runner.run(opts);
+
+
+        verify(lognit, times(2)).getServer();
+        verify(lognit, times(2)).authenticate("somelogin2", "somepass2");
+        verify(main, times(3)).run(opts);
+        verify(clock, times(2)).sleep(2000);
+        verify(console, times(2)).readLine("login: ");
+        verify(console, times(2)).readPassword("%s's password: ", "somelogin2");
+        verify(console).println("(%s): %s", null, "HTTP/1.0 401 OK");
+        verify(console).println("(%s): %s", null, "HTTP/1.0 402 OK");
+        verifyNoMoreInteractions(lognit, console, clock);
+    }
+
+
 }
