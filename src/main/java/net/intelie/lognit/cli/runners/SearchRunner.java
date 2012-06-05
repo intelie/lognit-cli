@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class SearchRunner implements Runner {
     public static final String HANDSHAKE = "INFO: handshake (%dms)";
+    public static final String REALTIME_DISCONNECTED = "Realtime results disconnected";
 
     private final UserConsole console;
     private final Lognit lognit;
@@ -28,21 +29,28 @@ public class SearchRunner implements Runner {
 
     @Override
     public int run(UserOptions options) throws Exception {
-        BufferListener listener = factory.create(options.getFormat(), options.isVerbose());
-
-        RestListenerHandle handle = handshake(options, listener);
-
         try {
-            listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
-            if (options.isFollow()) {
-                listener.releaseAll();
-                clock.sleep(Integer.MAX_VALUE);
-            }
-        } finally {
-            handle.close();
-        }
+            BufferListener listener = factory.create(options.getFormat(), options.isVerbose());
 
-        return 0;
+            RestListenerHandle handle = handshake(options, listener);
+
+            try {
+                listener.waitHistoric(options.getTimeoutInMilliseconds(), options.getLines());
+                if (options.isFollow()) {
+                    listener.releaseAll();
+                    handle.waitDisconnected();
+                    throw new RetryConnectionException(options.realtimeOnly(), REALTIME_DISCONNECTED);
+                }
+                return 0;
+            } finally {
+                handle.close();
+            }
+        } catch (Exception e) {
+            if (options.isFollow() && !(e instanceof RetryConnectionException))
+                throw new RetryConnectionException(options, e);
+            else
+                throw e;
+        }
     }
 
     private RestListenerHandle handshake(UserOptions options, BufferListener listener) throws IOException {

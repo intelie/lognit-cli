@@ -3,11 +3,15 @@ package net.intelie.lognit.cli;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
+import java.math.BigDecimal;
+
 public class UserOptions {
     private final String server;
     private final String user;
     private final String password;
+
     private final String query;
+
     private final String format;
     private final boolean follow;
     private final boolean info;
@@ -23,7 +27,6 @@ public class UserOptions {
     private final boolean complete;
     private final boolean download;
     private final boolean verbose;
-
     public UserOptions(String... args) {
         ArgsParser parser = new ArgsParser(args);
         help = parser.flag("-?", "-h", "--help");
@@ -107,10 +110,10 @@ public class UserOptions {
         return user == null || password == null;
     }
 
-
     public boolean isComplete() {
         return complete;
     }
+
 
     public boolean isPurge() {
         return purge;
@@ -120,10 +123,10 @@ public class UserOptions {
         return verbose;
     }
 
-
     public String getFormat() {
         return format;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -151,11 +154,11 @@ public class UserOptions {
                 Objects.equal(this.help, that.help);
     }
 
-
     @Override
     public int hashCode() {
         return Objects.hashCode(server, user, password, query, follow, all, pause, resume, purge, unpurge, cancelPurges, timeout, lines, info, format, complete, download, verbose, help);
     }
+
 
     public boolean isUnpurge() {
         return unpurge;
@@ -179,5 +182,31 @@ public class UserOptions {
 
     public boolean isDownload() {
         return download;
+    }
+
+    public UserOptions realtimeOnly() {
+        return new UserOptions(server, user,password, query, format, follow, info, help, purge, unpurge, cancelPurges, all, pause, resume, timeout, 0, complete, download, verbose);
+    }
+
+    public UserOptions(String server, String user, String password, String query, String format, boolean follow, boolean info, boolean help, boolean purge, boolean unpurge, boolean cancelPurges, boolean all, boolean pause, boolean resume, int timeout, int lines, boolean complete, boolean download, boolean verbose) {
+        this.server = server;
+        this.user = user;
+        this.password = password;
+        this.query = query;
+        this.format = format;
+        this.follow = follow;
+        this.info = info;
+        this.help = help;
+        this.purge = purge;
+        this.unpurge = unpurge;
+        this.cancelPurges = cancelPurges;
+        this.all = all;
+        this.pause = pause;
+        this.resume = resume;
+        this.timeout = timeout;
+        this.lines = lines;
+        this.complete = complete;
+        this.download = download;
+        this.verbose = verbose;
     }
 }

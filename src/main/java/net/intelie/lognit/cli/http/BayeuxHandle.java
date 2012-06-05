@@ -14,6 +14,11 @@ public class BayeuxHandle implements RestListenerHandle {
     }
 
     @Override
+    public void waitDisconnected() {
+        this.client.waitFor(Long.MAX_VALUE, BayeuxClient.State.UNCONNECTED);
+    }
+
+    @Override
     public void close() {
         if (!closed.getAndSet(true))
             this.client.disconnect();

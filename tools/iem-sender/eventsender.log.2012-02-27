@@ -1,0 +1,14 @@
+2012-02-27 14:43:00,930 sender.py(65) __connect MainThread: ERROR Unexpected error [Errno 32] Broken pipe.
+2012-02-27 16:15:47,540 sender.py(67) __connect MainThread: ERROR Unexpected error [Errno 32] Broken pipe.
+2012-02-27 17:20:29,133 sender.py(67) __connect MainThread: ERROR Unexpected error [Errno 32] Broken pipe.
+2012-02-27 17:20:29,903 sender.py(78) on_error StompReceiver: ERROR received an error org.apache.activemq.transport.stomp.ProtocolException: Not connected.
+	at org.apache.activemq.transport.stomp.ProtocolConverter.checkConnected(ProtocolConverter.java:567)
+	at org.apache.activemq.transport.stomp.ProtocolConverter.onStompSend(ProtocolConverter.java:235)
+	at org.apache.activemq.transport.stomp.ProtocolConverter.onStompCommand(ProtocolConverter.java:178)
+	at org.apache.activemq.transport.stomp.StompTransportFilter.onCommand(StompTransportFilter.java:70)
+	at org.apache.activemq.transport.TransportSupport.doConsume(TransportSupport.java:83)
+	at org.apache.activemq.transport.tcp.TcpTransport.doRun(TcpTransport.java:220)
+	at org.apache.activemq.transport.tcp.TcpTransport.run(TcpTransport.java:202)
+	at java.lang.Thread.run(Thread.java:662)
+
+2012-02-27 17:20:29,904 sender.py(82) on_error StompReceiver: ERROR TCP is connect but has some errors

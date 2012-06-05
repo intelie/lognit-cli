@@ -46,7 +46,7 @@ public class Main {
         Timer timer = new Timer();
         MainRunner mainRunner = makeMainRunner(userConsole, lognit, clock, timer, runtime, selector);
 
-        AuthenticatorRunner authenticatorRunner = new AuthenticatorRunner(userConsole, lognit, mainRunner);
+        AuthenticatorRunner authenticatorRunner = new AuthenticatorRunner(userConsole, lognit, clock, mainRunner);
 
         stateKeeper.register(runtime);
         userConsole.registerFix(runtime);

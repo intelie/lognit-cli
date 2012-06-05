@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 public class BayeuxFactory {
     public BayeuxClient create(String uri) {
-        return new BayeuxClient(uri, LongPollingTransport.create(new HashMap<String, Object>()));
+        LongPollingTransport transport = LongPollingTransport.create(new HashMap<String, Object>());
+        return new BayeuxClient(uri, transport);
     }
 }

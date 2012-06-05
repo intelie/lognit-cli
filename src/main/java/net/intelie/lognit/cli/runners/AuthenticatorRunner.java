@@ -5,15 +5,18 @@ import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.UserOptions;
 import net.intelie.lognit.cli.http.UnauthorizedException;
 import net.intelie.lognit.cli.model.Lognit;
+import net.intelie.lognit.cli.state.Clock;
 
 public class AuthenticatorRunner implements Runner {
     private final UserConsole console;
     private final Lognit lognit;
+    private final Clock clock;
     private final MainRunner runner;
 
-    public AuthenticatorRunner(UserConsole console, Lognit lognit, MainRunner runner) {
+    public AuthenticatorRunner(UserConsole console, Lognit lognit, Clock clock, MainRunner runner) {
         this.console = console;
         this.lognit = lognit;
+        this.clock = clock;
         this.runner = runner;
     }
 
@@ -24,8 +27,12 @@ public class AuthenticatorRunner implements Runner {
         int retries = options.askPassword() ? 4 : 1;
         while (retries-- > 0) {
             try {
-                runner.run(options);
-                return 0;
+                return runner.run(options);
+            } catch (RetryConnectionException e) {
+                console.println("(%s): %s", lognit.getServer(), e.getMessage());
+                clock.sleep(2000);
+                options = e.options();
+                retries++;
             } catch (UnauthorizedException ex) {
                 console.println("(%s): %s", lognit.getServer(), ex.getMessage());
                 if (retries > 0)

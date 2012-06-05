@@ -13,6 +13,8 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
+import org.cometd.bayeux.Message;
+import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 
 import java.io.IOException;
@@ -113,6 +115,7 @@ public class RestClientImpl implements RestClient {
         if (cookies != null)
             for (Cookie cookie : cookies)
                 cometd.setCookie(cookie.getName(), cookie.getValue());
+
 
         cometd.handshake();
         cometd.waitFor(1000, BayeuxClient.State.CONNECTED);

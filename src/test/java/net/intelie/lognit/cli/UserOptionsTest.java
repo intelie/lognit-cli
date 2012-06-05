@@ -42,6 +42,12 @@ public class UserOptionsTest {
     }
 
     @Test
+    public void canChangeLines() {
+        UserOptions opts = new UserOptions("abc", "-n", "500");
+        assertThat(opts.realtimeOnly()).isEqualTo(new UserOptions("abc", "-n", "0"));
+    }
+
+    @Test
     public void defaultForLinesIs2000WhenDownload() {
         UserOptions opts = new UserOptions("--download");
         assertThat(opts.getLines()).isEqualTo(2000);
@@ -95,7 +101,7 @@ public class UserOptionsTest {
 
     @Test
     public void differentOrderShouldDoTheSame() {
-        UserOptions opts1 = new UserOptions("-s", "A",  "--purge", "-d", "--all", "--cancel-purges", "--unpurge", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b", "-c", "-v");
+        UserOptions opts1 = new UserOptions("-s", "A", "--purge", "-d", "--all", "--cancel-purges", "--unpurge", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b", "-c", "-v");
         UserOptions opts2 = new UserOptions("--unpurge", "--cancel-purges", "--all", "-i", "-d", "-s", "A", "--purge", "-v", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-b", "-c");
         assertThat(opts1).isEqualTo(opts2);
         assertThat(opts1.hashCode()).isEqualTo(opts2.hashCode());
