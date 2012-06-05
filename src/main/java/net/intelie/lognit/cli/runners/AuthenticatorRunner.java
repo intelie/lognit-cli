@@ -29,17 +29,24 @@ public class AuthenticatorRunner implements Runner {
             try {
                 return runner.run(options);
             } catch (RetryConnectionException e) {
+                stacktrace(options, e);
                 console.println("(%s): %s", lognit.getServer(), e.getMessage());
                 clock.sleep(2000);
                 options = e.options();
                 retries++;
-            } catch (UnauthorizedException ex) {
-                console.println("(%s): %s", lognit.getServer(), ex.getMessage());
+            } catch (UnauthorizedException e) {
+                stacktrace(options, e);
+                console.println("(%s): %s", lognit.getServer(), e.getMessage());
                 if (retries > 0)
                     askPassword(options.getUser());
             }
         }
         return 2;
+    }
+
+    private void stacktrace(UserOptions options, Exception e) {
+        if (options.isVerbose())
+            e.printStackTrace();
     }
 
     private void askPassword(String user) {

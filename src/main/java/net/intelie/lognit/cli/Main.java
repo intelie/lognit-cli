@@ -13,9 +13,11 @@ import net.intelie.lognit.cli.state.Clock;
 import net.intelie.lognit.cli.state.RestStateStorage;
 import net.intelie.lognit.cli.state.StateKeeper;
 import org.apache.commons.httpclient.HttpClient;
+import org.eclipse.jetty.util.log.Log;
 
 import java.io.*;
 import java.util.Timer;
+import java.util.logging.LogManager;
 
 public class Main {
     public static void main(String... args) throws Exception {
