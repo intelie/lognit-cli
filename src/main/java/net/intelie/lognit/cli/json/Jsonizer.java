@@ -11,10 +11,7 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import net.intelie.lognit.cli.model.Aggregated;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PushbackInputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
@@ -37,17 +34,16 @@ public class Jsonizer {
     }
 
     public <T> Iterator<T> from(final InputStream stream, final Class<T> type) {
-        final PushbackInputStream pushStream = new PushbackInputStream(stream, 1);
-        final InputStreamReader reader = new InputStreamReader(pushStream);
-        final JsonReader jsonReader = new JsonReader(reader);
+        final JsonReader jsonReader = new JsonReader(new InputStreamReader(stream));
+        jsonReader.setLenient(true);
+
         return new Iterator<T>() {
             @Override
             public boolean hasNext() {
                 try {
-                    int next = pushStream.read();
-                    pushStream.unread(next);
-                    return next != -1;
+                    return jsonReader.peek() != JsonToken.END_DOCUMENT;
                 } catch (IOException e) {
+                    e.printStackTrace();
                     return false;
                 }
             }
