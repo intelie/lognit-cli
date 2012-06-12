@@ -51,7 +51,7 @@ public class UserOptions {
     }
 
     private int defaultLine(boolean purge, boolean download) {
-        return purge ? 20000000 : download ? 2000 : 20;
+        return purge ? 20000000 : download ? 100 : 20;
     }
 
     private <T> T def(T value, T def) {

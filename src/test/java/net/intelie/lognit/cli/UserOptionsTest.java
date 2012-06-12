@@ -48,9 +48,9 @@ public class UserOptionsTest {
     }
 
     @Test
-    public void defaultForLinesIs2000WhenDownload() {
+    public void defaultForLinesIs100WhenDownload() {
         UserOptions opts = new UserOptions("--download");
-        assertThat(opts.getLines()).isEqualTo(2000);
+        assertThat(opts.getLines()).isEqualTo(100);
     }
 
 
