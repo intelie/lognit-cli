@@ -3,6 +3,7 @@ package net.intelie.lognit.cli.runners;
 import com.google.common.collect.Lists;
 import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.http.RestListener;
+import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.MessageBag;
 
@@ -40,7 +41,7 @@ public class BufferListener implements RestListener<MessageBag> {
         if (verbose && messages.isSuccess() && messages.isHistoric()) {
             printer.printStatus(REPONSE_RECEIVED, messages.getNode(), messages.getItems().size(), messages.getTime());
         }
-        if (releasing) {
+        if (releasing || !messages.isSuccess()) {
             printBag(messages);
             return;
         }
@@ -53,28 +54,29 @@ public class BufferListener implements RestListener<MessageBag> {
     }
 
     public boolean waitHistoric(int timeout, int releaseMax) {
-        boolean success = false;
+        boolean success = true;
         try {
-            if (!semaphore.tryAcquire(1, timeout, TimeUnit.MILLISECONDS)) {
+            if (!waitForAnswer(1, timeout)) {
                 printer.printStatus(MISSING_NODES_RESPONSE);
                 return false;
             }
             int waiting = historic.getFirst().getTotalNodes() - 1;
             if (waiting < 0) {
                 printer.printStatus(NO_CLUSTER_INFO);
-                Thread.sleep(timeout);
                 success = false;
-            } else {
-                success = semaphore.tryAcquire(waiting, timeout, TimeUnit.MILLISECONDS);
-                if (!success) {
-                    printer.printStatus(MISSING_NODES_RESPONSE);
-                }
+            } else if (!waitForAnswer(waiting, timeout)) {
+                printer.printStatus(MISSING_NODES_RESPONSE);
+                success = false;
             }
         } catch (InterruptedException ex) {
             printer.printStatus(MISSING_NODES_RESPONSE);
         }
         releaseHistoric(releaseMax);
         return success;
+    }
+
+    private boolean waitForAnswer(int howMany, int timeout) throws InterruptedException {
+        return semaphore.tryAcquire(howMany, timeout, TimeUnit.MILLISECONDS);
     }
 
     private void releaseHistoric(int releaseMax) {
@@ -106,17 +108,24 @@ public class BufferListener implements RestListener<MessageBag> {
 
     private void printBag(MessageBag bag) {
         if (bag.isSuccess()) {
-            if (bag.getItems() != null) {
-                for (Message message : Lists.reverse(bag.getItems()))
-                    printer.printMessage(message);
-            }
+            if (bag.getItems() != null)
+                printMessages(bag.isHistoric(), bag.getItems());
 
-            if (bag.getAggregated() != null) {
-                printer.printAggregated(bag.getAggregated());
-            }
+            if (bag.getAggregated() != null)
+                printAggregated(bag.getAggregated());
         } else {
             printer.printStatus(QUERY_CANCELLED, bag.getMessage());
         }
+    }
+
+    private void printAggregated(Aggregated aggregated) {
+        printer.printAggregated(aggregated);
+    }
+
+    private void printMessages(boolean historic, List<Message> list) {
+        if (historic) list = Lists.reverse(list);
+        for (Message message : list)
+            printer.printMessage(message);
     }
 
     public Formatter getFormatter() {

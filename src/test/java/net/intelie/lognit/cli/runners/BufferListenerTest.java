@@ -7,6 +7,7 @@ import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.MessageBag;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import java.util.Arrays;
 
@@ -80,9 +81,10 @@ public class BufferListenerTest {
         Message mA = m("A"), mB = m("B"), mC = m("C");
         listener.receive(ms(false, true, 2, mB, mA));
         listener.receive(ms(true, true, 2, mC));
-        listener.receive(ms(false, false, 2, mC));
-        assertThat(listener.waitHistoric(50, 3)).isFalse();
+        listener.receive(ms("ABC"));
+        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, "ABC");
 
+        assertThat(listener.waitHistoric(50, 3)).isFalse();
 
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
         verify(printer).printMessage(mA);
@@ -149,6 +151,19 @@ public class BufferListenerTest {
     }
 
     @Test(timeout = 1000)
+    public void willPrintRealTimeInReceivingOrder() {
+        Message mA = m("A"), mB = m("B"), mC = m("C");
+        listener.releaseAll();
+        listener.receive(ms(true, true, "node", 2L, 2, m("A"), m("B")));
+
+        InOrder orderly = inOrder(printer);
+        orderly.verify(printer).printMessage(m("A"));
+        orderly.verify(printer).printMessage(m("B"));
+        orderly.verifyNoMoreInteractions();
+    }
+
+
+    @Test(timeout = 1000)
     public void whenOneOfOneMessagesAriveOnTime() {
         Message mA = m("A"), mB = m("B");
         listener.receive(ms(false, true, 1, mB, mA));
@@ -166,7 +181,6 @@ public class BufferListenerTest {
 
         long start = System.currentTimeMillis();
         assertThat(listener.waitHistoric(50, 3)).isFalse();
-        assertThat(System.currentTimeMillis() - start).isGreaterThanOrEqualTo(50);
 
         verify(printer).printStatus(BufferListener.NO_CLUSTER_INFO);
         verify(printer).printMessage(mA);
@@ -226,6 +240,9 @@ public class BufferListenerTest {
         verifyNoMoreInteractions(printer);
     }
 
+    private MessageBag ms(String message) {
+        return new MessageBag(null, null, null, null, message, false, false, 0, 0);
+    }
 
     private MessageBag ms(boolean realtime, boolean success, int nodes, Message... messages) {
         return ms(realtime, success, null, 0L, nodes, messages);
