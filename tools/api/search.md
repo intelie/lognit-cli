@@ -9,7 +9,7 @@ $ nitr get search?expression=*
 That returns:
 
 ```
-{"channel":"/search/bd22d917-192e-465a-aa56-c8041c737199"}
+{"channel":"/search/bd22d917-192e-465a-aa56-c8041c737199","aggregation":false}
 ```
 
 Where "channel" is a Bayeux channel that will return any matching results.
