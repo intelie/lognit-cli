@@ -14,6 +14,7 @@ Options:
   -i, --info                  shows cluster summary info
   -b, --format <format>       sets message output format, must be "colored",
                               "plain", "json" or "flat-json"
+  --force-login               forces login prompt
   -v, --verbose               shows some stats while querying
   -?, -h, --help              shows this help
 
@@ -22,7 +23,7 @@ Examples:
   nit '*'                     searches everything
   nit '*' -f                  searches everything, follows new messages
   nit '*' -d > file.txt       searches everything, downloads results
-  nit -i                      request cluster information
+  nit -i                      requests cluster information
   nit -s your-lognit-server   logs into your-lognit-server
   nit 'abcd' -n 50 -f         searches for 'abcd', last 50 messages,
                               following new messages

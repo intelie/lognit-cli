@@ -23,13 +23,19 @@ public class AuthenticatorRunner implements Runner {
     @Override
     public int run(UserOptions options) throws Exception {
         int retries = options.askPassword() ? 4 : 1;
+
+        if (options.isForceLogin()) {
+            printServerMessage("forcing login");
+            askPassword(options.getUser());
+        }
+
         while (retries-- > 0) {
             try {
                 prepare(options);
                 return runner.run(options);
             } catch (RetryConnectionException e) {
                 stacktrace(options, e);
-                console.println("(%s): %s", lognit.getServer(), e.getMessage());
+                printServerMessage(e.getMessage());
                 clock.sleep(2000);
                 options = e.options();
                 if (e.getCause() instanceof UnauthorizedException && options.askPassword())
@@ -37,12 +43,16 @@ public class AuthenticatorRunner implements Runner {
                 retries++;
             } catch (UnauthorizedException e) {
                 stacktrace(options, e);
-                console.println("(%s): %s", lognit.getServer(), e.getMessage());
+                printServerMessage(e.getMessage());
                 if (retries > 0)
                     askPassword(options.getUser());
             }
         }
         return 2;
+    }
+
+    private void printServerMessage(String msg) {
+        console.println("(%s): %s", lognit.getServer(), msg);
     }
 
     private void stacktrace(UserOptions options, Exception e) {
@@ -61,6 +71,7 @@ public class AuthenticatorRunner implements Runner {
             lognit.setServer(opts.getServer());
         if (!opts.askPassword())
             lognit.authenticate(opts.getUser(), opts.getPassword());
+
     }
 }
 

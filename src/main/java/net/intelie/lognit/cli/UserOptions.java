@@ -27,6 +27,8 @@ public class UserOptions {
     private final boolean complete;
     private final boolean download;
     private final boolean verbose;
+    private final boolean forceLogin;
+
     public UserOptions(String... args) {
         ArgsParser parser = new ArgsParser(args);
         help = parser.flag("-?", "-h", "--help");
@@ -47,6 +49,7 @@ public class UserOptions {
         verbose = parser.flag("-v", "--verbose");
         pause = parser.flag("--pause");
         resume = parser.flag("--resume");
+        forceLogin = parser.flag("--force-login");
         query = parser.text();
     }
 
@@ -106,6 +109,10 @@ public class UserOptions {
         return help;
     }
 
+    public boolean isForceLogin() {
+        return forceLogin;
+    }
+
     public boolean askPassword() {
         return user == null || password == null;
     }
@@ -151,12 +158,13 @@ public class UserOptions {
                 Objects.equal(this.complete, that.complete) &&
                 Objects.equal(this.download, that.download) &&
                 Objects.equal(this.verbose, that.verbose) &&
-                Objects.equal(this.help, that.help);
+                Objects.equal(this.help, that.help) &&
+                Objects.equal(this.forceLogin, that.forceLogin);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, user, password, query, follow, all, pause, resume, purge, unpurge, cancelPurges, timeout, lines, info, format, complete, download, verbose, help);
+        return Objects.hashCode(server, user, password, query, follow, all, pause, resume, purge, unpurge, cancelPurges, timeout, lines, info, format, complete, download, verbose, help, forceLogin);
     }
 
 
@@ -185,10 +193,10 @@ public class UserOptions {
     }
 
     public UserOptions realtimeOnly() {
-        return new UserOptions(server, user,password, query, format, follow, info, help, purge, unpurge, cancelPurges, all, pause, resume, timeout, 0, complete, download, verbose);
+        return new UserOptions(server, user,password, query, format, follow, info, help, purge, unpurge, cancelPurges, all, pause, resume, timeout, 0, complete, download, verbose, forceLogin);
     }
 
-    public UserOptions(String server, String user, String password, String query, String format, boolean follow, boolean info, boolean help, boolean purge, boolean unpurge, boolean cancelPurges, boolean all, boolean pause, boolean resume, int timeout, int lines, boolean complete, boolean download, boolean verbose) {
+    public UserOptions(String server, String user, String password, String query, String format, boolean follow, boolean info, boolean help, boolean purge, boolean unpurge, boolean cancelPurges, boolean all, boolean pause, boolean resume, int timeout, int lines, boolean complete, boolean download, boolean verbose, boolean forceLogin) {
         this.server = server;
         this.user = user;
         this.password = password;
@@ -208,5 +216,6 @@ public class UserOptions {
         this.complete = complete;
         this.download = download;
         this.verbose = verbose;
+        this.forceLogin = forceLogin;
     }
 }

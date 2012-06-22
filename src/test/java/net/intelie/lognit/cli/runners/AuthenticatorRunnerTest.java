@@ -102,6 +102,26 @@ public class AuthenticatorRunnerTest {
     }
 
     @Test
+    public void whenForcingLoginForcesLogin() throws Exception {
+        UserOptions opts = new UserOptions("--force-login");
+
+        when(main.run(opts))
+                .thenReturn(0);
+        when(console.readLine("login: ")).thenReturn("somelogin");
+        when(console.readPassword("%s's password: ", "somelogin")).thenReturn("somepass");
+
+        runner.run(opts);
+
+        InOrder orderly = inOrder(lognit, console, main);
+        orderly.verify(console).println("(%s): %s", null, "forcing login");
+        orderly.verify(console).readLine(anyString());
+        orderly.verify(console).readPassword(anyString(), anyString());
+        orderly.verify(lognit).authenticate("somelogin", "somepass");
+        orderly.verify(main).run(opts);
+        orderly.verifyNoMoreInteractions();
+    }
+
+    @Test
     public void whenReceivesUnauthorizedAsksAtMostThreeTimes() throws Exception {
         UserOptions opts = new UserOptions();
         when(main.run(opts))
