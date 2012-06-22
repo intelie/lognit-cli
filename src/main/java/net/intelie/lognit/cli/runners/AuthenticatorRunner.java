@@ -24,11 +24,6 @@ public class AuthenticatorRunner implements Runner {
     public int run(UserOptions options) throws Exception {
         int retries = options.askPassword() ? 4 : 1;
 
-        if (options.isForceLogin()) {
-            printServerMessage("forcing login");
-            askPassword(options.getUser());
-        }
-
         while (retries-- > 0) {
             try {
                 prepare(options);
@@ -71,7 +66,10 @@ public class AuthenticatorRunner implements Runner {
             lognit.setServer(opts.getServer());
         if (!opts.askPassword())
             lognit.authenticate(opts.getUser(), opts.getPassword());
-
+        if (opts.isForceLogin()) {
+            printServerMessage("forcing login");
+            askPassword(opts.getUser());
+        }
     }
 }
 
