@@ -1,8 +1,6 @@
 package net.intelie.lognit.cli.http;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 import net.intelie.lognit.cli.json.Jsonizer;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
@@ -10,19 +8,20 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
+import org.apache.commons.httpclient.cookie.CookieSpec;
+import org.apache.commons.httpclient.cookie.RFC2965Spec;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
-import org.cometd.bayeux.Message;
-import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.Arrays;
+import java.net.URI;
 
 public class RestClientImpl implements RestClient {
+    private static final CookieSpec COOKIE_SPEC = new RFC2965Spec();
     private final HttpClient client;
     private final MethodFactory methods;
     private final BayeuxFactory bayeux;
@@ -110,10 +109,9 @@ public class RestClientImpl implements RestClient {
         String url = prependServer("cometd");
         BayeuxClient cometd = bayeux.create(url);
 
-        Cookie[] cookies = client.getState().getCookies();
-        if (cookies != null)
-            for (Cookie cookie : cookies)
-                cometd.setCookie(cookie.getName(), cookie.getValue());
+        Cookie[] cookies = getMatchingCookies(url);
+        for (Cookie cookie : cookies)
+            cometd.setCookie(cookie.getName(), cookie.getValue());
 
 
         cometd.handshake();
@@ -122,9 +120,32 @@ public class RestClientImpl implements RestClient {
         return new BayeuxHandle(cometd);
     }
 
+    private Cookie[] getMatchingCookies(String url) {
+        URI uri = URI.create(url);
+        Cookie[] cookies = client.getState().getCookies();
+        if (cookies == null) return new Cookie[0];
+        return COOKIE_SPEC.match(uri.getHost(),
+                httpPort(uri),
+                uri.getPath(),
+                isHttps(uri),
+                cookies);
+    }
+
+    private boolean isHttps(URI uri) {
+        return "https".equalsIgnoreCase(uri.getScheme());
+    }
+
+    private int httpPort(URI uri) {
+        int port = uri.getPort();
+        if (port == -1)
+            return isHttps(uri) ? 443 : 80;
+        return port;
+    }
+
     private String prependServer(String uri) throws MalformedURLException {
         String safeUri = uri.startsWith("/") ? uri : "/" + uri;
-        uri = String.format("http://%s%s", server, safeUri);
+        String safeServer = server.startsWith("http://") || server.startsWith("https://") ? server : "http://" + server;
+        uri = String.format("%s%s", safeServer, safeUri);
 
         return uri;
     }

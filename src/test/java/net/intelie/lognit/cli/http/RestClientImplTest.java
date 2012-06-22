@@ -280,13 +280,50 @@ public class RestClientImplTest {
         when(bayeuxFactory.create("http://server/cometd")).thenReturn(bayeux);
 
         when(client.getState().getCookies()).thenReturn(new Cookie[]{
-                new Cookie("A", "B", "C"), new Cookie("D", "E", "F")});
+                new Cookie("server", "B", "C", "/", 1000, false), new Cookie("server", "E", "F", "/", 1000, false)});
 
         rest.setServer("server");
         rest.listen("", Object.class, null);
 
         verify(bayeux).setCookie("B", "C");
         verify(bayeux).setCookie("E", "F");
+    }
+
+    @Test
+    public void willSelectCorrectCookiesByHostPathAndHttpsWithoutHttps() throws Exception {
+        BayeuxClient bayeux = mock(BayeuxClient.class, RETURNS_DEEP_STUBS);
+        when(bayeuxFactory.create("http://server/cometd")).thenReturn(bayeux);
+
+        when(client.getState().getCookies()).thenReturn(new Cookie[]{
+                new Cookie("server", "A", "C", "/", 1000, false),
+                new Cookie("server", "B", "C", "/", 1000, true),
+                new Cookie("server", "C", "C", "/test", 1000, false),
+                new Cookie("abc", "D", "C", "/", 1000, false)});
+
+        rest.setServer("server");
+        rest.listen("", Object.class, null);
+
+        verify(bayeux).setCookie("A", "C");
+        verify(bayeux, times(1)).setCookie(anyString(), anyString());
+    }
+
+    @Test
+    public void willSelectCorrectCookiesByHostPathAndHttpsWithHttps() throws Exception {
+        BayeuxClient bayeux = mock(BayeuxClient.class, RETURNS_DEEP_STUBS);
+        when(bayeuxFactory.create("https://server:8080/cometd")).thenReturn(bayeux);
+
+        when(client.getState().getCookies()).thenReturn(new Cookie[]{
+                new Cookie("server", "A", "C", "/", 1000, false),
+                new Cookie("server", "B", "C", "/", 1000, true),
+                new Cookie("server", "C", "C", "/test", 1000, false),
+                new Cookie("abc", "D", "C", "/", 1000, false)});
+
+        rest.setServer("https://server:8080");
+        rest.listen("", Object.class, null);
+
+        verify(bayeux).setCookie("A", "C");
+        verify(bayeux).setCookie("B", "C");
+        verify(bayeux, times(2)).setCookie(anyString(), anyString());
     }
 
     @Test

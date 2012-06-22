@@ -18,6 +18,15 @@ public class BayeuxHandleTest {
     }
 
     @Test
+    public void waitDisconnectedWaitsForSoLong() {
+        BayeuxClient client = mock(BayeuxClient.class);
+        BayeuxHandle handle = new BayeuxHandle(client);
+        handle.waitDisconnected();
+        verify(client).waitFor(Long.MAX_VALUE, BayeuxClient.State.UNCONNECTED);
+    }
+
+
+    @Test
     public void onlyClosesOnce() {
         BayeuxClient client = mock(BayeuxClient.class);
         BayeuxHandle handle = new BayeuxHandle(client);
