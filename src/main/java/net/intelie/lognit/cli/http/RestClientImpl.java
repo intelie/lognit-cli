@@ -57,8 +57,6 @@ public class RestClientImpl implements RestClient {
 
     @Override
     public void setServer(String server) {
-        if (!Objects.equal(this.server, server))
-            client.getState().clearCookies();
         this.server = server;
     }
 
