@@ -39,7 +39,7 @@ public class RestClientImplTest {
     public void whenSettingServer() throws Exception {
         rest.setServer("localhost:9000");
 
-        verify(client.getState()).clearCookies();
+        verify(client.getState(), times(0)).clearCookies();
         assertThat(rest.getServer()).isEqualTo("localhost:9000");
         verifyNoMoreInteractions(client.getParams(), client.getState());
     }
