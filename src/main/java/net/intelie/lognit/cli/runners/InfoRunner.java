@@ -6,19 +6,19 @@ import net.intelie.lognit.cli.UserOptions;
 import net.intelie.lognit.cli.model.Lognit;
 import net.intelie.lognit.cli.model.Stats;
 import net.intelie.lognit.cli.model.StatsSummary;
-import net.intelie.lognit.cli.model.Welcome;
 
 import java.io.IOException;
 import java.util.Collection;
 
-public class InfoRunner implements Runner{
+public class InfoRunner implements Runner {
     public static final String HAS_MISSING_NODES = "(%s): %d node(s) did not respond";
     public static final String NO_MISSING_NODES = "(%s): all nodes responded";
     public static final String NODE_TEXT = "node '%s':";
     public static final String SUMMARY_TEXT = "SUMMARY:";
-    public static final String INFO_TEXT = "  info: %,d queries / %,d docs";
-    public static final String DOCS_TEXT =  "  docs/s: %,d (3s) / %,d (15s) / %,d (60s)";
+    public static final String INFO_TEXT = "  info: %,d queries / %,d messages / %.2f MB / %,d docs";
+    public static final String DOCS_TEXT = "  messages/s: %,d (3s) / %,d (15s) / %,d (60s)";
     public static final String BYTES_TEXT = "  bytes/s: %.2f MB (3s) / %.2f MB (15s) / %.2f MB (60s)";
+    public static final double MB = 1024 * 1024;
 
 
     private final UserConsole console;
@@ -42,16 +42,16 @@ public class InfoRunner implements Runner{
         for (Stats stats : summary.getPerNodes()) {
             console.printOut("");
             console.printOut(NODE_TEXT, stats.getNode());
-            console.printOut(INFO_TEXT, stats.getQueries().size(), stats.getTotalDocs());
+            console.printOut(INFO_TEXT, stats.getQueries().size(), stats.getTotalMessages(), stats.getTotalBytes() / MB, stats.getTotalDocs());
             printLoad(DOCS_TEXT, stats.getDocsRate(), 1);
-            printLoad(BYTES_TEXT, stats.getBytesRate(), 1024 * 1024);
+            printLoad(BYTES_TEXT, stats.getBytesRate(), MB);
         }
 
         console.printOut("");
         console.printOut(SUMMARY_TEXT);
-        console.printOut(INFO_TEXT, summary.getQueries().size(), summary.getTotalDocs());
-        printLoad(DOCS_TEXT, summary.getDocsRate(), 1);
-        printLoad(BYTES_TEXT, summary.getBytesRate(), 1024 * 1024);
+        console.printOut(INFO_TEXT, summary.getQueries().size(), summary.getTotalMessages(), summary.getTotalBytes() / MB, summary.getTotalDocs());
+        printLoad(DOCS_TEXT, summary.getMessageRate(), 1);
+        printLoad(BYTES_TEXT, summary.getByteRate(), 1024 * 1024);
 
         return 0;
     }
