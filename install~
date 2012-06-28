@@ -23,8 +23,7 @@ if [ $# -lt 2 ]; then
     exit 0
 fi
 
-server=$(cat ~/.lognit/state | head -n 1 | cut -c 2-)
-verb=$1; shift
+server=$(cat ~/.lognit/state | head -n 1 | cut -c 2-)verb=$1; shift
 resource=$1; shift
 curl -X ${verb} -s -L -H 'Content-Type:application/json' -w \\n -b ~/.lognit/state "http://${server}/rest/${resource}" $@
 __END__

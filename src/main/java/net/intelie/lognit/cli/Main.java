@@ -32,7 +32,7 @@ public class Main {
 
         UserConsole userConsole = makeUserConsole();
 
-        RestStateStorage storage = new RestStateStorage(stateFile, jsonizer);
+        RestStateStorage storage = new RestStateStorage(stateFile);
 
         HttpClient httpClient = new HttpClient();
         MethodFactory methodFactory = new MethodFactory();
