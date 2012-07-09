@@ -334,8 +334,7 @@ public class RestClientImplTest {
         rest.setServer("server");
         rest.listen("testChannel", Object.class, null);
 
-        verify(bayeux).handshake();
-        verify(bayeux).waitFor(1000, BayeuxClient.State.CONNECTED);
+        verify(bayeux).handshake(120000);
         verify(bayeux.getChannel("testChannel")).subscribe(any(ClientSessionChannel.MessageListener.class));
     }
 
@@ -347,7 +346,7 @@ public class RestClientImplTest {
         rest.setServer("server");
         rest.listen("testChannel", Object.class, null);
 
-        verify(bayeux).handshake();
+        verify(bayeux).handshake(120000);
         verify(bayeux.getChannel("testChannel")).subscribe(any(JsonMessageListener.class));
     }
 

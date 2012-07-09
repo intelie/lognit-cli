@@ -4,4 +4,4 @@
 # cat [your jar file] >> [this file]
 # then chmod +x [this file]
 # you can now exec [this file]
-exec java -Xmx1G -jar "$0" "$@"
+exec java -jar "$0" "$@"

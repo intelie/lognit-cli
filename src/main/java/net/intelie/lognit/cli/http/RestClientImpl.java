@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.HashMap;
 
 public class RestClientImpl implements RestClient {
     private static final CookieSpec COOKIE_SPEC = new RFC2965Spec();
@@ -113,9 +114,7 @@ public class RestClientImpl implements RestClient {
         for (Cookie cookie : cookies)
             cometd.setCookie(cookie.getName(), cookie.getValue());
 
-
-        cometd.handshake();
-        cometd.waitFor(1000, BayeuxClient.State.CONNECTED);
+        cometd.handshake(120000);
         cometd.getChannel(channel).subscribe(new JsonMessageListener<T>(listener, type, jsonizer));
         return new BayeuxHandle(cometd);
     }
