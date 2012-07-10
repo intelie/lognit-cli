@@ -3,6 +3,12 @@ package net.intelie.lognit.cli;
 import net.intelie.lognit.cli.runners.AuthenticatorRunner;
 import net.intelie.lognit.cli.runners.UsageRunner;
 import net.intelie.lognit.cli.state.StateKeeper;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+
+import java.io.OutputStreamWriter;
 
 public class EntryPoint {
 
@@ -22,6 +28,7 @@ public class EntryPoint {
         UserOptions options = null;
         try {
             options = new UserOptions(args);
+            configureLogger(options);
             return request.run(options);
         } catch (Exception ex) {
             console.fixCursor();
@@ -33,6 +40,18 @@ public class EntryPoint {
         } finally {
             state.end();
         }
+    }
+
+    private void configureLogger(UserOptions options) {
+        Logger root = Logger.getRootLogger();
+        ConsoleAppender appender = new ConsoleAppender(new PatternLayout("%r %-1p %c{1}: %m%n"));
+        appender.setWriter(new OutputStreamWriter(System.err));
+        root.removeAllAppenders();
+        root.addAppender(appender);
+        if (options.isVerbose())
+            root.setLevel(Level.DEBUG);
+        else
+            root.setLevel(Level.OFF);
     }
 
 }
