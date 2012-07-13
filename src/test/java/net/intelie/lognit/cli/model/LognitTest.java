@@ -43,7 +43,7 @@ public class LognitTest {
     @Test
     public void testWelcome() throws Exception {
         Welcome welcome = new Welcome("abc");
-        when(client.get("/rest/users/welcome", Welcome.class)).thenReturn(welcome);
+        when(client.get("/rest/me/welcome", Welcome.class)).thenReturn(welcome);
         assertThat(lognit.welcome()).isEqualTo(welcome);
     }
 

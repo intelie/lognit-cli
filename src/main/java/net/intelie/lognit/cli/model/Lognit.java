@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class Lognit {
-    public static final String URL_WELCOME = "/rest/users/welcome";
+    public static final String URL_WELCOME = "/rest/me/welcome";
     public static final String URL_PAUSE = "/rest/pause";
     public static final String URL_RESUME = "/rest/pause/resume";
     public static final String URL_PURGE = "/rest/purge";
