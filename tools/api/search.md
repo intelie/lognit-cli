@@ -3,13 +3,13 @@
 ##Starting a search
 
 ``` bash
-$ nitr get search?expression=*
+$ nitr get search?expression=*=>
 ```
 
 That returns:
 
 ```
-{"channel":"/search/bd22d917-192e-465a-aa56-c8041c737199","aggregation":false}
+{"channel":"/search/3937bd6f-4684-485e-95dc-fab470692a06","info":{"filter":{"valid":true},"aggregation":{"window":1000,"selectFields":["count"],"groupFields":[],"valid":true},"valid":true}}
 ```
 
 Where "channel" is a Bayeux channel that will return any matching results.
