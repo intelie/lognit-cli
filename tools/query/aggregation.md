@@ -88,6 +88,13 @@ count(http_status) ou count()
 ```
 _contagem de todos os valores não-nulos recebidos para a expressão passada por parâmetro na janela de tempo definida_
 
+```
+dcount(<object>...)
+dcount(user_agent, ip)
+```
+_contagem de todos os valores distintos para o conjunto de expressões passadas como parâmetro_
+
+Para economizar memória, para mais de 1000 valores distintos, a contagem passa a ser uma estimativa usando HyperLogLog.
 
 ```
 sum([<number>])
@@ -104,7 +111,7 @@ _menor (ou maior) valor recebido na janela de tempo definida_
 
 ```
 first(<object>) e last(<object>)
-min(response_time#)
+first(response_time#)
 ```
 _primeiro (ou último) valor recebido na janela de tempo definida (comparado utilizando o id da mensagem de log, para ser distribuído)_
 
@@ -175,6 +182,12 @@ response_time#('pt-br', '###,###.00')
 
 Perceba que tem a mesma sintaxe do operador de coerção. Se o parâmetro for um número, ele formata, se for uma string,
 ele faz parse.
+
+
+###Potenciação e logarítmo
+```
+pow(<number>, <exponent>) e log(<number>, <base>)
+```
 
 ###Função de formatação como bytes
 ```
