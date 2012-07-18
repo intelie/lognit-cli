@@ -159,7 +159,12 @@ reponse_time# > 1000 and (host == 'aaa' || host == 'bbb')
 ###Operador ternário
 ```
 condition ? if-true, if-false
-response_time < 100 ? 'great!', response_time < 1000 ? 'ok.', 'bad
+response_time < 100 ? 'great!', 'bad...'
+```
+Ele permite uma composição associativa à direita, como o do C++
+
+```
+response_time < 100 ? 'great!', response_time < 1000 ? 'ok.', 'bad...'
 ```
 
 ###Operador de coalescência de nulos:
