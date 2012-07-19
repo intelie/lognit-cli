@@ -40,7 +40,7 @@ public class UserOptions {
         purge = parser.flag("--purge");
         unpurge = parser.flag("--unpurge");
         cancelPurges = parser.flag("--cancel-purges");
-        format = def(parser.option(String.class, "-b", "--format"), "colored");
+        format = def(parser.option(String.class, "-o", "--output"), "colored");
         follow = parser.flag("-f", "--follow");
         info = parser.flag("-i", "--info");
         complete = parser.flag("-c", "--complete");
