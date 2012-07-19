@@ -2,6 +2,7 @@ package net.intelie.lognit.cli;
 
 import jline.ConsoleReader;
 import net.intelie.lognit.cli.formatters.*;
+import net.intelie.lognit.cli.formatters.iem.IEMSenderFactory;
 import net.intelie.lognit.cli.http.BayeuxFactory;
 import net.intelie.lognit.cli.http.MethodFactory;
 import net.intelie.lognit.cli.http.RestClient;
@@ -71,7 +72,8 @@ public class Main {
         ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
         JsonFormatter jsonFormatter = new JsonFormatter(userConsole, jsonizer);
         FlatJsonFormatter flatJsonFormatter = new FlatJsonFormatter(userConsole, jsonizer);
-        return new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter, flatJsonFormatter);
+        IEMSenderFactory iemFormatter = new IEMSenderFactory(userConsole, jsonizer);
+        return new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter, flatJsonFormatter, iemFormatter);
     }
 
     private static MainRunner makeMainRunner(UserConsole userConsole, Lognit lognit, Clock clock, Timer timer, Runtime runtime, FormatterSelector selector) {

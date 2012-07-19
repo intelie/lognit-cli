@@ -9,7 +9,7 @@ public class BufferListenerFactory {
         this.selector = selector;
     }
 
-    public BufferListener create(String format, boolean verbose) {
+    public BufferListener create(String format, boolean verbose) throws Exception {
         return new BufferListener(selector.select(format), verbose);
     }
 }
