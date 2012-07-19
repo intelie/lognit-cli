@@ -33,7 +33,7 @@ public class SearchRunnerTest {
 
     @Test
     public void whenHasQueryExecutesUsingCorrectFormatter() throws Exception {
-        runner.run(new UserOptions("blablabla", "-n", "42", "-b", "plain"));
+        runner.run(new UserOptions("blablabla", "-n", "42", "-o", "plain"));
         BufferListener listener = factory.create("plain", false);
         verify(lognit).search("blablabla", 42, listener);
         verify(lognit.search("blablabla", 42, listener)).close();

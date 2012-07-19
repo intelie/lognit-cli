@@ -48,7 +48,7 @@ public class DownloadRunnerTest {
         Formatter formatter = formatters.select("someformat");
         when(lognit.download("abc", 42)).thenReturn(stream);
 
-        UserOptions options = new UserOptions("abc", "-n", "42", "-b", "someformat");
+        UserOptions options = new UserOptions("abc", "-n", "42", "-o", "someformat");
         Thread thread = runInAnotherThread(options);
 
         iterator.waitNext();

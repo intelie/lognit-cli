@@ -18,7 +18,7 @@ public class IEMSender implements Formatter {
     private final Jsonizer jsonizer;
     private final Map header;
 
-    public IEMSender(UserConsole console, Client client, Jsonizer jsonizer, String eventType) throws Exception {
+    public IEMSender(UserConsole console, Client client, Jsonizer jsonizer, String eventType) {
         this.console = console;
         this.client = client;
         this.jsonizer = jsonizer;

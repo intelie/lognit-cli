@@ -57,7 +57,7 @@ public class UserOptionsTest {
 
     @Test
     public void canConstructWithNonDefaults() {
-        UserOptions opts = new UserOptions("--purge", "--unpurge", "--pause", "--resume", "-d", "--all", "--cancel-purges", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b", "plain", "-c", "-v", "--force-login");
+        UserOptions opts = new UserOptions("--purge", "--unpurge", "--pause", "--resume", "-d", "--all", "--cancel-purges", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-o", "plain", "-c", "-v", "--force-login");
         assertThat(opts.getServer()).isEqualTo("A");
         assertThat(opts.hasServer()).isEqualTo(true);
         assertThat(opts.getUser()).isEqualTo("B");
@@ -103,8 +103,8 @@ public class UserOptionsTest {
 
     @Test
     public void differentOrderShouldDoTheSame() {
-        UserOptions opts1 = new UserOptions("-s", "A", "--purge", "--force-login", "-d", "--all", "--cancel-purges", "--unpurge", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-b", "-c", "-v");
-        UserOptions opts2 = new UserOptions("--unpurge", "--force-login", "--cancel-purges", "--all", "-i", "-d", "-s", "A", "--purge", "-v", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-b", "-c");
+        UserOptions opts1 = new UserOptions("-s", "A", "--purge", "--force-login", "-d", "--all", "--cancel-purges", "--unpurge", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-o", "-c", "-v");
+        UserOptions opts2 = new UserOptions("--unpurge", "--force-login", "--cancel-purges", "--all", "-i", "-d", "-s", "A", "--purge", "-v", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-o", "-c");
         assertThat(opts1).isEqualTo(opts2);
         assertThat(opts1.hashCode()).isEqualTo(opts2.hashCode());
     }
@@ -112,7 +112,7 @@ public class UserOptionsTest {
     @Test
     public void whenAreDifferent() {
         String[] original = {"--all", "--pause", "--resume", "--cancel-purges", "--unpurge", "--purge",
-                "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-b", "plain", "-?",
+                "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-o", "plain", "-?",
                 "-i", "-c", "-v", "-d", "--force-login"};
         UserOptions opts1 = new UserOptions(original);
 
