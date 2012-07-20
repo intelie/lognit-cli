@@ -1,6 +1,7 @@
 package net.intelie.lognit.cli.formatters.iem;
 
 import net.intelie.lognit.cli.UserConsole;
+import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Message;
 import net.ser1.stomp.Client;
@@ -17,13 +18,13 @@ public class IEMSenderFactoryTest {
 
     private StompClientFactory clientFactory;
     private IEMSenderFactory factory;
-    private UserConsole console;
+    private Formatter console;
     private Jsonizer jsonizer;
 
     @Before
     public void setUp() throws Exception {
         clientFactory = mock(StompClientFactory.class, RETURNS_DEEP_STUBS);
-        console = mock(UserConsole.class);
+        console = mock(Formatter.class);
         jsonizer = mock(Jsonizer.class);
         factory = new IEMSenderFactory(console, jsonizer, clientFactory);
     }

@@ -2,6 +2,8 @@ package net.intelie.lognit.cli.formatters.iem;
 
 import com.google.common.base.CharMatcher;
 import net.intelie.lognit.cli.UserConsole;
+import net.intelie.lognit.cli.formatters.ColoredFormatter;
+import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.ser1.stomp.Client;
 
@@ -10,11 +12,11 @@ import java.io.IOException;
 import java.net.URI;
 
 public class IEMSenderFactory {
-    private final UserConsole console;
+    private final Formatter console;
     private final Jsonizer jsonizer;
     private final StompClientFactory clientFactory;
 
-    public IEMSenderFactory(UserConsole console, Jsonizer jsonizer, StompClientFactory clientFactory) {
+    public IEMSenderFactory(Formatter console, Jsonizer jsonizer, StompClientFactory clientFactory) {
         this.console = console;
         this.jsonizer = jsonizer;
         this.clientFactory = clientFactory;

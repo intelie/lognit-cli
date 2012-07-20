@@ -10,9 +10,15 @@ import java.util.Map;
 
 public class ColoredFormatter implements Formatter {
     private final UserConsole console;
+    private boolean colored;
 
     public ColoredFormatter(UserConsole console) {
+        this(console, true);
+    }
+
+    public ColoredFormatter(UserConsole console, boolean colored) {
         this.console = console;
+        this.colored = colored;
     }
 
     @Override
@@ -35,7 +41,11 @@ public class ColoredFormatter implements Formatter {
         buffer.append(" ");
         buffer.append(message.getMessage());
 
-        console.printOut(buffer.toString());
+        console.printOut(buffer.toString(reallyColored()));
+    }
+
+    private boolean reallyColored() {
+        return colored && console.isTTY();
     }
 
     @Override
@@ -50,7 +60,7 @@ public class ColoredFormatter implements Formatter {
                 buffer.append(":");
                 buffer.green("" + entry.getValue());
             }
-            console.printOut(buffer.toString());
+            console.printOut(buffer.toString(reallyColored()));
         }
 
     }

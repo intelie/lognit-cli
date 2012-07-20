@@ -1,6 +1,7 @@
 package net.intelie.lognit.cli.formatters.iem;
 
 import net.intelie.lognit.cli.UserConsole;
+import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.AggregatedItem;
@@ -17,13 +18,13 @@ import static org.mockito.Mockito.*;
 public class IEMSenderTest {
 
     public static final String QUEUE_EVENTS = "/queue/events";
-    private UserConsole console;
+    private Formatter console;
     private Client client;
     private Jsonizer jsonizer;
 
     @Before
     public void setUp() throws Exception {
-        console = mock(UserConsole.class);
+        console = mock(Formatter.class);
         client = mock(Client.class);
         jsonizer = mock(Jsonizer.class);
     }
@@ -36,6 +37,7 @@ public class IEMSenderTest {
         when(jsonizer.toFlat(message)).thenReturn("AAA");
 
         sender.printMessage(message);
+        verify(console).printMessage(message);
         verify(client).send(QUEUE_EVENTS, "AAA", makeHeader("test"));
     }
 
@@ -52,6 +54,8 @@ public class IEMSenderTest {
         when(jsonizer.to(item2)).thenReturn("BBB");
 
         sender.printAggregated(aggregated);
+        verify(console).printAggregated(aggregated);
+
         verify(client).send(QUEUE_EVENTS, "AAA", makeHeader("test"));
         verify(client).send(QUEUE_EVENTS, "BBB", makeHeader("test"));
     }
@@ -60,7 +64,7 @@ public class IEMSenderTest {
     public void printingStatusPrintToConsole() throws Exception {
         IEMSender sender = new IEMSender(console, client, jsonizer, "test");
         sender.printStatus("abc", 1, 2);
-        verify(console).println("abc", 1, 2);
+        verify(console).printStatus("abc", 1, 2);
     }
 
     private Map makeHeader(String eventType) {

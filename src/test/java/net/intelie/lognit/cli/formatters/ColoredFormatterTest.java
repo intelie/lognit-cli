@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ColoredFormatterTest {
 
@@ -29,6 +30,7 @@ public class ColoredFormatterTest {
 
     @Test
     public void testPrintMessage() throws Exception {
+        when(console.isTTY()).thenReturn(true);
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
         printer.printMessage(message);
         verify(console).printOut(colored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc"));
@@ -38,8 +40,13 @@ public class ColoredFormatterTest {
         return s.replace("$c", CYAN).replace("$g", GREEN).replace("$y", YELLOW).replace("$n", NONE);
     }
 
+    private String nonColored(String s) {
+        return s.replace("$c", "").replace("$g", "").replace("$y", "").replace("$n", "");
+    }
+
     @Test
     public void testAggregated() throws Exception {
+        when(console.isTTY()).thenReturn(true);
         AggregatedItem item1 = AggregatedItemHelper.map("abc", 123, "abd", 42);
         AggregatedItem item2 = AggregatedItemHelper.map("abc", 124, "abd", "qwe");
         Aggregated aggr = new Aggregated(item1, item2);
@@ -47,6 +54,26 @@ public class ColoredFormatterTest {
         printer.printAggregated(aggr);
         verify(console).printOut(colored("abc:$g123$n abd:$g42$n"));
         verify(console).printOut(colored("abc:$g124$n abd:$gqwe$n"));
+    }
+
+    @Test
+    public void testPrintMessageNoTty() throws Exception {
+        when(console.isTTY()).thenReturn(false);
+        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
+        printer.printMessage(message);
+        verify(console).printOut(nonColored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc"));
+    }
+
+    @Test
+    public void testAggregatedNoTty() throws Exception {
+        when(console.isTTY()).thenReturn(false);
+        AggregatedItem item1 = AggregatedItemHelper.map("abc", 123, "abd", 42);
+        AggregatedItem item2 = AggregatedItemHelper.map("abc", 124, "abd", "qwe");
+        Aggregated aggr = new Aggregated(item1, item2);
+
+        printer.printAggregated(aggr);
+        verify(console).printOut(nonColored("abc:$g123$n abd:$g42$n"));
+        verify(console).printOut(nonColored("abc:$g124$n abd:$gqwe$n"));
     }
 
     @Test

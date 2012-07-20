@@ -30,7 +30,7 @@ public class FormatterSelector {
             throw new IllegalArgumentException("formatter");
 
         if ("colored".equalsIgnoreCase(formatter))
-            return console.isTTY() ? colored : plain;
+            return colored;
         else if ("plain".equalsIgnoreCase(formatter))
             return plain;
         else if ("json".equalsIgnoreCase(formatter))

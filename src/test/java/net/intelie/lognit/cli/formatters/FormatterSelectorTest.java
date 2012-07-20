@@ -40,7 +40,7 @@ public class FormatterSelectorTest {
     @Test
     public void whenSelectingColoredWithNonTtyTerminal() throws Exception {
         when(console.isTTY()).thenReturn(false);
-        assertThat(selector.select("colored")).isSameAs(plain);
+        assertThat(selector.select("colored")).isSameAs(colored);
     }
 
     @Test

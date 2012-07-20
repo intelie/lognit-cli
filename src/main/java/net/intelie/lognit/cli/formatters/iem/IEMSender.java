@@ -1,6 +1,7 @@
 package net.intelie.lognit.cli.formatters.iem;
 
 import net.intelie.lognit.cli.UserConsole;
+import net.intelie.lognit.cli.formatters.ColoredFormatter;
 import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Aggregated;
@@ -13,12 +14,13 @@ import java.util.Map;
 
 public class IEMSender implements Formatter {
     private static final String QUEUE_NAME = "/queue/events";
-    private final UserConsole console;
+    public static final String MESSAGES_SENT = "event: %d message(s) sent";
+    private final Formatter console;
     private final Client client;
     private final Jsonizer jsonizer;
     private final Map header;
 
-    public IEMSender(UserConsole console, Client client, Jsonizer jsonizer, String eventType) {
+    public IEMSender(Formatter console, Client client, Jsonizer jsonizer, String eventType) {
         this.console = console;
         this.client = client;
         this.jsonizer = jsonizer;
@@ -34,16 +36,20 @@ public class IEMSender implements Formatter {
 
     @Override
     public void printStatus(String format, Object... args) {
-        console.println(format, args);
+        console.printStatus(format, args);
     }
 
     @Override
     public void printMessage(Message message) {
+        console.printMessage(message);
+        console.printStatus(MESSAGES_SENT, 1);
         client.send(QUEUE_NAME, jsonizer.toFlat(message), header);
     }
 
     @Override
     public void printAggregated(Aggregated aggregated) {
+        console.printAggregated(aggregated);
+        console.printStatus(MESSAGES_SENT, aggregated.size());
         for (AggregatedItem item : aggregated)
             client.send(QUEUE_NAME, jsonizer.to(item), header);
     }

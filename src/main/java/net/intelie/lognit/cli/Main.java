@@ -73,7 +73,7 @@ public class Main {
         ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
         JsonFormatter jsonFormatter = new JsonFormatter(userConsole, jsonizer);
         FlatJsonFormatter flatJsonFormatter = new FlatJsonFormatter(userConsole, jsonizer);
-        IEMSenderFactory iemFormatter = new IEMSenderFactory(userConsole, jsonizer, new StompClientFactory());
+        IEMSenderFactory iemFormatter = new IEMSenderFactory(coloredFormatter, jsonizer, new StompClientFactory());
         return new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter, flatJsonFormatter, iemFormatter);
     }
 

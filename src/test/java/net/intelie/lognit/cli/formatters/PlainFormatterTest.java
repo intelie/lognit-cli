@@ -23,14 +23,16 @@ public class PlainFormatterTest {
     }
 
     @Test
-    public void testPrintMessage() throws Exception {
+    public void testPrintMessageNoTty() throws Exception {
+        when(console.isTTY()).thenReturn(false);
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
         printer.printMessage(message);
-        verify(console).printOut("%s %s %s %s %s %s", "A", "Nov 11 11:11:11", "D", "E", "F", "abc");
+        verify(console).printOut("A Nov 11 11:11:11 D E F abc");
     }
 
     @Test
-    public void testAggregated() throws Exception {
+    public void testAggregatedNoTty() throws Exception {
+        when(console.isTTY()).thenReturn(false);
         AggregatedItem item1 = AggregatedItemHelper.map("abc", 123, "abd", 42);
         AggregatedItem item2 = AggregatedItemHelper.map("abc", 124, "abd", "qwe");
         Aggregated aggr = new Aggregated(item1, item2);
@@ -39,7 +41,6 @@ public class PlainFormatterTest {
         verify(console).printOut("abc:123 abd:42");
         verify(console).printOut("abc:124 abd:qwe");
     }
-
     @Test
     public void testPrintStatus() throws Exception {
         printer.printStatus("ABC", 1, "2", 3);
