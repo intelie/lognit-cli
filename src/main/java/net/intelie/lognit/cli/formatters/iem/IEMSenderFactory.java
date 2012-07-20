@@ -1,8 +1,6 @@
 package net.intelie.lognit.cli.formatters.iem;
 
 import com.google.common.base.CharMatcher;
-import net.intelie.lognit.cli.UserConsole;
-import net.intelie.lognit.cli.formatters.ColoredFormatter;
 import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.ser1.stomp.Client;
@@ -12,6 +10,7 @@ import java.io.IOException;
 import java.net.URI;
 
 public class IEMSenderFactory {
+    public static final int DEFAULT_PORT = 61613;
     private final Formatter console;
     private final Jsonizer jsonizer;
     private final StompClientFactory clientFactory;
@@ -39,6 +38,10 @@ public class IEMSenderFactory {
             pass = userInfo.length > 1 ? userInfo[1] : null;
         }
 
-        return clientFactory.create(uri.getHost(), uri.getPort(), user, pass);
+        int port = uri.getPort();
+        if (port == -1)
+            port = DEFAULT_PORT;
+
+        return clientFactory.create(uri.getHost(), port, user, pass);
     }
 }

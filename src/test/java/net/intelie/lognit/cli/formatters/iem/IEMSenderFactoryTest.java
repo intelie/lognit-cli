@@ -50,6 +50,12 @@ public class IEMSenderFactoryTest {
         assertCreatedRight(client, "iem://user:pass:pass@test:123/Event");
     }
 
+    @Test
+    public void whenCreatingWithNoPort() throws Exception {
+        Client client = clientFactory.create("test", 61613, null, null);
+
+        assertCreatedRight(client, "iem://test/Event");
+    }
 
 
     private void assertCreatedRight(Client client, String url) throws Exception {
