@@ -3,6 +3,7 @@ package net.intelie.lognit.cli;
 import jline.ConsoleReader;
 import net.intelie.lognit.cli.formatters.*;
 import net.intelie.lognit.cli.formatters.iem.IEMSenderFactory;
+import net.intelie.lognit.cli.formatters.iem.StompClientFactory;
 import net.intelie.lognit.cli.http.BayeuxFactory;
 import net.intelie.lognit.cli.http.MethodFactory;
 import net.intelie.lognit.cli.http.RestClient;
@@ -72,7 +73,7 @@ public class Main {
         ColoredFormatter coloredFormatter = new ColoredFormatter(userConsole);
         JsonFormatter jsonFormatter = new JsonFormatter(userConsole, jsonizer);
         FlatJsonFormatter flatJsonFormatter = new FlatJsonFormatter(userConsole, jsonizer);
-        IEMSenderFactory iemFormatter = new IEMSenderFactory(userConsole, jsonizer);
+        IEMSenderFactory iemFormatter = new IEMSenderFactory(userConsole, jsonizer, new StompClientFactory());
         return new FormatterSelector(userConsole, coloredFormatter, plainFormatter, jsonFormatter, flatJsonFormatter, iemFormatter);
     }
 

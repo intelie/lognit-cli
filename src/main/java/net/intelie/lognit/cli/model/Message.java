@@ -1,16 +1,15 @@
 package net.intelie.lognit.cli.model;
 
 import com.google.common.base.Objects;
-import org.apache.commons.collections.comparators.NullComparator;
-import org.apache.commons.collections.comparators.ReverseComparator;
+import com.google.common.collect.Ordering;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 public class Message implements Comparable<Message> {
-    private static final Comparator COMPARATOR = new NullComparator(
-            new ReverseComparator(String.CASE_INSENSITIVE_ORDER), true);
+    private static final Comparator COMPARATOR = Ordering.from(String.CASE_INSENSITIVE_ORDER).reverse().nullsLast();
+
     private final String id;
     private final String host;
     private final String date;

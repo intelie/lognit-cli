@@ -12,12 +12,9 @@ Options:
   -c, --complete              shows completion options for query
   -f, --follow                outputs new messages as they arrive
   -i, --info                  shows cluster summary info
-  -o, --output <format>       sets message output format, must be
-                              "colored",
-                              "plain",
-                              "json",
-                              "flat-json",
-                              "iem://host:port/eventType"
+  -o, --output <format>       sets message output format, must be one of
+                              "colored", "plain", "json", "flat-json" or
+                              "iem://[user:password@]host:port/eventType"
   --force-login               forces login prompt
   -v, --verbose               shows some stats while querying
   -?, -h, --help              shows this help

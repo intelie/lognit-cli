@@ -1,16 +1,22 @@
 package net.intelie.lognit.cli;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 
 import java.util.*;
+
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.Collections2.filter;
+import static java.util.Arrays.asList;
 
 public class ArgsParser {
     private final LinkedList<String> args;
 
     public ArgsParser(String... args) {
-        this.args = new LinkedList<String>();
-        Collections.addAll(this.args, args);
+        this.args = new LinkedList<String>(filter(asList(args), notNull()));
     }
 
     public boolean flag(String... flag) {
@@ -70,6 +76,6 @@ public class ArgsParser {
     }
 
     public String text() {
-        return StringUtils.join(args, " ").trim();
+        return Joiner.on(' ').join(args).trim();
     }
 }

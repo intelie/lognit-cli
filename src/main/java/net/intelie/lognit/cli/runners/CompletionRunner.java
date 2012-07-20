@@ -4,7 +4,6 @@ import net.intelie.lognit.cli.Runner;
 import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.UserOptions;
 import net.intelie.lognit.cli.model.Lognit;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -20,7 +19,7 @@ public class CompletionRunner implements Runner {
 
     @Override
     public int run(UserOptions options) throws IOException {
-        String[] args = StringUtils.splitPreserveAllTokens(options.getQuery(), ":", 2);
+        String[] args = options.getQuery().split(":", 2);
         if (args.length == 0) args = new String[]{""};
 
         Collection<String> terms = args.length == 1 ?

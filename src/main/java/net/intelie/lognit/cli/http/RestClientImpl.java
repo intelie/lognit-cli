@@ -1,6 +1,7 @@
 package net.intelie.lognit.cli.http;
 
 import com.google.common.collect.Iterators;
+import com.google.common.io.ByteStreams;
 import net.intelie.lognit.cli.json.Jsonizer;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
@@ -12,14 +13,12 @@ import org.apache.commons.httpclient.cookie.CookieSpec;
 import org.apache.commons.httpclient.cookie.RFC2965Spec;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.io.IOUtils;
 import org.cometd.client.BayeuxClient;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.HashMap;
 
 public class RestClientImpl implements RestClient {
     private static final CookieSpec COOKIE_SPEC = new RFC2965Spec();
@@ -101,7 +100,7 @@ public class RestClientImpl implements RestClient {
         InputStream stream = method.getResponseBodyAsStream();
         if (stream == null)
             return null;
-        String body = IOUtils.toString(stream);
+        String body = new String(ByteStreams.toByteArray(stream));
         return jsonizer.from(body, type);
     }
 
