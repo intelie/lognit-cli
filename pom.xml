@@ -15,10 +15,20 @@
         </repository>
     </repositories>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
     <dependencies>
         <dependency>
             <groupId>org.cometd.java</groupId>
             <artifactId>cometd-java-client</artifactId>
+            <version>2.4.0.RC2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>bayeux-api</artifactId>
             <version>2.4.0.RC2</version>
         </dependency>
         <dependency>
@@ -27,14 +37,9 @@
             <version>0.4.1</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.4</version>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.9</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -67,12 +72,6 @@
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert</artifactId>
             <version>1.4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.easytesting</groupId>
-            <artifactId>fest-util</artifactId>
-            <version>1.1.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
