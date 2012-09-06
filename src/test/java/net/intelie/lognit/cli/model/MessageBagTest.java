@@ -30,7 +30,7 @@ public class MessageBagTest {
         assertThat(messages.getMessage()).isEqualTo("some message");
         assertThat(messages.getAggregated()).isNull();
         assertThat(messages.getTotalNodes()).isEqualTo(42);
-        assertThat(messages.getTotalItems()).isEqualTo(200);
+        assertThat(messages.getTotalItems()).isEqualTo(200L);
         assertThat(messages.getItems().size()).isEqualTo(2);
         assertThat(messages.getNode()).isEqualTo("abc");
         assertThat(messages.getTime()).isEqualTo(42L);
@@ -39,7 +39,7 @@ public class MessageBagTest {
     @Test
     public void whenSerializing() {
         MessageBag messages = new MessageBag(Arrays.asList(new Message("abc1"), new Message("abc2")), null,
-                "abc", 42L, "some message", true, true, 42, 200);
+                "abc", 42L, "some message", true, true, 42, 200L);
         JsonElement actual = jsonElement(messages);
 
         assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
