@@ -19,8 +19,8 @@ public class UserOptionsTest {
         assertThat(opts.getQuery()).isEqualTo("");
         assertThat(opts.hasQuery()).isEqualTo(false);
         assertThat(opts.getLines()).isEqualTo(20);
-        assertThat(opts.getTimeout()).isEqualTo(10);
-        assertThat(opts.getTimeoutInMilliseconds()).isEqualTo(10000);
+        assertThat(opts.getTimeout()).isEqualTo(30);
+        assertThat(opts.getTimeoutInMilliseconds()).isEqualTo(30000);
         assertThat(opts.isFollow()).isEqualTo(false);
         assertThat(opts.isAll()).isEqualTo(false);
         assertThat(opts.isPurge()).isEqualTo(false);
