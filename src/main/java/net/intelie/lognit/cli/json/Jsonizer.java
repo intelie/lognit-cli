@@ -42,6 +42,8 @@ public class Jsonizer {
             public boolean hasNext() {
                 try {
                     return jsonReader.peek() != JsonToken.END_DOCUMENT;
+                } catch (EOFException e) {
+                    return false;
                 } catch (IOException e) {
                     e.printStackTrace();
                     return false;
