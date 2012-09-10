@@ -43,6 +43,7 @@ public class PurgeInfoTest {
 
     @Test
     public void statusFinishedTest() {
+        assertThat(PurgeInfo.Status.CANCELLING.isFinished()).isEqualTo(false);
         assertThat(PurgeInfo.Status.CANCELLED.isFinished()).isEqualTo(true);
         assertThat(PurgeInfo.Status.COMPLETED.isFinished()).isEqualTo(true);
         assertThat(PurgeInfo.Status.FAILURE.isFinished()).isEqualTo(true);

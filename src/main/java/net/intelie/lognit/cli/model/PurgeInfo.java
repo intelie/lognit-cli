@@ -4,6 +4,7 @@ public class PurgeInfo {
     public enum Status {
         WAITING(false),
         RUNNING(false),
+        CANCELLING(false),
         CANCELLED(true),
         FAILURE(true),
         COMPLETED(true);
