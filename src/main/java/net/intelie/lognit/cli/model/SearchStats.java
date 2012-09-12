@@ -2,6 +2,7 @@ package net.intelie.lognit.cli.model;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Longs;
 
 import java.io.Serializable;
 import java.util.*;
@@ -60,8 +61,20 @@ public class SearchStats implements Serializable {
         this.hours = mergeFreqs(this.hours, that.hours);
         this.last = mergeFreqs(this.last, that.last);
 
-        for (Map.Entry<String, List<FreqPoint<String>>> entry : that.fields.entrySet())
-            this.fields.put(entry.getKey(), mergeFreqs(this.fields.get(entry.getKey()), entry.getValue()));
+        for (Map.Entry<String, List<FreqPoint<String>>> entry : that.fields.entrySet()) {
+            List<FreqPoint<String>> merged = mergeFreqs(this.fields.get(entry.getKey()), entry.getValue());
+            sortByMostFrequent(merged);
+            this.fields.put(entry.getKey(), merged);
+        }
+    }
+
+    private void sortByMostFrequent(List<FreqPoint<String>> merged) {
+        Collections.sort(merged, new Comparator<FreqPoint<String>>() {
+            @Override
+            public int compare(FreqPoint<String> a, FreqPoint<String> b) {
+                return -Longs.compare(a.freq(), b.freq());
+            }
+        });
     }
 
     private <T> List<FreqPoint<T>> mergeFreqs(List<FreqPoint<T>> target, List<FreqPoint<T>> source) {

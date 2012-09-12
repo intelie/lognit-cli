@@ -62,7 +62,7 @@ public class SearchStatsTest {
                 Arrays.asList(new FreqPoint<Long>(1L, 2)),
                 Arrays.asList(new FreqPoint<Long>(4L, 5)),
                 new HashMap<String, List<FreqPoint<String>>>() {{
-                    put("host", Arrays.asList(new FreqPoint<String>("A", 2), new FreqPoint<String>("B", 3)));
+                    put("host", Arrays.asList(new FreqPoint<String>("B", 8), new FreqPoint<String>("A", 2)));
                     put("what", Arrays.asList(new FreqPoint<String>("C", 2)));
                 }});
 
@@ -75,7 +75,7 @@ public class SearchStatsTest {
                 Arrays.asList(new FreqPoint<Long>(1L, 4)),
                 Arrays.asList(new FreqPoint<Long>(3L, 4), new FreqPoint<Long>(4L, 5)),
                 new HashMap<String, List<FreqPoint<String>>>() {{
-                    put("host", Arrays.asList(new FreqPoint<String>("A", 7), new FreqPoint<String>("B", 3)));
+                    put("host", Arrays.asList(new FreqPoint<String>("B", 8), new FreqPoint<String>("A", 7)));
                     put("what", Arrays.asList(new FreqPoint<String>("C", 2)));
 
                 }}));
