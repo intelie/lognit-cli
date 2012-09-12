@@ -4,6 +4,7 @@ import jline.ANSIBuffer;
 import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.Message;
+import net.intelie.lognit.cli.model.SearchStats;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class ColoredFormatter implements Formatter {
     }
 
     @Override
-    public void printMessage(Message message) {
+    public void print(Message message) {
         ANSIBuffer buffer = new ANSIBuffer();
         buffer.cyan(message.getHost());
         buffer.append(" ");
@@ -49,7 +50,7 @@ public class ColoredFormatter implements Formatter {
     }
 
     @Override
-    public void printAggregated(Aggregated aggregated) {
+    public void print(Aggregated aggregated) {
         for (LinkedHashMap<String, Object> map : aggregated) {
             ANSIBuffer buffer = new ANSIBuffer();
             int count = 0;
@@ -64,4 +65,10 @@ public class ColoredFormatter implements Formatter {
         }
 
     }
+
+    @Override
+    public void print(SearchStats stats) {
+        throw new IllegalArgumentException("stats not implemented yet");
+    }
+
 }

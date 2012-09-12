@@ -6,6 +6,7 @@ import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.AggregatedItem;
 import net.intelie.lognit.cli.model.Message;
+import net.intelie.lognit.cli.model.SearchStats;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,9 +30,18 @@ public class JsonFormatterTest {
     public void testPrintMessage() throws Exception {
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
         when(jsonizer.to(message)).thenReturn("abc");
-        printer.printMessage(message);
+        printer.print(message);
         verify(console).printOut("%s", "abc");
     }
+
+    @Test
+    public void testPrintStats() throws Exception {
+        SearchStats stats = mock(SearchStats.class);
+        when(jsonizer.to(stats)).thenReturn("abc");
+        printer.print(stats);
+        verify(console).printOut("%s", "abc");
+    }
+
 
     @Test
     public void testAggregated() throws Exception {
@@ -41,7 +51,7 @@ public class JsonFormatterTest {
 
         when(jsonizer.to(item1)).thenReturn("abc");
         when(jsonizer.to(item2)).thenReturn("qwe");
-        printer.printAggregated(aggr);
+        printer.print(aggr);
         verify(console).printOut("%s", "abc");
         verify(console).printOut("%s", "qwe");
     }

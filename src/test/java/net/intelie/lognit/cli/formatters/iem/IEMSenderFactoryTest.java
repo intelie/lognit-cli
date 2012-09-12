@@ -1,6 +1,5 @@
 package net.intelie.lognit.cli.formatters.iem;
 
-import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Message;
@@ -63,7 +62,7 @@ public class IEMSenderFactoryTest {
         when(jsonizer.toFlat(message)).thenReturn("AAA");
 
         IEMSender sender = factory.create(url);
-        sender.printMessage(message);
+        sender.print(message);
 
         verify(client).send(QUEUE_EVENTS, "AAA", makeHeader("Event"));
     }

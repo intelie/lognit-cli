@@ -4,6 +4,7 @@ import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.Message;
+import net.intelie.lognit.cli.model.SearchStats;
 
 import java.util.LinkedHashMap;
 
@@ -22,15 +23,19 @@ public class FlatJsonFormatter implements Formatter {
     }
 
     @Override
-    public void printMessage(Message message) {
+    public void print(Message message) {
         console.printOut("%s", json.toFlat(message));
     }
 
     @Override
-    public void printAggregated(Aggregated aggregated) {
+    public void print(Aggregated aggregated) {
         for (LinkedHashMap<String, Object> map : aggregated) {
             console.printOut("%s", json.toFlat(map));
         }
+    }
 
+    @Override
+    public void print(SearchStats stats) {
+        console.printOut("%s", json.to(stats));
     }
 }

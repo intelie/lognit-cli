@@ -26,7 +26,6 @@ public class BufferListenerFactoryTest {
         when(selector.select("test")).thenReturn(formatter);
         BufferListener listener = listenerFactory.create("test", false);
         assertThat(listener.getFormatter()).isEqualTo(formatter);
-        assertThat(listener.isVerbose()).isEqualTo(false);
     }
 
 }

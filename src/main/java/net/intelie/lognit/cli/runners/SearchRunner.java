@@ -30,7 +30,7 @@ public class SearchRunner implements Runner {
     @Override
     public int run(UserOptions options) throws Exception {
         try {
-            BufferListener listener = factory.create(options.getFormat(), options.isVerbose());
+            BufferListener listener = factory.create(options.getFormat(), options.isStats());
 
             RestListenerHandle handle = handshake(options, listener);
 

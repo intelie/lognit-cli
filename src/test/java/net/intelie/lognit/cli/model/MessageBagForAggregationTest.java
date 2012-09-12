@@ -4,9 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-
 import static net.intelie.lognit.cli.JsonHelpers.jsonElement;
 import static net.intelie.lognit.cli.JsonHelpers.jsonParse;
 import static org.fest.assertions.Assertions.assertThat;
@@ -45,7 +42,7 @@ public class MessageBagForAggregationTest {
         Aggregated agg = new Aggregated();
         agg.add(map("timestamp", 123.0, "count", 1.0, "first_abc", "abc"));
         agg.add(map("timestamp", 123.0, "count", 42000000000001.0, "first_abc", "qwe"));
-        MessageBag messages = new MessageBag(null, agg,
+        MessageBag messages = new MessageBag(null, null, agg,
                 "abc", 42L, null, true, true, null, null);
         JsonElement actual = jsonElement(messages);
 

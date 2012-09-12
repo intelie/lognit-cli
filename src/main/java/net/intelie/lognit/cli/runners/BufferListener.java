@@ -6,6 +6,7 @@ import net.intelie.lognit.cli.http.RestListener;
 import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.MessageBag;
+import net.intelie.lognit.cli.model.SearchStats;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -24,13 +25,13 @@ public class BufferListener implements RestListener<MessageBag> {
     private final Deque<MessageBag> other;
     private final Semaphore semaphore;
     private final Formatter printer;
-    private final boolean verbose;
+    private final boolean printStats;
     private boolean releasing;
-    private int historicCount=0;
+    private int historicCount = 0;
 
-    public BufferListener(Formatter printer, boolean verbose) {
+    public BufferListener(Formatter printer, boolean printStats) {
         this.printer = printer;
-        this.verbose = verbose;
+        this.printStats = printStats;
         this.historic = new LinkedList<MessageBag>();
         this.other = new LinkedList<MessageBag>();
         this.semaphore = new Semaphore(0);
@@ -87,10 +88,17 @@ public class BufferListener implements RestListener<MessageBag> {
     }
 
     private void releaseHistoric(int releaseMax) {
-        List<Message> reverse = pickValidHistory(releaseMax);
+        if (printStats) {
+            SearchStats merged = new SearchStats();
+            for (MessageBag bag : historic)
+                merged.merge(bag.getStats());
+            printer.print(merged);
+        } else {
+            List<Message> reverse = pickValidHistory(releaseMax);
 
-        for (Message message : reverse)
-            printer.printMessage(message);
+            for (Message message : reverse)
+                printer.print(message);
+        }
     }
 
     private List<Message> pickValidHistory(int releaseMax) {
@@ -126,20 +134,16 @@ public class BufferListener implements RestListener<MessageBag> {
     }
 
     private void printAggregated(Aggregated aggregated) {
-        printer.printAggregated(aggregated);
+        printer.print(aggregated);
     }
 
     private void printMessages(boolean historic, List<Message> list) {
         if (historic) list = Lists.reverse(list);
         for (Message message : list)
-            printer.printMessage(message);
+            printer.print(message);
     }
 
     public Formatter getFormatter() {
         return printer;
-    }
-
-    public boolean isVerbose() {
-        return verbose;
     }
 }

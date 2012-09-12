@@ -1,11 +1,11 @@
 package net.intelie.lognit.cli.formatters.iem;
 
-import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.AggregatedItem;
 import net.intelie.lognit.cli.model.Message;
+import net.intelie.lognit.cli.model.SearchStats;
 import net.ser1.stomp.Client;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,8 +36,20 @@ public class IEMSenderTest {
         Message message = mock(Message.class);
         when(jsonizer.toFlat(message)).thenReturn("AAA");
 
-        sender.printMessage(message);
-        verify(console).printMessage(message);
+        sender.print(message);
+        verify(console).print(message);
+        verify(client).send(QUEUE_EVENTS, "AAA", makeHeader("test"));
+    }
+
+    @Test
+    public void whenSendingStatsEvent() throws Exception {
+        IEMSender sender = new IEMSender(console, client, jsonizer, "test");
+
+        SearchStats stats = mock(SearchStats.class);
+        when(jsonizer.to(stats)).thenReturn("AAA");
+
+        sender.print(stats);
+        verify(console).print(stats);
         verify(client).send(QUEUE_EVENTS, "AAA", makeHeader("test"));
     }
 
@@ -53,8 +65,8 @@ public class IEMSenderTest {
         when(jsonizer.to(item1)).thenReturn("AAA");
         when(jsonizer.to(item2)).thenReturn("BBB");
 
-        sender.printAggregated(aggregated);
-        verify(console).printAggregated(aggregated);
+        sender.print(aggregated);
+        verify(console).print(aggregated);
 
         verify(client).send(QUEUE_EVENTS, "AAA", makeHeader("test"));
         verify(client).send(QUEUE_EVENTS, "BBB", makeHeader("test"));

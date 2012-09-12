@@ -32,7 +32,7 @@ public class ColoredFormatterTest {
     public void testPrintMessage() throws Exception {
         when(console.isTTY()).thenReturn(true);
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
-        printer.printMessage(message);
+        printer.print(message);
         verify(console).printOut(colored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc"));
     }
 
@@ -51,7 +51,7 @@ public class ColoredFormatterTest {
         AggregatedItem item2 = AggregatedItemHelper.map("abc", 124, "abd", "qwe");
         Aggregated aggr = new Aggregated(item1, item2);
 
-        printer.printAggregated(aggr);
+        printer.print(aggr);
         verify(console).printOut(colored("abc:$g123$n abd:$g42$n"));
         verify(console).printOut(colored("abc:$g124$n abd:$gqwe$n"));
     }
@@ -60,7 +60,7 @@ public class ColoredFormatterTest {
     public void testPrintMessageNoTty() throws Exception {
         when(console.isTTY()).thenReturn(false);
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
-        printer.printMessage(message);
+        printer.print(message);
         verify(console).printOut(nonColored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc"));
     }
 
@@ -71,7 +71,7 @@ public class ColoredFormatterTest {
         AggregatedItem item2 = AggregatedItemHelper.map("abc", 124, "abd", "qwe");
         Aggregated aggr = new Aggregated(item1, item2);
 
-        printer.printAggregated(aggr);
+        printer.print(aggr);
         verify(console).printOut(nonColored("abc:$g123$n abd:$g42$n"));
         verify(console).printOut(nonColored("abc:$g124$n abd:$gqwe$n"));
     }

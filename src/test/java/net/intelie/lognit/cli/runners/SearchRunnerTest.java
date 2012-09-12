@@ -102,7 +102,7 @@ public class SearchRunnerTest {
             fail("must throw");
         } catch (RetryConnectionException e) {
             assertThat(e.options()).isEqualTo(new UserOptions("blablabla", "-n", "0", "-f", "-v"));
-            BufferListener listener = factory.create("colored", true);
+            BufferListener listener = factory.create("colored", false);
             verify(lognit).search("blablabla", 42, listener);
             verify(console).println(SearchRunner.HANDSHAKE, 32L);
             verify(listener).releaseAll();

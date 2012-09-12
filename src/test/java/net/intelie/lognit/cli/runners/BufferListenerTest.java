@@ -2,14 +2,14 @@ package net.intelie.lognit.cli.runners;
 
 import net.intelie.lognit.cli.formatters.ColoredFormatter;
 import net.intelie.lognit.cli.http.RestListener;
-import net.intelie.lognit.cli.model.Aggregated;
-import net.intelie.lognit.cli.model.Message;
-import net.intelie.lognit.cli.model.MessageBag;
+import net.intelie.lognit.cli.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import static net.intelie.lognit.cli.AggregatedItemHelper.map;
 import static org.fest.assertions.Assertions.assertThat;
@@ -43,8 +43,8 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
-        verify(printer).printMessage(mA);
-        verify(printer).printMessage(mB);
+        verify(printer).print(mA);
+        verify(printer).print(mB);
         verifyNoMoreInteractions(printer);
     }
 
@@ -57,8 +57,8 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
-        verify(printer).printMessage(mA);
-        verify(printer).printMessage(mB);
+        verify(printer).print(mA);
+        verify(printer).print(mB);
         verifyNoMoreInteractions(printer);
     }
 
@@ -92,8 +92,8 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
-        verify(printer).printMessage(mA);
-        verify(printer).printMessage(mB);
+        verify(printer).print(mA);
+        verify(printer).print(mB);
         verifyNoMoreInteractions(printer);
     }
 
@@ -104,9 +104,9 @@ public class BufferListenerTest {
         listener.receive(ms(true, true, 2, mB));
         listener.releaseAll();
 
-        verify(printer).printMessage(mC);
-        verify(printer).printMessage(mA);
-        verify(printer).printMessage(mB);
+        verify(printer).print(mC);
+        verify(printer).print(mA);
+        verify(printer).print(mB);
         verifyNoMoreInteractions(printer);
         listener.releaseAll();
         verifyNoMoreInteractions(printer);
@@ -133,9 +133,9 @@ public class BufferListenerTest {
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
         listener.receive(ms(true, true, 2, mB));
 
-        verify(printer).printMessage(mC);
-        verify(printer).printMessage(mA);
-        verify(printer).printMessage(mB);
+        verify(printer).print(mC);
+        verify(printer).print(mA);
+        verify(printer).print(mB);
         verifyNoMoreInteractions(printer);
         listener.releaseAll();
         verifyNoMoreInteractions(printer);
@@ -150,7 +150,7 @@ public class BufferListenerTest {
         listener.releaseAll();
         listener.receive(ms(true, true, "node", 2L, aggregated));
 
-        verify(printer).printAggregated(aggregated);
+        verify(printer).print(aggregated);
         verifyNoMoreInteractions(printer);
         listener.releaseAll();
         verifyNoMoreInteractions(printer);
@@ -163,8 +163,8 @@ public class BufferListenerTest {
         listener.receive(ms(true, true, "node", 2L, 2, m("A"), m("B")));
 
         InOrder orderly = inOrder(printer);
-        orderly.verify(printer).printMessage(m("A"));
-        orderly.verify(printer).printMessage(m("B"));
+        orderly.verify(printer).print(m("A"));
+        orderly.verify(printer).print(m("B"));
         orderly.verifyNoMoreInteractions();
     }
 
@@ -176,8 +176,8 @@ public class BufferListenerTest {
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
 
-        verify(printer).printMessage(mA);
-        verify(printer).printMessage(mB);
+        verify(printer).print(mA);
+        verify(printer).print(mB);
         verifyNoMoreInteractions(printer);
     }
 
@@ -191,8 +191,8 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
         verify(printer).printStatus(BufferListener.NO_CLUSTER_INFO);
-        verify(printer).printMessage(mA);
-        verify(printer).printMessage(mB);
+        verify(printer).print(mA);
+        verify(printer).print(mB);
         verifyNoMoreInteractions(printer);
     }
 
@@ -206,33 +206,50 @@ public class BufferListenerTest {
 
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
 
-        verify(printer).printMessage(mB);
-        verify(printer).printMessage(mC);
-        verify(printer).printMessage(mD);
+        verify(printer).print(mB);
+        verify(printer).print(mC);
+        verify(printer).print(mD);
         verifyNoMoreInteractions(printer);
     }
 
     @Test(timeout = 1000)
-    public void whenTwoOfTwoMessagesArriveOntimeAndIsVerboseShowAll() {
+    public void whenTwoOfTwoMessagesArriveOntimePrintStats() {
         listener = new BufferListener(printer, true);
 
+        SearchStats A = new SearchStats(
+                Arrays.asList(new FreqPoint<Long>(1L, 2)),
+                Arrays.asList(new FreqPoint<Long>(3L, 4)),
+                new HashMap<String, List<FreqPoint<String>>>() {{
+                    put("host", Arrays.asList(new FreqPoint<String>("A", 5)));
+                }});
+
+        SearchStats B = new SearchStats(
+                Arrays.asList(new FreqPoint<Long>(1L, 2)),
+                Arrays.asList(new FreqPoint<Long>(4L, 5)),
+                new HashMap<String, List<FreqPoint<String>>>() {{
+                    put("host", Arrays.asList(new FreqPoint<String>("A", 2), new FreqPoint<String>("B", 3)));
+                    put("what", Arrays.asList(new FreqPoint<String>("C", 2)));
+                }});
+
+        SearchStats merged = new SearchStats();
+        merged.merge(A);
+        merged.merge(B);
+
         Message mA = m("A"), mB = m("B"), mC = m("C"), mD = m("D");
-        listener.receive(ms(false, true, "AAA", 3L, 2, mB, mA));
+        listener.receive(new MessageBag(Arrays.asList(mB, mA), A, null, "AAA", 3L, null, true, false, 2, 42L));
         verify(printer).printStatus(BufferListener.RESPONSE_RECEIVED, "AAA", 1, 2, 2, 42L, 3L);
-        listener.receive(ms(false, true, "BBB", 5L, 3, mC, mD));
+        listener.receive(new MessageBag(Arrays.asList(mC, mD), B, null, "BBB", 5L, null, true, false, 3, 42L));
         verify(printer).printStatus(BufferListener.RESPONSE_RECEIVED, "BBB", 2, 3, 2, 42L, 5L);
 
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
 
-        verify(printer).printMessage(mB);
-        verify(printer).printMessage(mC);
-        verify(printer).printMessage(mD);
+        verify(printer).print(merged);
         verifyNoMoreInteractions(printer);
     }
 
     @Test(timeout = 1000)
     public void willPrintEvenIfReceivesAfterTimeout() {
-        listener = new BufferListener(printer, true);
+        listener = new BufferListener(printer, false);
 
         Message mA = m("A"), mB = m("B"), mC = m("C"), mD = m("D");
         listener.receive(ms(false, true, "AAA", 3L, 2, mB, mA));
@@ -241,8 +258,8 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
 
-        verify(printer).printMessage(mB);
-        verify(printer).printMessage(mA);
+        verify(printer).print(mB);
+        verify(printer).print(mA);
 
         listener.receive(ms(false, true, "BBB", 5L, 3, mC, mD));
         verify(printer).printStatus(BufferListener.RESPONSE_RECEIVED, "BBB", 2, 3, 2, 42L, 5L);
@@ -251,7 +268,7 @@ public class BufferListenerTest {
     }
 
     private MessageBag ms(String message) {
-        return new MessageBag(null, null, null, null, message, false, false, 0, 0L);
+        return new MessageBag(null, null, null, null, null, message, false, false, 0, 0L);
     }
 
     private MessageBag ms(boolean realtime, boolean success, int nodes, Message... messages) {
@@ -259,11 +276,11 @@ public class BufferListenerTest {
     }
 
     private MessageBag ms(boolean realtime, boolean success, String node, Long time, int nodes, Message... messages) {
-        return new MessageBag(Arrays.asList(messages), null, node, time, null, success, realtime, nodes, 42L);
+        return new MessageBag(Arrays.asList(messages), null, null, node, time, null, success, realtime, nodes, 42L);
     }
 
     private MessageBag ms(boolean realtime, boolean success, String node, Long time, Aggregated aggregated) {
-        return new MessageBag(null, aggregated, node, time, null, success, realtime, 0, 0L);
+        return new MessageBag(null, null, aggregated, node, time, null, success, realtime, 0, 0L);
     }
 
 

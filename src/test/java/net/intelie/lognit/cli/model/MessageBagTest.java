@@ -5,8 +5,11 @@ import com.google.gson.JsonElement;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
-import static net.intelie.lognit.cli.JsonHelpers.*;
+import static net.intelie.lognit.cli.JsonHelpers.jsonElement;
+import static net.intelie.lognit.cli.JsonHelpers.jsonParse;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class MessageBagTest {
@@ -18,7 +21,15 @@ public class MessageBagTest {
             "total_nodes:42, " +
             "node: abc," +
             "time: 42, " +
+            "stats:{hours:[{key:1,freq:2}], last:[{key:3,freq:4}], fields:{host:[{key:'A', freq:5}]}}," +
             "items:[{id:'abc1'}, {id:'abc2'}]}";
+
+    public static final SearchStats DEFAULT_STATS = new SearchStats(
+            Arrays.asList(new FreqPoint<Long>(1L, 2)),
+            Arrays.asList(new FreqPoint<Long>(3L, 4)),
+            new HashMap<String, List<FreqPoint<String>>>() {{
+                put("host", Arrays.asList(new FreqPoint<String>("A", 5)));
+            }});
 
     @Test
     public void whenDeserializing() {
@@ -34,11 +45,12 @@ public class MessageBagTest {
         assertThat(messages.getItems().size()).isEqualTo(2);
         assertThat(messages.getNode()).isEqualTo("abc");
         assertThat(messages.getTime()).isEqualTo(42L);
+        assertThat(messages.getStats()).isEqualTo(DEFAULT_STATS);
     }
 
     @Test
     public void whenSerializing() {
-        MessageBag messages = new MessageBag(Arrays.asList(new Message("abc1"), new Message("abc2")), null,
+        MessageBag messages = new MessageBag(Arrays.asList(new Message("abc1"), new Message("abc2")), DEFAULT_STATS, null,
                 "abc", 42L, "some message", true, true, 42, 200L);
         JsonElement actual = jsonElement(messages);
 
