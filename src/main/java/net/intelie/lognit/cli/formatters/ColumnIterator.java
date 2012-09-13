@@ -50,7 +50,12 @@ public class ColumnIterator {
         list.add(new ANSIBuffer().cyan("Top 10 " + field + "s (last 24h):").toString(realColor));
         for (FreqPoint<String> point : points) {
             ANSIBuffer buffer = new ANSIBuffer();
-            buffer.append(String.format("%-16.16s %,10d ", point.key(), point.freq()));
+
+            String host = point.key();
+            if (host.length() > 16)
+                host = host.substring(0, 15) + "…";
+
+            buffer.append(String.format("%-16.16s %,10d ", host, point.freq()));
             makeBar(buffer, point, maxFreq, 16);
             list.add(buffer.toString(realColor));
         }

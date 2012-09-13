@@ -3,13 +3,11 @@ package net.intelie.lognit.cli.formatters;
 import jline.ANSIBuffer;
 import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.model.Aggregated;
+import net.intelie.lognit.cli.model.FreqPoint;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.SearchStats;
 
-import java.util.ArrayDeque;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class ColoredFormatter implements Formatter {
     private final UserConsole console;
@@ -70,17 +68,22 @@ public class ColoredFormatter implements Formatter {
 
     @Override
     public void print(SearchStats stats) {
-        Queue<String> left = new ArrayDeque<String>();
-        Queue<String> right = new ArrayDeque<String>();
+        Queue<String>[] C = new Queue[]{new ArrayDeque<String>(), new ArrayDeque<String>()};
 
-        left.addAll(ColumnIterator.reprHours(stats.hours(), reallyColored()));
-        right.addAll(ColumnIterator.reprLastHour(stats.last(), reallyColored()));
-        right.add("");
-        right.addAll(ColumnIterator.reprField("host", stats.fields().get("host"), reallyColored()));
+        C[0].addAll(ColumnIterator.reprHours(stats.hours(), reallyColored()));
+        C[1].addAll(ColumnIterator.reprLastHour(stats.last(), reallyColored()));
+        C[1].add("");
 
-        while (!left.isEmpty() || !right.isEmpty()) {
-            String cLeft = left.poll();
-            String cRight = right.poll();
+        int next = 1;
+        for (Map.Entry<String, List<FreqPoint<String>>> entry : stats.fields().entrySet()) {
+            C[next].addAll(ColumnIterator.reprField(entry.getKey(), entry.getValue(), reallyColored()));
+            next = (next + 1) % 2;
+        }
+
+
+        while (!C[0].isEmpty() || !C[1].isEmpty()) {
+            String cLeft = C[0].poll();
+            String cRight = C[1].poll();
 
             console.printOut("%s%s", cLeft != null ? cLeft : "", cRight != null ? cRight : "");
         }
