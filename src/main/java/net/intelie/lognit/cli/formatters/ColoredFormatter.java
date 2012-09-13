@@ -76,15 +76,13 @@ public class ColoredFormatter implements Formatter {
         left.addAll(ColumnIterator.reprHours(stats.hours(), reallyColored()));
         right.addAll(ColumnIterator.reprLastHour(stats.last(), reallyColored()));
         right.add("");
-
-
         right.addAll(ColumnIterator.reprField("host", stats.fields().get("host"), reallyColored()));
 
         while (!left.isEmpty() || !right.isEmpty()) {
             String cLeft = left.poll();
             String cRight = right.poll();
 
-            console.printOut("%s%s", cLeft, cRight);
+            console.printOut("%s%s", cLeft != null ? cLeft : "", cRight != null ? cRight : "");
         }
 
     }
