@@ -6,8 +6,10 @@ import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.SearchStats;
 
+import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Queue;
 
 public class ColoredFormatter implements Formatter {
     private final UserConsole console;
@@ -68,7 +70,23 @@ public class ColoredFormatter implements Formatter {
 
     @Override
     public void print(SearchStats stats) {
-        throw new IllegalArgumentException("stats not implemented yet");
+        Queue<String> left = new ArrayDeque<String>();
+        Queue<String> right = new ArrayDeque<String>();
+
+        left.addAll(ColumnIterator.reprHours(stats.hours(), reallyColored()));
+        right.addAll(ColumnIterator.reprLastHour(stats.last(), reallyColored()));
+        right.add("");
+
+
+        right.addAll(ColumnIterator.reprField("host", stats.fields().get("host"), reallyColored()));
+
+        while (!left.isEmpty() || !right.isEmpty()) {
+            String cLeft = left.poll();
+            String cRight = right.poll();
+
+            console.printOut("%s%s", cLeft, cRight);
+        }
+
     }
 
 }
