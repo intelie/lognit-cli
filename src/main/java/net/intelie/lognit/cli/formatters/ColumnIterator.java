@@ -47,7 +47,7 @@ public class ColumnIterator {
 
         long maxFreq = calculateMaxFreq(points);
 
-        list.add(new ANSIBuffer().cyan("Top 10 " + field + "s:").toString(realColor));
+        list.add(new ANSIBuffer().cyan("Top 10 " + field + "s (last 24h):").toString(realColor));
         for (FreqPoint<String> point : points) {
             ANSIBuffer buffer = new ANSIBuffer();
             buffer.append(String.format("%-16.16s %,10d ", point.key(), point.freq()));
