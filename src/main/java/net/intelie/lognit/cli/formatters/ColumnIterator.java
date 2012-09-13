@@ -97,16 +97,23 @@ public class ColumnIterator {
 
     private static <T> double calculateAvgFreq(List<FreqPoint<T>> points) {
         double avg = 0;
-        for (FreqPoint point : points)
+        int cnt = 0;
+        for (FreqPoint point : points) {
             avg += point.freq();
-        return avg / points.size();
+            cnt++;
+        }
+        return avg / cnt;
     }
 
 
     private static <T> double calculateStdev(List<FreqPoint<T>> points, double avg) {
         double stdev = 0;
+        int cnt = 0;
         for (FreqPoint point : points)
-            stdev += Math.pow(point.freq() - avg, 2) / points.size();
-        return Math.sqrt(stdev);
+            if (point.freq() != 0) {
+                stdev += Math.pow(point.freq() - avg, 2);
+                cnt++;
+            }
+        return Math.sqrt(stdev / cnt);
     }
 }
