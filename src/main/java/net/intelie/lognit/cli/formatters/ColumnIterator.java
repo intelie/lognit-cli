@@ -13,13 +13,15 @@ public class ColumnIterator {
     public static List<String> reprLastHour(List<FreqPoint<Long>> points, boolean realColor) {
         List<String> list = Lists.newArrayList();
 
-        long maxFreq = calculateMaxFreq(points);
+        long max = calculateMaxFreq(points);
+        double avg = calculateAvgFreq(points);
+        double stdDev = calculateStdev(points, avg);
 
         list.add(new ANSIBuffer().cyan("This hour:").toString(realColor));
         for (FreqPoint<Long> point : points) {
             ANSIBuffer buffer = new ANSIBuffer();
             buffer.append(String.format("%tR %,10d ", point.key(), point.freq()));
-            makeBar(buffer, point, maxFreq, 16);
+            makeBar(buffer, point, 16, max, avg, stdDev);
             list.add(buffer.toString(realColor));
         }
         return list;
@@ -28,14 +30,16 @@ public class ColumnIterator {
     public static List<String> reprHours(List<FreqPoint<Long>> points, boolean realColor) {
         List<String> list = Lists.newArrayList();
 
-        long maxFreq = calculateMaxFreq(points);
+        long max = calculateMaxFreq(points);
+        double avg = calculateAvgFreq(points);
+        double stdDev = calculateStdev(points, avg);
 
         list.add(makeString(realColor, new ANSIBuffer().cyan(String.format(
                 "24h (%tF, %tF)", points.get(0).key(), points.get(points.size() - 1).key())), 33));
         for (FreqPoint<Long> point : points) {
             ANSIBuffer buffer = new ANSIBuffer();
             buffer.append(String.format("%tHh %,10d ", point.key(), point.freq()));
-            makeBar(buffer, point, maxFreq, 16);
+            makeBar(buffer, point, 16, max, avg, stdDev);
             list.add(makeString(realColor, buffer, 33));
         }
 
@@ -45,7 +49,9 @@ public class ColumnIterator {
     public static List<String> reprField(String field, List<FreqPoint<String>> points, boolean realColor) {
         List<String> list = Lists.newArrayList();
 
-        long maxFreq = calculateMaxFreq(points);
+        long max = calculateMaxFreq(points);
+        double avg = calculateAvgFreq(points);
+        double stdDev = calculateStdev(points, avg);
 
         list.add(new ANSIBuffer().cyan("Top 10 " + field + "s (last 24h):").toString(realColor));
         for (FreqPoint<String> point : points) {
@@ -56,7 +62,7 @@ public class ColumnIterator {
                 host = host.substring(0, 15) + "…";
 
             buffer.append(String.format("%-16.16s %,10d ", host, point.freq()));
-            makeBar(buffer, point, maxFreq, 16);
+            makeBar(buffer, point, 16, max, avg, stdDev);
             list.add(buffer.toString(realColor));
         }
 
@@ -68,12 +74,14 @@ public class ColumnIterator {
         return buffer.toString(realColor) + Strings.repeat(" ", Math.max(0, width - nonAnsi.length()));
     }
 
-    private static void makeBar(ANSIBuffer buffer, FreqPoint point, long maxFreq, int maxBars) {
-        int bars = (int) Math.ceil(maxBars * point.freq() / (double) maxFreq);
+    private static void makeBar(ANSIBuffer buffer, FreqPoint point, int maxBars, long max, double avg, double stdev) {
+        int bars = (int) Math.ceil(maxBars * point.freq() / (double) max);
+        int std1 = (int) Math.ceil(maxBars * (avg + stdev) / (double) max);
+        int std2 = (int) Math.ceil(maxBars * (avg + 2 * stdev) / (double) max);
         for (int i = 0; i < bars; i++) {
-            if (i < maxBars / 2)
+            if (i < std1)
                 buffer.green(BAR_CHAR);
-            else if (i < 7 * maxBars / 8)
+            else if (i < std2)
                 buffer.yellow(BAR_CHAR);
             else
                 buffer.red(BAR_CHAR);
@@ -87,4 +95,18 @@ public class ColumnIterator {
         return max;
     }
 
+    private static <T> double calculateAvgFreq(List<FreqPoint<T>> points) {
+        double avg = 0;
+        for (FreqPoint point : points)
+            avg += point.freq();
+        return avg / points.size();
+    }
+
+
+    private static <T> double calculateStdev(List<FreqPoint<T>> points, double avg) {
+        double stdev = 0;
+        for (FreqPoint point : points)
+            stdev += Math.pow(point.freq() - avg, 2) / points.size();
+        return Math.sqrt(stdev);
+    }
 }

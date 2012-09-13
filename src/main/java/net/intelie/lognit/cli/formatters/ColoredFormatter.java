@@ -68,26 +68,28 @@ public class ColoredFormatter implements Formatter {
 
     @Override
     public void print(SearchStats stats) {
-        Queue<String>[] C = new Queue[]{new ArrayDeque<String>(), new ArrayDeque<String>()};
+        Queue<String> left = new ArrayDeque<String>();
+        Queue<String> right = new ArrayDeque<String>();
 
-        C[0].addAll(ColumnIterator.reprHours(stats.hours(), reallyColored()));
-        C[1].addAll(ColumnIterator.reprLastHour(stats.last(), reallyColored()));
-        C[1].add("");
+        left.addAll(ColumnIterator.reprHours(stats.hours(), reallyColored()));
+        right.addAll(ColumnIterator.reprLastHour(stats.last(), reallyColored()));
 
-        int next = 1;
         for (Map.Entry<String, List<FreqPoint<String>>> entry : stats.fields().entrySet()) {
-            C[next].addAll(ColumnIterator.reprField(entry.getKey(), entry.getValue(), reallyColored()));
-            next = (next + 1) % 2;
+            Queue<String> current = left.size() <= right.size() ? left : right;
+
+            current.add("");
+            current.addAll(ColumnIterator.reprField(entry.getKey(), entry.getValue(), reallyColored()));
         }
 
 
-        while (!C[0].isEmpty() || !C[1].isEmpty()) {
-            String cLeft = C[0].poll();
-            String cRight = C[1].poll();
-
+        while (!left.isEmpty() || !right.isEmpty()) {
+            String cLeft = left.poll();
+            String cRight = right.poll();
             console.printOut("%s%s", cLeft != null ? cLeft : "", cRight != null ? cRight : "");
         }
 
     }
+
+
 
 }
