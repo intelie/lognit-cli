@@ -68,8 +68,8 @@ public class ColumnIterator {
         double stdev = calculateStdev(points, point, avg);
 
         int bars = (int) Math.ceil(maxBars * point.freq() / (double) max);
-        int std1 = (int) Math.floor(maxBars * (avg + stdev) / (double) max);
-        int std2 = (int) Math.ceil(maxBars * (avg + 2 * stdev) / (double) max);
+        int std1 = (int) Math.ceil(maxBars * (avg + stdev) / (double) max);
+        int std2 = Math.max(std1 + 1, (int)Math.ceil(maxBars * (avg + 2 * stdev) / (double) max));
         for (int i = 0; i < bars; i++) {
             if (i <= std1)
                 buffer.green(BAR_CHAR);
