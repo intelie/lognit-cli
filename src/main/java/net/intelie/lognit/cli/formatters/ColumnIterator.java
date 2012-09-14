@@ -71,9 +71,9 @@ public class ColumnIterator {
         int std1 = (int) Math.ceil(maxBars * avg / (double) max);
         int std2 = Math.max(std1 + 1, (int) Math.ceil(maxBars * (avg + stdev) / (double) max));
         for (int i = 0; i < bars; i++) {
-            if (i <= std1)
+            if (i < std1)
                 buffer.green(BAR_CHAR);
-            else if (i <= std2)
+            else if (i < std2)
                 buffer.yellow(BAR_CHAR);
             else
                 buffer.red(BAR_CHAR);
