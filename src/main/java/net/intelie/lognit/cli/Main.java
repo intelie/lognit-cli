@@ -63,9 +63,9 @@ public class Main {
     private static UserConsole makeUserConsole() throws IOException {
         final ConsoleReader consoleReader = new ConsoleReader(
                 new FileInputStream(FileDescriptor.in),
-                new PrintWriter(System.err));
+                new PrintWriter(new PrintStream(System.err, true, "UTF-8")));
 
-        return new UserConsole(consoleReader, new PrintWriter(System.out));
+        return new UserConsole(consoleReader, new PrintWriter(new PrintStream(System.out, true, "UTF-8")));
     }
 
     private static FormatterSelector makeFormatterSelector(Jsonizer jsonizer, UserConsole userConsole) {
