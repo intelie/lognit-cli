@@ -15,10 +15,6 @@ import net.intelie.lognit.cli.state.Clock;
 import net.intelie.lognit.cli.state.RestStateStorage;
 import net.intelie.lognit.cli.state.StateKeeper;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 
 import java.io.*;
 import java.util.Timer;
@@ -63,9 +59,9 @@ public class Main {
     private static UserConsole makeUserConsole() throws IOException {
         final ConsoleReader consoleReader = new ConsoleReader(
                 new FileInputStream(FileDescriptor.in),
-                new PrintWriter(new PrintStream(System.err, true, "UTF-8")));
+                new OutputStreamWriter(System.err, "UTF-8"));
 
-        return new UserConsole(consoleReader, new PrintWriter(new PrintStream(System.out, true, "UTF-8")));
+        return new UserConsole(consoleReader, new PrintWriter(new OutputStreamWriter(System.out, "UTF-8")));
     }
 
     private static FormatterSelector makeFormatterSelector(Jsonizer jsonizer, UserConsole userConsole) {
