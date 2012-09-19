@@ -7,6 +7,8 @@ import com.google.common.primitives.Longs;
 import java.io.Serializable;
 import java.util.*;
 
+import static java.lang.Math.min;
+
 public class SearchStats implements Serializable {
     private final Map<String, List<FreqPoint<String>>> fields;
     private List<FreqPoint<Long>> hours;
@@ -58,11 +60,11 @@ public class SearchStats implements Serializable {
 
     public void merge(SearchStats that) {
         if (that == null) return;
-        this.hours = mergeFreqs(this.hours, that.hours);
-        this.last = mergeFreqs(this.last, that.last);
+        this.hours = mergeFreqs(this.hours, that.hours, false, 24);
+        this.last = mergeFreqs(this.last, that.last, false, 20);
 
         for (Map.Entry<String, List<FreqPoint<String>>> entry : that.fields.entrySet()) {
-            List<FreqPoint<String>> merged = mergeFreqs(this.fields.get(entry.getKey()), entry.getValue());
+            List<FreqPoint<String>> merged = mergeFreqs(this.fields.get(entry.getKey()), entry.getValue(), true, 10);
             sortByMostFrequent(merged);
             this.fields.put(entry.getKey(), merged);
         }
@@ -77,8 +79,8 @@ public class SearchStats implements Serializable {
         });
     }
 
-    private <T> List<FreqPoint<T>> mergeFreqs(List<FreqPoint<T>> target, List<FreqPoint<T>> source) {
-        Map<T, Long> longMap = new TreeMap<T, Long>();
+    private <T> List<FreqPoint<T>> mergeFreqs(List<FreqPoint<T>> target, List<FreqPoint<T>> source, boolean sort, int max) {
+        Map<T, Long> longMap = new LinkedHashMap<T, Long>();
 
         if (target != null)
             for (FreqPoint<T> item : target)
@@ -89,11 +91,20 @@ public class SearchStats implements Serializable {
                 longMap.put(item.key(), def(longMap.get(item.key())) + item.freq());
 
 
-        List<FreqPoint<T>> list = Lists.newArrayList();
+        ArrayList<FreqPoint<T>> list = Lists.newArrayList();
         for (Map.Entry<T, Long> entry : longMap.entrySet()) {
             list.add(new FreqPoint<T>(entry.getKey(), entry.getValue()));
         }
-        return list;
+        if (sort) {
+            Collections.sort(list, new Comparator<FreqPoint<T>>() {
+                @Override
+                public int compare(FreqPoint<T> a, FreqPoint<T> b) {
+                    return Longs.compare(b.freq(), a.freq());
+                }
+            });
+        }
+
+        return list.subList(0, min(max, list.size()));
     }
 
     private long def(Long value) {
