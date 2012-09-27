@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DEFAULT_VERSION=1.2
+DEFAULT_VERSION=1.2.1
 
 if [ "$1" = "--local" ]; then
     echo "Installing Lognit command-line interface (local)..."
