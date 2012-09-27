@@ -19,7 +19,7 @@ public class BufferListener implements RestListener<MessageBag> {
     public static final String NO_CLUSTER_INFO = "WARN: seems there is a bug in server response, no cluster info";
     public static final String MISSING_NODES_RESPONSE = "WARN: missing some cluster responses, check nodes status";
     public static final String QUERY_CANCELLED = "WARN: %s";
-    public static final String RESPONSE_RECEIVED = "(%s) response %d/%d: %d of %d historic results in %dms";
+    public static final String RESPONSE_RECEIVED = "(%s) response %d/%d: %,d of %,d historic results in %dms";
 
     private final Deque<MessageBag> historic;
     private final Deque<MessageBag> other;
