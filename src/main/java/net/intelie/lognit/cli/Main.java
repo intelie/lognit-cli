@@ -1,6 +1,8 @@
 package net.intelie.lognit.cli;
 
 import jline.ConsoleReader;
+import jline.Terminal;
+import jline.UnsupportedTerminal;
 import net.intelie.lognit.cli.formatters.*;
 import net.intelie.lognit.cli.formatters.iem.IEMSenderFactory;
 import net.intelie.lognit.cli.formatters.iem.StompClientFactory;
@@ -57,10 +59,9 @@ public class Main {
     }
 
     private static UserConsole makeUserConsole() throws IOException {
-        final ConsoleReader consoleReader = new ConsoleReader(
-                new FileInputStream(FileDescriptor.in),
-                new OutputStreamWriter(System.err, "UTF-8"));
-
+        FileInputStream in = new FileInputStream(FileDescriptor.in);
+        OutputStreamWriter out = new OutputStreamWriter(System.err, "UTF-8");
+        final ConsoleReader consoleReader = new ConsoleReader(in, out, null, new UnsupportedTerminal());
         return new UserConsole(consoleReader, new PrintWriter(new OutputStreamWriter(System.out, "UTF-8")));
     }
 
