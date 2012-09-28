@@ -1,8 +1,4 @@
-#!/bin/sh
-#
-# This is an install script. Run it!
-#
-
+#<!--
 if [ "$1" = "--local" ]; then
     echo "Installing Lognit command-line interface (local)..."
     cp target/lognit-cli-*.sh /usr/bin/nit
@@ -70,5 +66,15 @@ if [ -d /usr/local/etc/bash_completion.d ]; then
     echo "Installing bash completion (mac)"
     cp /tmp/_nit /usr/local/etc/bash_completion.d/nit
 fi
+exit 0
+# -->
 
-
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="refresh" content="0; url=http://help.lognit.com/nit" />
+    </head>
+    <body>
+        <p>Redirecting to <a href="http://help.lognit.com/nit">documentation</a>.
+    </body>
+</html>
