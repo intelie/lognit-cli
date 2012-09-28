@@ -1,13 +1,13 @@
 #Installation
 
 ```sh
-sudo sh < <(curl -s https://raw.github.com/intelie/lognit-cli/master/install)
+curl nit.lognit.com | sudo sh
 ```
 
 Installing another version:
 
 ```
-sudo sh -s 0.4 < <(curl -s https://raw.github.com/intelie/lognit-cli/master/install) 
+curl nit.lognit.com | sudo sh -s 1.2
 ```
 
 # Usage
