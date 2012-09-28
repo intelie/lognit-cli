@@ -6,8 +6,14 @@ curl -s nit.lognit.com | sudo sh
 
 Installing another version:
 
-```
+```sh
 curl -s nit.lognit.com | sudo sh -s 1.2
+```
+
+Alternativelly, using wget:
+
+```sh
+wget -qO- nit.lognit.com | sudo sh
 ```
 
 # Usage
