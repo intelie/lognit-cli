@@ -1,13 +1,13 @@
 #Installation
 
 ```sh
-curl nit.lognit.com | sudo sh
+curl -s nit.lognit.com | sudo sh
 ```
 
 Installing another version:
 
 ```
-curl nit.lognit.com | sudo sh -s 1.2
+curl -s nit.lognit.com | sudo sh -s 1.2
 ```
 
 # Usage
