@@ -1,5 +1,7 @@
 #!/bin/sh
-
+#
+# This is an install script. Run it!
+#
 
 if [ "$1" = "--local" ]; then
     echo "Installing Lognit command-line interface (local)..."
