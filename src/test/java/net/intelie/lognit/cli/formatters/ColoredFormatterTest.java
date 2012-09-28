@@ -5,17 +5,23 @@ import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.AggregatedItem;
 import net.intelie.lognit.cli.model.Message;
+import net.intelie.lognit.cli.model.SearchStats;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.mockito.Mockito.*;
 
 public class ColoredFormatterTest {
 
     private ColoredFormatter printer;
     private UserConsole console;
+    private BarsFormatter bars;
 
     private static final String YELLOW = "\033[33m";
     private static final String GREEN = "\033[32m";
@@ -25,7 +31,13 @@ public class ColoredFormatterTest {
     @Before
     public void setUp() throws Exception {
         console = mock(UserConsole.class);
-        printer = new ColoredFormatter(console);
+        bars = mock(BarsFormatter.class);
+        printer = new ColoredFormatter(console, bars);
+    }
+
+    @Test
+    public void hasConsoleOnlyConstructor() throws Exception {
+        new ColoredFormatter(mock(UserConsole.class));
     }
 
     @Test
@@ -80,5 +92,37 @@ public class ColoredFormatterTest {
     public void testPrintStatus() throws Exception {
         printer.printStatus("ABC", 1, "2", 3);
         verify(console).println("ABC", 1, "2", 3);
+    }
+
+    @Test
+    public void testPrintStats() throws Exception {
+        when(console.isTTY()).thenReturn(true);
+
+        List hours = mock(List.class);
+        List last = mock(List.class);
+        List hosts = mock(List.class);
+        List others = mock(List.class);
+        Map fields = new LinkedHashMap();
+        fields.put("host", hosts);
+        fields.put("other", others);
+
+        SearchStats stats = new SearchStats(hours, last, fields);
+
+        when(bars.hours(hours, true)).thenReturn(Arrays.asList("aaa", "aaa", "aaa"));
+        when(bars.lastHour(last, true)).thenReturn(Arrays.asList("bbb"));
+        when(bars.field("host", hosts, true)).thenReturn(Arrays.asList("ccc"));
+        when(bars.field("other", others, true)).thenReturn(Arrays.asList("ddd", "ddd"));
+
+        printer.print(stats);
+
+        verify(console, atLeastOnce()).isTTY();
+
+        InOrder orderly = inOrder(console);
+        orderly.verify(console).printOut("%s%s", "aaa", "bbb");
+        orderly.verify(console).printOut("%s%s", "aaa", "");
+        orderly.verify(console).printOut("%s%s", "aaa", "ccc");
+        orderly.verify(console).printOut("%s%s", "", "");
+        orderly.verify(console, times(2)).printOut("%s%s", "ddd", "");
+        verifyNoMoreInteractions(console);
     }
 }

@@ -12,4 +12,8 @@ public class PlainFormatter extends ColoredFormatter {
     public PlainFormatter(UserConsole console) {
         super(console, false);
     }
+
+    public PlainFormatter(UserConsole console, BarsFormatter bars) {
+        super(console, bars, false);
+    }
 }

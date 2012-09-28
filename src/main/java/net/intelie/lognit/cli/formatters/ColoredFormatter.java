@@ -11,15 +11,27 @@ import java.util.*;
 
 public class ColoredFormatter implements Formatter {
     private final UserConsole console;
+    private final BarsFormatter bars;
     private boolean colored;
 
     public ColoredFormatter(UserConsole console) {
         this(console, true);
     }
 
+
     public ColoredFormatter(UserConsole console, boolean colored) {
+        this(console, new BarsFormatter(), colored);
+    }
+
+
+    public ColoredFormatter(UserConsole console, BarsFormatter bars, boolean colored) {
         this.console = console;
+        this.bars = bars;
         this.colored = colored;
+    }
+
+    public ColoredFormatter(UserConsole console, BarsFormatter bars) {
+        this(console, bars, true);
     }
 
     @Override
@@ -71,14 +83,14 @@ public class ColoredFormatter implements Formatter {
         Queue<String> left = new ArrayDeque<String>();
         Queue<String> right = new ArrayDeque<String>();
 
-        left.addAll(ColumnIterator.reprHours(stats.hours(), reallyColored()));
-        right.addAll(ColumnIterator.reprLastHour(stats.last(), reallyColored()));
+        left.addAll(bars.hours(stats.hours(), reallyColored()));
+        right.addAll(bars.lastHour(stats.last(), reallyColored()));
 
         for (Map.Entry<String, List<FreqPoint<String>>> entry : stats.fields().entrySet()) {
             Queue<String> current = left.size() <= right.size() ? left : right;
 
             current.add("");
-            current.addAll(ColumnIterator.reprField(entry.getKey(), entry.getValue(), reallyColored()));
+            current.addAll(bars.field(entry.getKey(), entry.getValue(), reallyColored()));
         }
 
 
@@ -89,7 +101,6 @@ public class ColoredFormatter implements Formatter {
         }
 
     }
-
 
 
 }
