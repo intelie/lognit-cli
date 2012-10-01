@@ -17,6 +17,7 @@ public class Lognit {
     public static final String URL_PURGE_CANCEL_ALL = "/rest/purge/cancel-all";
     public static final String URL_STATS = "/rest/stats";
     public static final String URL_SEARCH = "/rest/search?expression=%s&windowLength=%s";
+    public static final String URL_BARS = "/rest/search?expression=%s&windowLength=0&now=%s";
     public static final String URL_DOWNLOAD = "/rest/search/download?expression=%s&windowLength=%s";
     public static final String URL_TERMS = "/rest/terms?field=%s&term=%s&avoidColons=true&size=100";
     private final RestClient client;
@@ -39,6 +40,11 @@ public class Lognit {
 
     public RestListenerHandle search(String query, int windowLength, RestListener<MessageBag> listener) throws IOException {
         SearchChannel channel = client.get(make(URL_SEARCH, query, windowLength), SearchChannel.class);
+        return client.listen(channel.getChannel(), MessageBag.class, listener);
+    }
+
+    public RestListenerHandle bars(String query, long now, RestListener<MessageBag> listener) throws IOException {
+        SearchChannel channel = client.get(make(URL_BARS, query, now), SearchChannel.class);
         return client.listen(channel.getChannel(), MessageBag.class, listener);
     }
 

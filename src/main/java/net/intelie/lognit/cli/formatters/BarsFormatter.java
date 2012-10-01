@@ -27,8 +27,12 @@ public class BarsFormatter {
     public List<String> hours(List<FreqPoint<Long>> points, boolean colored) {
         List<String> list = Lists.newArrayList();
 
-        list.add(makeLine(colored, new ANSIBuffer().cyan(String.format(
-                "24h (%tF, %tF)", points.get(0).key(), points.get(points.size() - 1).key()))));
+        if (points.size() > 0)
+            list.add(makeLine(colored, new ANSIBuffer().cyan(String.format(
+                    "24h (%tF, %tF)", points.get(0).key(), points.get(points.size() - 1).key()))));
+        else
+            list.add(makeLine(colored, new ANSIBuffer().cyan(String.format("24h"))));
+
         for (FreqPoint<Long> point : points) {
             ANSIBuffer buffer = new ANSIBuffer();
             buffer.append(String.format("%tHh %,10d ", point.key(), point.freq()));

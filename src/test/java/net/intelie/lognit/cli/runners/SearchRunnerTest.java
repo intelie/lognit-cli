@@ -49,6 +49,14 @@ public class SearchRunnerTest {
     }
 
     @Test
+    public void whenQueryingBars() throws Exception {
+        when(clock.currentMillis()).thenReturn(123L);
+        runner.run(new UserOptions("blablabla", "-b"));
+        BufferListener listener = factory.create("colored", true);
+        verify(lognit).bars("blablabla", 123L, listener);
+    }
+
+    @Test
     public void whenHasQueryToFollowButHandshakeFails() throws Exception {
         try {
             when(lognit.search(eq("blablabla"), eq(42), any(RestListener.class))).thenThrow(new RuntimeException());

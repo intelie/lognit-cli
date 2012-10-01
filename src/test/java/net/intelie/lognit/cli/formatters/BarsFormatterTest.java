@@ -61,6 +61,21 @@ public class BarsFormatterTest {
     }
 
     @Test
+    public void whenRepresentingEmptyHours() throws Exception {
+        BarsFormatter bars = new BarsFormatter();
+
+        List<FreqPoint<Long>> points = Lists.newArrayList();
+
+        List<String> data = bars.hours(points, false);
+
+        assertThat(data).containsExactly(
+                "24h                                    "
+        );
+
+    }
+
+
+    @Test
     public void whenRepresentingLastHours() throws Exception {
         BarsFormatter bars = new BarsFormatter();
 
