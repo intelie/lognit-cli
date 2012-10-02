@@ -55,9 +55,7 @@ public class SearchRunner implements Runner {
 
     private RestListenerHandle handshake(UserOptions options, BufferListener listener) throws IOException {
         long start = clock.currentMillis();
-        RestListenerHandle handle = options.isStats() ?
-                lognit.bars(options.getQuery(), clock.currentMillis(), listener) :
-                lognit.search(options.getQuery(), options.getLines(), listener);
+        RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), options.isFollow(), options.isStats(), listener);
         registerRuntime(handle);
 
         if (options.isVerbose())

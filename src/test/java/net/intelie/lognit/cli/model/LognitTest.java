@@ -120,22 +120,10 @@ public class LognitTest {
         RestListenerHandle handle = mock(RestListenerHandle.class);
         RestListener<MessageBag> listener = mock(RestListener.class);
 
-        when(client.get("/rest/search?expression=qwe+asd&windowLength=20", SearchChannel.class)).thenReturn(channel);
+        when(client.get("/rest/search?expression=qwe+asd&windowLength=20&realtime=false&stats=true", SearchChannel.class)).thenReturn(channel);
         when(client.listen("lalala", MessageBag.class, listener)).thenReturn(handle);
 
-        assertThat(lognit.search("qwe asd", 20, listener)).isEqualTo(handle);
-    }
-
-    @Test
-    public void testBars() throws Exception {
-        SearchChannel channel = new SearchChannel("lalala");
-        RestListenerHandle handle = mock(RestListenerHandle.class);
-        RestListener<MessageBag> listener = mock(RestListener.class);
-
-        when(client.get("/rest/search?expression=qwe+asd&windowLength=0&now=123", SearchChannel.class)).thenReturn(channel);
-        when(client.listen("lalala", MessageBag.class, listener)).thenReturn(handle);
-
-        assertThat(lognit.bars("qwe asd", 123L, listener)).isEqualTo(handle);
+        assertThat(lognit.search("qwe asd", 20, false, true, listener)).isEqualTo(handle);
     }
 
     @Test

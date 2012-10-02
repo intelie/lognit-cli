@@ -35,8 +35,8 @@ public class SearchRunnerTest {
     public void whenHasQueryExecutesUsingCorrectFormatter() throws Exception {
         runner.run(new UserOptions("blablabla", "-n", "42", "-o", "plain"));
         BufferListener listener = factory.create("plain", false);
-        verify(lognit).search("blablabla", 42, listener);
-        verify(lognit.search("blablabla", 42, listener)).close();
+        verify(lognit).search("blablabla", 42, false, false, listener);
+        verify(lognit.search("blablabla", 42, false, false, listener)).close();
     }
 
 
@@ -44,8 +44,8 @@ public class SearchRunnerTest {
     public void whenHasQueryExecutesSearchAndClose() throws Exception {
         runner.run(new UserOptions("blablabla", "-n", "42"));
         BufferListener listener = factory.create("colored", false);
-        verify(lognit).search("blablabla", 42, listener);
-        verify(lognit.search("blablabla", 42, listener)).close();
+        verify(lognit).search("blablabla", 42, false, false, listener);
+        verify(lognit.search("blablabla", 42, false, false, listener)).close();
     }
 
     @Test
@@ -53,13 +53,14 @@ public class SearchRunnerTest {
         when(clock.currentMillis()).thenReturn(123L);
         runner.run(new UserOptions("blablabla", "-b"));
         BufferListener listener = factory.create("colored", true);
-        verify(lognit).bars("blablabla", 123L, listener);
+        verify(lognit).search("blablabla", 20, false, true, listener);
+        verify(lognit.search("blablabla", 20, false, true, listener)).close();
     }
 
     @Test
     public void whenHasQueryToFollowButHandshakeFails() throws Exception {
         try {
-            when(lognit.search(eq("blablabla"), eq(42), any(RestListener.class))).thenThrow(new RuntimeException());
+            when(lognit.search(eq("blablabla"), eq(42), eq(true), eq(false), any(RestListener.class))).thenThrow(new RuntimeException());
             runner.run(new UserOptions("blablabla", "-n", "42", "-f"));
             fail("must throw");
         } catch (RetryConnectionException e) {
@@ -75,10 +76,10 @@ public class SearchRunnerTest {
         } catch (RetryConnectionException e) {
             assertThat(e.options()).isEqualTo(new UserOptions("blablabla", "-n", "0", "-f"));
             BufferListener listener = factory.create("colored", false);
-            verify(lognit).search("blablabla", 42, listener);
+            verify(lognit).search("blablabla", 42, true, false, listener);
             verify(listener).releaseAll();
-            verify(lognit.search("blablabla", 42, listener)).waitDisconnected();
-            verify(lognit.search("blablabla", 42, listener)).close();
+            verify(lognit.search("blablabla", 42, true, false, listener)).waitDisconnected();
+            verify(lognit.search("blablabla", 42, true, false, listener)).close();
         }
     }
 
@@ -90,15 +91,15 @@ public class SearchRunnerTest {
         } catch (RetryConnectionException e) {
             assertThat(e.options()).isEqualTo(new UserOptions("blablabla", "-n", "0", "-f"));
             BufferListener listener = factory.create("colored", false);
-            verify(lognit).search("blablabla", 42, listener);
+            verify(lognit).search("blablabla", 42, true, false, listener);
             verify(listener).releaseAll();
 
             ArgumentCaptor<Thread> captor = ArgumentCaptor.forClass(Thread.class);
             verify(runtime).addShutdownHook(captor.capture());
 
             captor.getValue().run();
-            verify(lognit.search("blablabla", 42, listener)).waitDisconnected();
-            verify(lognit.search("blablabla", 42, listener), times(2)).close();
+            verify(lognit.search("blablabla", 42, true, false, listener)).waitDisconnected();
+            verify(lognit.search("blablabla", 42, true, false, listener), times(2)).close();
         }
     }
 
@@ -111,11 +112,11 @@ public class SearchRunnerTest {
         } catch (RetryConnectionException e) {
             assertThat(e.options()).isEqualTo(new UserOptions("blablabla", "-n", "0", "-f", "-v"));
             BufferListener listener = factory.create("colored", false);
-            verify(lognit).search("blablabla", 42, listener);
+            verify(lognit).search("blablabla", 42, true, false, listener);
             verify(console).println(SearchRunner.HANDSHAKE, 32L);
             verify(listener).releaseAll();
-            verify(lognit.search("blablabla", 42, listener)).waitDisconnected();
-            verify(lognit.search("blablabla", 42, listener)).close();
+            verify(lognit.search("blablabla", 42, true, false, listener)).waitDisconnected();
+            verify(lognit.search("blablabla", 42, true, false, listener)).close();
         }
     }
 }
