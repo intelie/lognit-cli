@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.formatters;
 
+import com.google.common.base.Joiner;
 import jline.ANSIBuffer;
 import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.model.Aggregated;
@@ -54,7 +55,22 @@ public class ColoredFormatter implements Formatter {
         buffer.append(" ");
         buffer.append(message.getMessage());
 
+        Map<String, List<String>> metadata = message.getMetadata();
+        if (metadata != null) {
+            for (Map.Entry<String, List<String>> entry : metadata.entrySet()) {
+                buffer.append(" ");
+                buffer.cyan(entry.getKey() + ":");
+                buffer.append(joinValues(entry.getValue()));
+            }
+        }
+
         console.printOut(buffer.toString(reallyColored()));
+    }
+
+    private String joinValues(List<String> value) {
+        return Joiner.on(new ANSIBuffer()
+                .cyan(",")
+                .toString(reallyColored())).join(value);
     }
 
     private boolean reallyColored() {

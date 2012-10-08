@@ -10,10 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
@@ -43,9 +40,14 @@ public class ColoredFormatterTest {
     @Test
     public void testPrintMessage() throws Exception {
         when(console.isTTY()).thenReturn(true);
-        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
+
+        Map metadata = new HashMap();
+        metadata.put("abc", Arrays.asList("111", "222"));
+        metadata.put("qwe", Arrays.asList("333"));
+
+        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", metadata);
         printer.print(message);
-        verify(console).printOut(colored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc"));
+        verify(console).printOut(colored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc $cabc:$n111$c,$n222 $cqwe:$n333"));
     }
 
     private String colored(String s) {
@@ -71,9 +73,14 @@ public class ColoredFormatterTest {
     @Test
     public void testPrintMessageNoTty() throws Exception {
         when(console.isTTY()).thenReturn(false);
-        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
+
+        Map metadata = new HashMap();
+        metadata.put("abc", Arrays.asList("111", "222"));
+        metadata.put("qwe", Arrays.asList("333"));
+
+        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", metadata);
         printer.print(message);
-        verify(console).printOut(nonColored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc"));
+        verify(console).printOut(nonColored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc $cabc:$n111$c,$n222 $cqwe:$n333"));
     }
 
     @Test
