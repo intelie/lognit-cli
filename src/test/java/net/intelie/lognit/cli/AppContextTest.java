@@ -1,15 +1,13 @@
 package net.intelie.lognit.cli;
 
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 
-public class MainTest {
+public class AppContextTest {
     @Test
     public void callingWithoutParamsWontBreakTheWorld() throws Exception {
-        Main.resolveEntryPoint().run("--help");
+        new AppContext().resolveEntryPoint().run("--help");
     }
 }
