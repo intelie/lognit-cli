@@ -18,16 +18,16 @@ import static org.mockito.Mockito.*;
 public class BufferListenerTest {
 
     private ColoredFormatter printer;
-    private BufferListener listener;
 
     @Before
     public void setUp() throws Exception {
         printer = mock(ColoredFormatter.class);
-        listener = new BufferListener(printer, false);
     }
 
     @Test(timeout = 1000)
     public void whenNoMessageArriveOnTime() {
+        BufferListener listener = new BufferListener(printer, false, false);
+
         assertThat(listener.waitHistoric(50, 3)).isFalse();
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
         verifyNoMoreInteractions(printer);
@@ -35,6 +35,7 @@ public class BufferListenerTest {
 
     @Test(timeout = 1000)
     public void whenOnlyOneOfTwoMessagesAriveOnTime() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B");
         listener.receive(ms(false, true, 2, mB, mA));
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
@@ -43,13 +44,14 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
-        verify(printer).print(mA);
-        verify(printer).print(mB);
+        verify(printer).print(mA, false);
+        verify(printer).print(mB, false);
         verifyNoMoreInteractions(printer);
     }
 
     @Test(timeout = 1000)
     public void canReceiveAsRestListener() {
+        BufferListener listener = new BufferListener(printer, false, false);
         RestListener restListener = (RestListener) listener;
         Message mA = m("A"), mB = m("B");
         restListener.receive(ms(false, true, 2, mB, mA));
@@ -57,14 +59,15 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
-        verify(printer).print(mA);
-        verify(printer).print(mB);
+        verify(printer).print(mA, false);
+        verify(printer).print(mB, false);
         verifyNoMoreInteractions(printer);
     }
 
 
     @Test(timeout = 1000)
     public void whenOnlyOneOfTwoMessagesAriveOnTimeAndTheThreadInterrupts() throws Exception {
+        final BufferListener listener = new BufferListener(printer, false, false);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -82,6 +85,7 @@ public class BufferListenerTest {
 
     @Test(timeout = 1000)
     public void whenOnlyOneOfTwoMessagesAriveOnTimeRealTimeAndFailedDoesntCount() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B"), mC = m("C");
         listener.receive(ms(false, true, 2, mB, mA));
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
@@ -92,21 +96,22 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
-        verify(printer).print(mA);
-        verify(printer).print(mB);
+        verify(printer).print(mA, false);
+        verify(printer).print(mB, false);
         verifyNoMoreInteractions(printer);
     }
 
     @Test(timeout = 1000)
     public void afterReleasePrintsAllOthers() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B"), mC = m("C");
         listener.receive(ms(true, true, 2, mA, mC));
         listener.receive(ms(true, true, 2, mB));
         listener.releaseAll();
 
-        verify(printer).print(mC);
-        verify(printer).print(mA);
-        verify(printer).print(mB);
+        verify(printer).print(mC, false);
+        verify(printer).print(mA, false);
+        verify(printer).print(mB, false);
         verifyNoMoreInteractions(printer);
         listener.releaseAll();
         verifyNoMoreInteractions(printer);
@@ -114,6 +119,7 @@ public class BufferListenerTest {
 
     @Test(timeout = 1000)
     public void willShowWarningWhenQueryFails() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B"), mC = m("C");
         listener.receive(ms(false, false, 2, mB));
         listener.releaseAll();
@@ -127,15 +133,16 @@ public class BufferListenerTest {
 
     @Test(timeout = 1000)
     public void willNotHoldAnymoreAfterFirstReleaseAll() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B"), mC = m("C");
         listener.releaseAll();
         listener.receive(ms(false, true, 2, mA, mC));
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
         listener.receive(ms(true, true, 2, mB));
 
-        verify(printer).print(mC);
-        verify(printer).print(mA);
-        verify(printer).print(mB);
+        verify(printer).print(mC, false);
+        verify(printer).print(mA, false);
+        verify(printer).print(mB, false);
         verifyNoMoreInteractions(printer);
         listener.releaseAll();
         verifyNoMoreInteractions(printer);
@@ -143,6 +150,7 @@ public class BufferListenerTest {
 
     @Test(timeout = 1000)
     public void willNotHoldAnymoreAfterFirstReleaseAllPrintingAggregation() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Aggregated aggregated = new Aggregated(
                 map("abc", 123), map("qwe", 234));
 
@@ -158,31 +166,47 @@ public class BufferListenerTest {
 
     @Test(timeout = 1000)
     public void willPrintRealTimeInReceivingOrder() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B"), mC = m("C");
         listener.releaseAll();
         listener.receive(ms(true, true, "node", 2L, 2, m("A"), m("B")));
 
         InOrder orderly = inOrder(printer);
-        orderly.verify(printer).print(m("A"));
-        orderly.verify(printer).print(m("B"));
+        orderly.verify(printer).print(m("A"), false);
+        orderly.verify(printer).print(m("B"), false);
+        orderly.verifyNoMoreInteractions();
+    }
+
+    @Test(timeout = 1000)
+    public void willPrintRealTimeInReceivingOrderWithMetadata() {
+        BufferListener listener = new BufferListener(printer, false, true);
+        Message mA = m("A"), mB = m("B"), mC = m("C");
+        listener.releaseAll();
+        listener.receive(ms(true, true, "node", 2L, 2, m("A"), m("B")));
+
+        InOrder orderly = inOrder(printer);
+        orderly.verify(printer).print(m("A"), true);
+        orderly.verify(printer).print(m("B"), true);
         orderly.verifyNoMoreInteractions();
     }
 
 
     @Test(timeout = 1000)
     public void whenOneOfOneMessagesAriveOnTime() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B");
         listener.receive(ms(false, true, 1, mB, mA));
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
 
-        verify(printer).print(mA);
-        verify(printer).print(mB);
+        verify(printer).print(mA, false);
+        verify(printer).print(mB, false);
         verifyNoMoreInteractions(printer);
     }
 
     @Test(timeout = 1000)
     public void wontCauseExceptionIfOneMessageArrivesWithoutClusterInfo() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B");
         listener.receive(ms(false, true, 0, mB, mA));
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
@@ -191,14 +215,15 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
         verify(printer).printStatus(BufferListener.NO_CLUSTER_INFO);
-        verify(printer).print(mA);
-        verify(printer).print(mB);
+        verify(printer).print(mA, false);
+        verify(printer).print(mB, false);
         verifyNoMoreInteractions(printer);
     }
 
 
     @Test(timeout = 1000)
     public void whenTwoOfTwoMessagesArriveOntime() {
+        BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B"), mC = m("C"), mD = m("D");
         listener.receive(ms(false, true, 2, mB, mA));
         listener.receive(ms(false, true, 2, mC, mD));
@@ -206,15 +231,15 @@ public class BufferListenerTest {
 
         assertThat(listener.waitHistoric(10000, 3)).isTrue();
 
-        verify(printer).print(mB);
-        verify(printer).print(mC);
-        verify(printer).print(mD);
+        verify(printer).print(mB, false);
+        verify(printer).print(mC, false);
+        verify(printer).print(mD, false);
         verifyNoMoreInteractions(printer);
     }
 
     @Test(timeout = 1000)
     public void whenTwoOfTwoMessagesArriveOntimePrintStats() {
-        listener = new BufferListener(printer, true);
+        BufferListener listener = new BufferListener(printer, true, false);
 
         SearchStats A = new SearchStats(
                 Arrays.asList(new FreqPoint<Long>(1L, 2)),
@@ -249,7 +274,7 @@ public class BufferListenerTest {
 
     @Test(timeout = 1000)
     public void willPrintEvenIfReceivesAfterTimeout() {
-        listener = new BufferListener(printer, false);
+        BufferListener listener = new BufferListener(printer, false, false);
 
         Message mA = m("A"), mB = m("B"), mC = m("C"), mD = m("D");
         listener.receive(ms(false, true, "AAA", 3L, 2, mB, mA));
@@ -258,8 +283,8 @@ public class BufferListenerTest {
         assertThat(listener.waitHistoric(50, 3)).isFalse();
         verify(printer).printStatus(BufferListener.MISSING_NODES_RESPONSE);
 
-        verify(printer).print(mB);
-        verify(printer).print(mA);
+        verify(printer).print(mB, false);
+        verify(printer).print(mA, false);
 
         listener.receive(ms(false, true, "BBB", 5L, 3, mC, mD));
         verify(printer).printStatus(BufferListener.RESPONSE_RECEIVED, "BBB", 2, 3, 2, 42L, 5L);

@@ -26,12 +26,14 @@ public class BufferListener implements RestListener<MessageBag> {
     private final Semaphore semaphore;
     private final Formatter printer;
     private final boolean printStats;
+    private final boolean printMeta;
     private boolean releasing;
     private int historicCount = 0;
 
-    public BufferListener(Formatter printer, boolean printStats) {
+    public BufferListener(Formatter printer, boolean printStats, boolean printMeta) {
         this.printer = printer;
         this.printStats = printStats;
+        this.printMeta = printMeta;
         this.historic = new LinkedList<MessageBag>();
         this.other = new LinkedList<MessageBag>();
         this.semaphore = new Semaphore(0);
@@ -97,7 +99,7 @@ public class BufferListener implements RestListener<MessageBag> {
             List<Message> reverse = pickValidHistory(releaseMax);
 
             for (Message message : reverse)
-                printer.print(message);
+                printer.print(message, printMeta);
         }
     }
 
@@ -140,7 +142,7 @@ public class BufferListener implements RestListener<MessageBag> {
     private void printMessages(boolean historic, List<Message> list) {
         if (historic) list = Lists.reverse(list);
         for (Message message : list)
-            printer.print(message);
+            printer.print(message, printMeta);
     }
 
     public Formatter getFormatter() {

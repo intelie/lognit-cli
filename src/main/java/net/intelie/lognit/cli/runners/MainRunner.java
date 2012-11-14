@@ -33,7 +33,7 @@ public class MainRunner implements Runner {
 
     @Override
     public int run(UserOptions options) throws Exception {
-        if (options.isUsage())
+        if (options.isHelp())
             return usage.run(options);
         else if (options.isInfo())
             return info.run(options);

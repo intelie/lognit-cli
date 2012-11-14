@@ -41,7 +41,7 @@ public class ColoredFormatter implements Formatter {
     }
 
     @Override
-    public void print(Message message) {
+    public void print(Message message, boolean withMetadata) {
         ANSIBuffer buffer = new ANSIBuffer();
         buffer.cyan(message.getHost());
         buffer.append(" ");
@@ -55,12 +55,14 @@ public class ColoredFormatter implements Formatter {
         buffer.append(" ");
         buffer.append(message.getMessage());
 
-        Map<String, List<String>> metadata = message.getMetadata();
-        if (metadata != null) {
-            for (Map.Entry<String, List<String>> entry : metadata.entrySet()) {
-                buffer.append(" ");
-                buffer.cyan(entry.getKey() + ":");
-                buffer.append(joinValues(entry.getValue()));
+        if (withMetadata) {
+            Map<String, List<String>> metadata = message.getMetadata();
+            if (metadata != null) {
+                for (Map.Entry<String, List<String>> entry : metadata.entrySet()) {
+                    buffer.append(" ");
+                    buffer.cyan(entry.getKey() + ":");
+                    buffer.append(joinValues(entry.getValue()));
+                }
             }
         }
 

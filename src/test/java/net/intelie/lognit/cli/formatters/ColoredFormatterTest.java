@@ -38,7 +38,7 @@ public class ColoredFormatterTest {
     }
 
     @Test
-    public void testPrintMessage() throws Exception {
+    public void testPrintMessageWithMetadata() throws Exception {
         when(console.isTTY()).thenReturn(true);
 
         Map metadata = new HashMap();
@@ -46,8 +46,21 @@ public class ColoredFormatterTest {
         metadata.put("qwe", Arrays.asList("333"));
 
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", metadata);
-        printer.print(message);
+        printer.print(message, true);
         verify(console).printOut(colored("$cA$n $g1111-11-11 11:11:11$n D E $yF$n abc $cabc:$n111$c,$n222 $cqwe:$n333"));
+    }
+
+    @Test
+    public void testPrintMessageWithoutMetadata() throws Exception {
+        when(console.isTTY()).thenReturn(true);
+
+        Map metadata = new HashMap();
+        metadata.put("abc", Arrays.asList("111", "222"));
+        metadata.put("qwe", Arrays.asList("333"));
+
+        Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", metadata);
+        printer.print(message, false);
+        verify(console).printOut(colored("$cA$n $g1111-11-11 11:11:11$n D E $yF$n abc"));
     }
 
     private String colored(String s) {
@@ -79,7 +92,7 @@ public class ColoredFormatterTest {
         metadata.put("qwe", Arrays.asList("333"));
 
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", metadata);
-        printer.print(message);
+        printer.print(message, true);
         verify(console).printOut(nonColored("$cA$n $g1111-11-11 11:11:11$n D E $yF$n abc $cabc:$n111$c,$n222 $cqwe:$n333"));
     }
 

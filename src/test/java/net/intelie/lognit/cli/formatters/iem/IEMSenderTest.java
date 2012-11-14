@@ -36,8 +36,8 @@ public class IEMSenderTest {
         Message message = mock(Message.class);
         when(jsonizer.toFlat(message)).thenReturn("AAA");
 
-        sender.print(message);
-        verify(console).print(message);
+        sender.print(message, false);
+        verify(console).print(message, false);
         verify(client).send(QUEUE_EVENTS, "AAA", makeHeader("test"));
     }
 

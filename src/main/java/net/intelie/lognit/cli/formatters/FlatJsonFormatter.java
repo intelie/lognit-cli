@@ -23,7 +23,7 @@ public class FlatJsonFormatter implements Formatter {
     }
 
     @Override
-    public void print(Message message) {
+    public void print(Message message, boolean withMetadata) {
         console.printOut("%s", json.toFlat(message));
     }
 

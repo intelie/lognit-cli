@@ -24,7 +24,7 @@ public class BufferListenerFactoryTest {
     public void whenCreating() throws Exception {
         Formatter formatter = mock(Formatter.class);
         when(selector.select("test")).thenReturn(formatter);
-        BufferListener listener = listenerFactory.create("test", false);
+        BufferListener listener = listenerFactory.create("test", false, false);
         assertThat(listener.getFormatter()).isEqualTo(formatter);
     }
 

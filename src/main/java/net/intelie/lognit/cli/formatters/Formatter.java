@@ -7,7 +7,7 @@ import net.intelie.lognit.cli.model.SearchStats;
 public interface Formatter {
     void printStatus(String format, Object... args);
 
-    void print(Message message);
+    void print(Message message, boolean withMetadata);
 
     void print(Aggregated aggregated);
 

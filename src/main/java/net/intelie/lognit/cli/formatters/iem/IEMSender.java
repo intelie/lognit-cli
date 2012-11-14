@@ -39,8 +39,8 @@ public class IEMSender implements Formatter {
     }
 
     @Override
-    public void print(Message message) {
-        console.print(message);
+    public void print(Message message, boolean withMetadata) {
+        console.print(message, false);
         console.printStatus(MESSAGES_SENT, 1);
         client.send(QUEUE_NAME, jsonizer.toFlat(message), header);
     }

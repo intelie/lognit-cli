@@ -42,7 +42,7 @@ public class DownloadRunner implements Runner {
             while (stream.hasNext()) {
                 DownloadBag bag = stream.next();
                 for (Message message : bag.getItems())
-                    formatter.print(message);
+                    formatter.print(message, false);
                 messages.addAndGet(bag.getItems().size());
                 files.set(bag.getRemainingDocs());
             }

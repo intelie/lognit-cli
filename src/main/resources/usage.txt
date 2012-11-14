@@ -16,6 +16,7 @@ Options:
   -o, --output <format>       sets message output format, must be one of
                               "colored", "plain", "json", "flat-json" or
                               "iem://[user:password@]host[:port]/eventType"
+  --meta, --metadata          prints message metadata info
   --force-login               forces login prompt
   -v, --verbose               shows diagnostic messages
   -?, -h, --help              shows this help

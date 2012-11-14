@@ -60,21 +60,21 @@ public class DownloadRunnerTest {
         orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 0, 0, 0, 0.0);
 
         iterator.releaseAndWaitNext();
-        verify(formatter).print(msg("A"));
-        verify(formatter).print(msg("B"));
+        verify(formatter).print(msg("A"), false);
+        verify(formatter).print(msg("B"), false);
         timer.runNextAt(1000L);
         orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 2, 2, 10, 0.0);
 
         iterator.releaseAndWaitNext();
-        verify(formatter).print(msg("C"));
-        verify(formatter).print(msg("D"));
+        verify(formatter).print(msg("C"), false);
+        verify(formatter).print(msg("D"), false);
         timer.runNextAt(2000L);
         orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 4, 2, 5, 1.0);
 
         iterator.release();
         thread.join();
-        verify(formatter).print(msg("E"));
-        verify(formatter).print(msg("F"));
+        verify(formatter).print(msg("E"), false);
+        verify(formatter).print(msg("F"), false);
 
         timer.assertNoMoreTasks();
         orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 6, 2, 0, 0.0);

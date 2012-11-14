@@ -28,7 +28,7 @@ public class FlatJsonFormatterTest {
     public void testPrintMessage() throws Exception {
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
         when(jsonizer.toFlat(message)).thenReturn("abc");
-        printer.print(message);
+        printer.print(message, false);
         verify(console).printOut("%s", "abc");
     }
 

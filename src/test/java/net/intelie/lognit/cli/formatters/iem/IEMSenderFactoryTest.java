@@ -62,7 +62,7 @@ public class IEMSenderFactoryTest {
         when(jsonizer.toFlat(message)).thenReturn("AAA");
 
         IEMSender sender = factory.create(url);
-        sender.print(message);
+        sender.print(message, false);
 
         verify(client).send(QUEUE_EVENTS, "AAA", makeHeader("Event"));
     }
