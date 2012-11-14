@@ -47,7 +47,7 @@ public class ColoredFormatterTest {
 
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", metadata);
         printer.print(message);
-        verify(console).printOut(colored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc $cabc:$n111$c,$n222 $cqwe:$n333"));
+        verify(console).printOut(colored("$cA$n $g1111-11-11 11:11:11$n D E $yF$n abc $cabc:$n111$c,$n222 $cqwe:$n333"));
     }
 
     private String colored(String s) {
@@ -80,7 +80,7 @@ public class ColoredFormatterTest {
 
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", metadata);
         printer.print(message);
-        verify(console).printOut(nonColored("$cA$n $gNov 11 11:11:11$n D E $yF$n abc $cabc:$n111$c,$n222 $cqwe:$n333"));
+        verify(console).printOut(nonColored("$cA$n $g1111-11-11 11:11:11$n D E $yF$n abc $cabc:$n111$c,$n222 $cqwe:$n333"));
     }
 
     @Test

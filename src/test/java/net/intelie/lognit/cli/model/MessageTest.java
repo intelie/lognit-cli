@@ -102,7 +102,7 @@ public class MessageTest {
     public void whenFormattingDateTime() {
         Message message = new Message(null, null, "20120213", "182653", null, null, null, null, null);
 
-        assertThat(message.formattedDateTime()).isEqualTo("Feb 13 18:26:53");
+        assertThat(message.formattedDateTime()).isEqualTo("2012-02-13 18:26:53");
     }
 
     @Test
@@ -114,7 +114,7 @@ public class MessageTest {
 
         assertThat(message1.formattedDateTime()).isEqualTo("2012021182653");
         assertThat(message2.formattedDateTime()).isEqualTo("2012021382653");
-        assertThat(message3.formattedDateTime()).isEqualTo("?13? 13 18:26:53");
+        assertThat(message3.formattedDateTime()).isEqualTo("2012-13-13 18:26:53");
         assertThat(message4.formattedDateTime()).isEqualTo("nullnull");
     }
 

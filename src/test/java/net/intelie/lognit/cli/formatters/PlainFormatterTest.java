@@ -40,7 +40,7 @@ public class PlainFormatterTest {
         when(console.isTTY()).thenReturn(false);
         Message message = new Message("123", "A", "11111111", "111111", "D", "E", "F", "abc", null);
         printer.print(message);
-        verify(console).printOut("A Nov 11 11:11:11 D E F abc");
+        verify(console).printOut("A 1111-11-11 11:11:11 D E F abc");
     }
 
     @Test
