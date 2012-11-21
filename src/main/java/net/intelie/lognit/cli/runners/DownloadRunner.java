@@ -12,10 +12,10 @@ import net.intelie.lognit.cli.model.Message;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class DownloadRunner implements Runner {
-    public static final String DOWNLOAD_STATUS = "Downloaded %d messages. %d/s. Still %d files to analyze. ETA: %.0fs";
+    public static final String DOWNLOAD_STATUS = "Downloaded %d/%d messages. %d/s. ETA: %.0fs";
     private final UserConsole console;
     private final Lognit lognit;
     private final FormatterSelector formatters;
@@ -33,9 +33,9 @@ public class DownloadRunner implements Runner {
         RestStream<DownloadBag> stream = lognit.download(options.getQuery(), options.getLines());
         Formatter formatter = formatters.select(options.getFormat());
 
-        final AtomicInteger messages = new AtomicInteger(0), files = new AtomicInteger(0);
+        final AtomicLong current = new AtomicLong(0), total = new AtomicLong(0);
 
-        TimerTask task = makeTask(messages, files);
+        TimerTask task = makeTask(current, total);
         timer.schedule(task, 0, 1000);
 
         try {
@@ -43,8 +43,8 @@ public class DownloadRunner implements Runner {
                 DownloadBag bag = stream.next();
                 for (Message message : bag.getItems())
                     formatter.print(message, false);
-                messages.addAndGet(bag.getItems().size());
-                files.set(bag.getRemainingDocs());
+                current.set(bag.getCurrentHit());
+                total.set(bag.getTotalHits());
             }
         } finally {
             stream.close();
@@ -55,28 +55,26 @@ public class DownloadRunner implements Runner {
         return 0;
     }
 
-    private TimerTask makeTask(final AtomicInteger messages, final AtomicInteger files) {
+    private TimerTask makeTask(final AtomicLong current, final AtomicLong total) {
         return new TimerTask() {
-            int lastMessages = 0;
-            int lastFiles = 0;
+            long lastHit = 0;
 
             @Override
             public void run() {
-                int currentMessages = messages.get();
-                int currentFiles = files.get();
+                long currentHit = current.get();
+                long totalHits = total.get();
                 console.printStill(DOWNLOAD_STATUS,
-                        currentMessages,
-                        currentMessages - lastMessages,
-                        currentFiles,
-                        calculateETA(currentFiles));
-                lastMessages = currentMessages;
-                lastFiles = currentFiles;
+                        currentHit,
+                        totalHits,
+                        currentHit - lastHit,
+                        calculateETA(currentHit, totalHits));
+                lastHit = currentHit;
             }
 
-            private double calculateETA(int currentFiles) {
-                if (lastFiles - currentFiles <= 0)
+            private double calculateETA(long currentHit, long totalHits) {
+                if (currentHit - lastHit <= 0)
                     return 0;
-                return currentFiles / (double) (lastFiles - currentFiles);
+                return (totalHits - currentHit) / (double) (currentHit - lastHit);
             }
         };
     }

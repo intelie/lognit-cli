@@ -43,7 +43,7 @@ public class DownloadRunnerTest {
 
     @Test(timeout = 1000)
     public void whenDownloadingThreeBags() throws Exception {
-        BlockingIterator<DownloadBag> iterator = bags(bag(10, "A", "B"), bag(5, "C", "D"), bag(0, "E", "F"));
+        BlockingIterator<DownloadBag> iterator = bags(bag(0, 10, "A", "B"), bag(4, 10, "C", "D"), bag(10, 10, "E", "F"));
         RestStream<DownloadBag> stream = stream(iterator);
         Formatter formatter = formatters.select("someformat");
         when(lognit.download("abc", 42)).thenReturn(stream);
@@ -57,19 +57,19 @@ public class DownloadRunnerTest {
         orderly.verify(lognit).download("abc", 42);
 
         timer.runNextAt(0);
-        orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 0, 0, 0, 0.0);
+        orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 0L, 0L, 0L, 0.0);
 
         iterator.releaseAndWaitNext();
         verify(formatter).print(msg("A"), false);
         verify(formatter).print(msg("B"), false);
         timer.runNextAt(1000L);
-        orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 2, 2, 10, 0.0);
+        orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 0L, 10L, 0L, 0.0);
 
         iterator.releaseAndWaitNext();
         verify(formatter).print(msg("C"), false);
         verify(formatter).print(msg("D"), false);
         timer.runNextAt(2000L);
-        orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 4, 2, 5, 1.0);
+        orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 4L, 10L, 4L, 1.5);
 
         iterator.release();
         thread.join();
@@ -77,7 +77,7 @@ public class DownloadRunnerTest {
         verify(formatter).print(msg("F"), false);
 
         timer.assertNoMoreTasks();
-        orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 6, 2, 0, 0.0);
+        orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 10L, 10L, 6L, 0.0);
     }
 
     private Thread runInAnotherThread(final UserOptions options) throws Exception {
@@ -103,11 +103,11 @@ public class DownloadRunnerTest {
         return spy(new RestStream<DownloadBag>(iterator, null));
     }
 
-    private DownloadBag bag(int remaining, String... ids) {
+    private DownloadBag bag(long current, long total, String... ids) {
         List<Message> messages = new ArrayList<Message>();
         for (String id : ids)
             messages.add(msg(id));
-        return spy(new DownloadBag(messages, remaining));
+        return spy(new DownloadBag(messages, current, total));
     }
 
     private Message msg(String id) {

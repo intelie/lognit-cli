@@ -11,20 +11,22 @@ import static net.intelie.lognit.cli.JsonHelpers.jsonParse;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class DownloadBagTest {
-    public static final String TEST_JSON = "{remaining_docs:42, " +
+    public static final String TEST_JSON = "{current_hit:42, " +
+            "total_hits:100, " +
             "items:[{id:'abc1'}, {id:'abc2'}]}";
 
     @Test
     public void whenDeserializing() {
         DownloadBag messages = new Gson().fromJson(TEST_JSON, DownloadBag.class);
 
-        assertThat(messages.getRemainingDocs()).isEqualTo(42);
+        assertThat(messages.getTotalHits()).isEqualTo(100);
+        assertThat(messages.getCurrentHit()).isEqualTo(42);
         assertThat(messages.getItems().size()).isEqualTo(2);
     }
 
     @Test
     public void whenSerializing() {
-        DownloadBag messages = new DownloadBag(Arrays.asList(new Message("abc1"), new Message("abc2")), 42);
+        DownloadBag messages = new DownloadBag(Arrays.asList(new Message("abc1"), new Message("abc2")), 42, 100);
         JsonElement actual = jsonElement(messages);
 
         assertThat(actual).isEqualTo(jsonParse(TEST_JSON));
