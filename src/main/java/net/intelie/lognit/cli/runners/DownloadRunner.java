@@ -15,7 +15,7 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class DownloadRunner implements Runner {
-    public static final String DOWNLOAD_STATUS = "Downloaded %d/%d messages. %d/s. ETA: %.0fs";
+    public static final String DOWNLOAD_STATUS = "Downloaded %,d/%,d messages (%.2f%%). %,d/s. ETA: %.0fs";
     private final UserConsole console;
     private final Lognit lognit;
     private final FormatterSelector formatters;
@@ -66,6 +66,7 @@ public class DownloadRunner implements Runner {
                 console.printStill(DOWNLOAD_STATUS,
                         currentHit,
                         totalHits,
+                        currentHit / (double) totalHits * 100,
                         currentHit - lastHit,
                         calculateETA(currentHit, totalHits));
                 lastHit = currentHit;
