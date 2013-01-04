@@ -103,8 +103,8 @@ public class LognitTest {
     @Test
     public void testStats() throws Exception {
         StatsSummary summary = mock(StatsSummary.class);
-        when(client.get("/rest/stats", StatsSummary.class)).thenReturn(summary);
-        assertThat(lognit.stats()).isEqualTo(summary);
+        when(client.get("/rest/stats?timeout=123", StatsSummary.class)).thenReturn(summary);
+        assertThat(lognit.stats(123)).isEqualTo(summary);
     }
 
     @Test

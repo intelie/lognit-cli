@@ -31,7 +31,7 @@ public class InfoRunner implements Runner {
 
     @Override
     public int run(UserOptions options) throws IOException {
-        StatsSummary summary = lognit.stats();
+        StatsSummary summary = lognit.stats(options.getTimeout() * 1000);
         String server = lognit.getServer();
 
         if (summary.getMissing() > 0)

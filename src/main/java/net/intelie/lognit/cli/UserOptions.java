@@ -35,7 +35,6 @@ public class UserOptions {
         server = parser.option(String.class, "-s", "--server");
         user = parser.option(String.class, "-u", "--user");
         password = parser.option(String.class, "-p", "--pass", "--password");
-        timeout = def(parser.option(Integer.class, "-t", "--timeout"), 30);
         all = parser.flag("--all");
         purge = parser.flag("--purge");
         unpurge = parser.flag("--unpurge");
@@ -52,7 +51,9 @@ public class UserOptions {
         resume = parser.flag("--resume");
         forceLogin = parser.flag("--force-login");
         metadata = parser.flag("--meta", "--metadata");
+        timeout = def(parser.option(Integer.class, "-t", "--timeout"), 30);
         query = parser.text();
+
     }
 
     private int defaultLine(boolean purge, boolean download) {

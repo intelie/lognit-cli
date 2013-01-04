@@ -15,7 +15,7 @@ public class Lognit {
     public static final String URL_PURGE_INFO = "/rest/purge/%s?all=%s";
     public static final String URL_PURGE_CANCEL = "/rest/purge/cancel/%s";
     public static final String URL_PURGE_CANCEL_ALL = "/rest/purge/cancel-all";
-    public static final String URL_STATS = "/rest/stats";
+    public static final String URL_STATS = "/rest/stats?timeout=%s";
     public static final String URL_SEARCH = "/rest/search?expression=%s&windowLength=%s&realtime=%s&stats=%s";
     public static final String URL_DOWNLOAD = "/rest/search/download?expression=%s&windowLength=%s";
     public static final String URL_TERMS = "/rest/terms?field=%s&term=%s&avoidColons=true&size=100";
@@ -92,8 +92,8 @@ public class Lognit {
         return client.get(URL_WELCOME, Welcome.class);
     }
 
-    public StatsSummary stats() throws IOException {
-        return client.get(URL_STATS, StatsSummary.class);
+    public StatsSummary stats(int timeout) throws IOException {
+        return client.get(make(URL_STATS, timeout), StatsSummary.class);
     }
 
     private String encode(String value) throws UnsupportedEncodingException {
