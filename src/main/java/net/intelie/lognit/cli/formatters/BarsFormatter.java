@@ -6,6 +6,7 @@ import jline.ANSIBuffer;
 import net.intelie.lognit.cli.model.FreqPoint;
 
 import java.util.List;
+import java.util.Locale;
 
 public class BarsFormatter {
     public static final String BAR_CHAR = "\u25A0";
@@ -17,7 +18,7 @@ public class BarsFormatter {
         list.add(makeLine(colored, new ANSIBuffer().cyan("This hour:")));
         for (FreqPoint<Long> point : points) {
             ANSIBuffer buffer = new ANSIBuffer();
-            buffer.append(String.format("%tR  %,10d ", point.key(), point.freq()));
+            buffer.append(String.format(Locale.US,"%tR  %,10d ", point.key(), point.freq()));
             drawBar(buffer, points, point, 20);
             list.add(makeLine(colored, buffer));
         }
@@ -28,14 +29,14 @@ public class BarsFormatter {
         List<String> list = Lists.newArrayList();
 
         if (points.size() > 0)
-            list.add(makeLine(colored, new ANSIBuffer().cyan(String.format(
+            list.add(makeLine(colored, new ANSIBuffer().cyan(String.format(Locale.US,
                     "24h (%tF, %tF)", points.get(0).key(), points.get(points.size() - 1).key()))));
         else
-            list.add(makeLine(colored, new ANSIBuffer().cyan(String.format("24h"))));
+            list.add(makeLine(colored, new ANSIBuffer().cyan(String.format(Locale.US,"24h"))));
 
         for (FreqPoint<Long> point : points) {
             ANSIBuffer buffer = new ANSIBuffer();
-            buffer.append(String.format("%tHh %,10d ", point.key(), point.freq()));
+            buffer.append(String.format(Locale.US,"%tHh %,10d ", point.key(), point.freq()));
             drawBar(buffer, points, point, 20);
             list.add(makeLine(colored, buffer));
         }
@@ -54,7 +55,7 @@ public class BarsFormatter {
             if (host != null && host.length() > 16)
                 host = host.substring(0, 15) + ELLIPSIS;
 
-            buffer.append(String.format("%-16.16s %,10d ", host, point.freq()));
+            buffer.append(String.format(Locale.US,"%-16.16s %,10d ", host, point.freq()));
             drawBar(buffer, points, point, 10);
             list.add(makeLine(colored, buffer));
         }
