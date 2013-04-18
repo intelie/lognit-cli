@@ -1,9 +1,9 @@
 package net.intelie.lognit.cli.formatters.iem;
 
 import com.google.common.base.CharMatcher;
+import net.intelie.gozirra.Client;
 import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
-import net.ser1.stomp.Client;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
@@ -32,6 +32,7 @@ public class IEMSenderFactory {
     private Client createClient(URI uri) throws IOException, LoginException {
         String user = null, pass = null;
         String uriUserInfo = uri.getUserInfo();
+        boolean ssl = "iems".equals(uri.getScheme());
         if (uriUserInfo != null) {
             String[] userInfo = uriUserInfo.split(":", 2);
             user = userInfo[0];
@@ -42,6 +43,6 @@ public class IEMSenderFactory {
         if (port == -1)
             port = DEFAULT_PORT;
 
-        return clientFactory.create(uri.getHost(), port, user, pass);
+        return clientFactory.create(uri.getHost(), port, ssl, user, pass);
     }
 }

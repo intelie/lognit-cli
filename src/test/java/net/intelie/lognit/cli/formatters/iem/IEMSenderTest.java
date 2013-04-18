@@ -1,12 +1,12 @@
 package net.intelie.lognit.cli.formatters.iem;
 
+import net.intelie.gozirra.Client;
 import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Aggregated;
 import net.intelie.lognit.cli.model.AggregatedItem;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.SearchStats;
-import net.ser1.stomp.Client;
 import org.junit.Before;
 import org.junit.Test;
 

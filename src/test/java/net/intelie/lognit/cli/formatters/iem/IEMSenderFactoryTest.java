@@ -1,9 +1,9 @@
 package net.intelie.lognit.cli.formatters.iem;
 
+import net.intelie.gozirra.Client;
 import net.intelie.lognit.cli.formatters.Formatter;
 import net.intelie.lognit.cli.json.Jsonizer;
 import net.intelie.lognit.cli.model.Message;
-import net.ser1.stomp.Client;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,28 +30,35 @@ public class IEMSenderFactoryTest {
 
     @Test
     public void whenCreatingWithoutUserAndPassword() throws Exception {
-        Client client = clientFactory.create("test", 123, null, null);
+        Client client = clientFactory.create("test", 123, false, null, null);
 
         assertCreatedRight(client, "iem://test:123/Event");
     }
 
     @Test
+    public void whenCreatingWithSSL() throws Exception {
+        Client client = clientFactory.create("test", 123, true, null, null);
+
+        assertCreatedRight(client, "iems://test:123/Event");
+    }
+
+    @Test
     public void whenCreatingWithUser() throws Exception {
-        Client client = clientFactory.create("test", 123, "user", null);
+        Client client = clientFactory.create("test", 123, false, "user", null);
 
         assertCreatedRight(client, "iem://user@test:123/Event");
     }
 
     @Test
     public void whenCreatingWithUserAndPassword() throws Exception {
-        Client client = clientFactory.create("test", 123, "user", "pass:pass");
+        Client client = clientFactory.create("test", 123, false, "user", "pass:pass");
 
         assertCreatedRight(client, "iem://user:pass:pass@test:123/Event");
     }
 
     @Test
     public void whenCreatingWithNoPort() throws Exception {
-        Client client = clientFactory.create("test", 61613, null, null);
+        Client client = clientFactory.create("test", 61613, false,  null, null);
 
         assertCreatedRight(client, "iem://test/Event");
     }
