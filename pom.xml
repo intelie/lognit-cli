@@ -8,13 +8,13 @@
     <artifactId>lognit-cli</artifactId>
     <version>1.6-SNAPSHOT</version>
 
-    <!--<repositories>-->
-        <!--<repository>-->
-            <!--<id>intelie-maven-repo</id>-->
-            <!--<name>intelie repository</name>-->
-            <!--<url>https://raw.github.com/intelie/mvn-repo/master/releases</url>-->
-        <!--</repository>-->
-    <!--</repositories>-->
+    <repositories>
+        <repository>
+            <id>intelie-maven-repo</id>
+            <name>intelie repository</name>
+            <url>https://raw.github.com/intelie/mvn-repo/master/releases</url>
+        </repository>
+    </repositories>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
