@@ -22,7 +22,7 @@ public class BayeuxHandleTest {
         BayeuxClient client = mock(BayeuxClient.class);
         BayeuxHandle handle = new BayeuxHandle(client);
         handle.waitDisconnected();
-        verify(client).waitFor(Long.MAX_VALUE, BayeuxClient.State.UNCONNECTED);
+        verify(client).waitFor(Long.MAX_VALUE, BayeuxClient.State.UNCONNECTED, BayeuxClient.State.DISCONNECTED);
     }
 
 
