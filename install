@@ -27,7 +27,7 @@ cat << '__END__' > /tmp/nitr
 #!/bin/sh
 if [ $# -lt 2 ]; then
     echo 'nitr <verb> <resource> [<curl params>]'
-    echo 'nitr get users/welcome -v'
+    echo 'nitr get me/welcome -v'
     exit 0
 fi
 
