@@ -152,7 +152,7 @@ public class RestClientImpl implements RestClient {
     }
 
     private void execute(HttpMethod method) throws IOException {
-        method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        method.getParams().setCookiePolicy(CookiePolicy.DEFAULT);
 
         method.setDoAuthentication(authenticated);
 

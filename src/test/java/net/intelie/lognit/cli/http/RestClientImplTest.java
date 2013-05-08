@@ -188,7 +188,7 @@ public class RestClientImplTest {
 
         rest.get("abc", String.class);
 
-        verify(method.getParams()).setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        verify(method.getParams()).setCookiePolicy(CookiePolicy.DEFAULT);
     }
 
     @Test

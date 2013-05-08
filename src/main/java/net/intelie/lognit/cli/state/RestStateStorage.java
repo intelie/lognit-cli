@@ -39,7 +39,7 @@ public class RestStateStorage {
             RestState state = new RestState(cookies.toArray(new Cookie[cookies.size()]), server);
             client.setState(state);
         } catch (Exception ex) {
-            // ex.printStackTrace();
+            //ex.printStackTrace();
         }
     }
 
