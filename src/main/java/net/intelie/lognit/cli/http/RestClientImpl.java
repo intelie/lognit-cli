@@ -117,8 +117,18 @@ public class RestClientImpl implements RestClient {
             cometd.setCookie(cookie.getName(), cookie.getValue());
 
         cometd.handshake(120000);
+
+        final BayeuxHandle handle = new BayeuxHandle(cometd);
+        cometd.getChannel("/meta/connect").addListener(new ClientSessionChannel.MessageListener() {
+            @Override
+            public void onMessage(ClientSessionChannel channel, Message message) {
+                if (!message.isSuccessful())
+                    handle.invalidate();
+            }
+        });
+
         cometd.getChannel(channel).subscribe(new JsonMessageListener<T>(listener, type, jsonizer));
-        return new BayeuxHandle(cometd);
+        return handle;
     }
 
     private Cookie[] getMatchingCookies(String url) {

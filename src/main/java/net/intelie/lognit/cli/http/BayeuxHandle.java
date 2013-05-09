@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BayeuxHandle implements RestListenerHandle {
     private final AtomicBoolean closed;
     private final BayeuxClient client;
+    private volatile boolean valid = true;
 
     public BayeuxHandle(BayeuxClient client) {
         this.client = client;
@@ -15,7 +16,13 @@ public class BayeuxHandle implements RestListenerHandle {
 
     @Override
     public void waitDisconnected() {
-        this.client.waitFor(Long.MAX_VALUE, BayeuxClient.State.UNCONNECTED, BayeuxClient.State.DISCONNECTED);
+        while (valid)
+            if (this.client.waitFor(1000, BayeuxClient.State.UNCONNECTED, BayeuxClient.State.DISCONNECTED))
+                return;
+    }
+
+    public void invalidate() {
+        this.valid = false;
     }
 
     @Override
