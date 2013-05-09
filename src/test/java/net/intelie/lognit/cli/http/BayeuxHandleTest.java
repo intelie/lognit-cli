@@ -4,9 +4,7 @@ import org.cometd.client.BayeuxClient;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 public class BayeuxHandleTest {
     @Test
@@ -21,8 +19,9 @@ public class BayeuxHandleTest {
     public void waitDisconnectedWaitsForSoLong() {
         BayeuxClient client = mock(BayeuxClient.class);
         BayeuxHandle handle = new BayeuxHandle(client);
+        when(client.waitFor(1000, BayeuxClient.State.UNCONNECTED, BayeuxClient.State.DISCONNECTED)).thenReturn(true);
         handle.waitDisconnected();
-        verify(client).waitFor(Long.MAX_VALUE, BayeuxClient.State.UNCONNECTED, BayeuxClient.State.DISCONNECTED);
+        verify(client).waitFor(1000, BayeuxClient.State.UNCONNECTED, BayeuxClient.State.DISCONNECTED);
     }
 
 
