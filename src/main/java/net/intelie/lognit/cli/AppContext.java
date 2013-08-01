@@ -2,8 +2,6 @@ package net.intelie.lognit.cli;
 
 import jline.ConsoleReader;
 import jline.UnsupportedTerminal;
-import net.intelie.lognit.cli.EntryPoint;
-import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.formatters.*;
 import net.intelie.lognit.cli.formatters.iem.IEMSenderFactory;
 import net.intelie.lognit.cli.formatters.iem.StompClientFactory;

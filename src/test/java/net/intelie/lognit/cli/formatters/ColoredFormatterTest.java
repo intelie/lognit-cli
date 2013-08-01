@@ -29,12 +29,12 @@ public class ColoredFormatterTest {
     public void setUp() throws Exception {
         console = mock(UserConsole.class);
         bars = mock(BarsFormatter.class);
-        printer = new ColoredFormatter(console, bars);
+        printer = new ColoredFormatter(console, bars, TimeZone.getTimeZone("America/Sao_Paulo"), true);
     }
 
     @Test
     public void hasConsoleOnlyConstructor() throws Exception {
-        new ColoredFormatter(mock(UserConsole.class));
+        new ColoredFormatter(mock(UserConsole.class), null);
     }
 
     @Test

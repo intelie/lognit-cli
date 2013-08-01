@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ColoredFormatter implements Formatter {
-    private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final SimpleDateFormat format;
     private final UserConsole console;
     private final BarsFormatter bars;
     private boolean colored;
@@ -23,18 +23,24 @@ public class ColoredFormatter implements Formatter {
 
 
     public ColoredFormatter(UserConsole console, boolean colored) {
-        this(console, new BarsFormatter(), colored);
+        this(console, new BarsFormatter(), null, colored);
     }
 
 
+    public ColoredFormatter(UserConsole console, BarsFormatter bars) {
+        this(console, bars, null, true);
+    }
+
     public ColoredFormatter(UserConsole console, BarsFormatter bars, boolean colored) {
+        this(console, bars, null, colored);
+    }
+
+    public ColoredFormatter(UserConsole console, BarsFormatter bars, TimeZone zone, boolean colored) {
         this.console = console;
         this.bars = bars;
         this.colored = colored;
-    }
-
-    public ColoredFormatter(UserConsole console, BarsFormatter bars) {
-        this(console, bars, true);
+        this.format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (zone != null) this.format.setTimeZone(zone);
     }
 
     @Override
