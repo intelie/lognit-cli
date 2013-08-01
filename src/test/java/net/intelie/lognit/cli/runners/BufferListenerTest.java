@@ -64,7 +64,6 @@ public class BufferListenerTest {
         verifyNoMoreInteractions(printer);
     }
 
-
     @Test(timeout = 1000)
     public void whenOnlyOneOfTwoMessagesAriveOnTimeAndTheThreadInterrupts() throws Exception {
         final BufferListener listener = new BufferListener(printer, false, false);
@@ -82,7 +81,6 @@ public class BufferListenerTest {
         verifyNoMoreInteractions(printer);
     }
 
-
     @Test(timeout = 1000)
     public void whenOnlyOneOfTwoMessagesAriveOnTimeRealTimeAndFailedDoesntCount() {
         BufferListener listener = new BufferListener(printer, false, false);
@@ -90,8 +88,8 @@ public class BufferListenerTest {
         listener.receive(ms(false, true, 2, mB, mA));
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
         listener.receive(ms(true, true, 2, mC));
-        listener.receive(ms("ABC"));
-        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, "ABC");
+        listener.receive(ms("ABC", "node"));
+        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, "node", "ABC");
 
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
@@ -124,12 +122,11 @@ public class BufferListenerTest {
         listener.receive(ms(false, false, 2, mB));
         listener.releaseAll();
 
-        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, (Object) null);
+        verify(printer).printStatus(BufferListener.QUERY_CANCELLED, null, null);
         verifyNoMoreInteractions(printer);
         listener.releaseAll();
         verifyNoMoreInteractions(printer);
     }
-
 
     @Test(timeout = 1000)
     public void willNotHoldAnymoreAfterFirstReleaseAll() {
@@ -138,6 +135,24 @@ public class BufferListenerTest {
         listener.releaseAll();
         listener.receive(ms(false, true, 2, mA, mC));
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
+        listener.receive(ms(true, true, 2, mB));
+
+        verify(printer).print(mC, false);
+        verify(printer).print(mA, false);
+        verify(printer).print(mB, false);
+        verifyNoMoreInteractions(printer);
+        listener.releaseAll();
+        verifyNoMoreInteractions(printer);
+    }
+
+    @Test(timeout = 1000)
+    public void willPrintInfoAsSoonAsItComes() {
+        BufferListener listener = new BufferListener(printer, false, false);
+        Message mA = m("A"), mB = m("B"), mC = m("C");
+        listener.releaseAll();
+        listener.receive(ms(false, true, "asd", 1L, 1, "AAAA", mA, mC));
+        verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
+        verify(printer).printStatus(BufferListener.QUERY_INFO, "asd", "AAAA");
         listener.receive(ms(true, true, 2, mB));
 
         verify(printer).print(mC, false);
@@ -190,7 +205,6 @@ public class BufferListenerTest {
         orderly.verifyNoMoreInteractions();
     }
 
-
     @Test(timeout = 1000)
     public void whenOneOfOneMessagesAriveOnTime() {
         BufferListener listener = new BufferListener(printer, false, false);
@@ -208,18 +222,17 @@ public class BufferListenerTest {
     public void wontCauseExceptionIfOneMessageArrivesWithoutClusterInfo() {
         BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B");
-        listener.receive(ms(false, true, 0, mB, mA));
+        listener.receive(ms(false, true, "node", 1L, 0, mB, mA));
         verify(printer).printStatus(eq(BufferListener.RESPONSE_RECEIVED), anyVararg());
 
         long start = System.currentTimeMillis();
         assertThat(listener.waitHistoric(50, 3)).isFalse();
 
-        verify(printer).printStatus(BufferListener.NO_CLUSTER_INFO);
+        verify(printer).printStatus(BufferListener.NO_CLUSTER_INFO, "node");
         verify(printer).print(mA, false);
         verify(printer).print(mB, false);
         verifyNoMoreInteractions(printer);
     }
-
 
     @Test(timeout = 1000)
     public void whenTwoOfTwoMessagesArriveOntime() {
@@ -292,8 +305,8 @@ public class BufferListenerTest {
         verifyNoMoreInteractions(printer);
     }
 
-    private MessageBag ms(String message) {
-        return new MessageBag(null, null, null, null, null, message, false, false, 0, 0L);
+    private MessageBag ms(String message, String node) {
+        return new MessageBag(null, null, null, node, null, message, false, false, 0, 0L);
     }
 
     private MessageBag ms(boolean realtime, boolean success, int nodes, Message... messages) {
@@ -304,10 +317,13 @@ public class BufferListenerTest {
         return new MessageBag(Arrays.asList(messages), null, null, node, time, null, success, realtime, nodes, 42L);
     }
 
+    private MessageBag ms(boolean realtime, boolean success, String node, Long time, int nodes, String message, Message... messages) {
+        return new MessageBag(Arrays.asList(messages), null, null, node, time, message, success, realtime, nodes, 42L);
+    }
+
     private MessageBag ms(boolean realtime, boolean success, String node, Long time, Aggregated aggregated) {
         return new MessageBag(null, null, aggregated, node, time, null, success, realtime, 0, 0L);
     }
-
 
     private Message m(String id) {
         return new Message(id);
