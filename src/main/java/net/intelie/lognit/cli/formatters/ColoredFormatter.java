@@ -8,9 +8,11 @@ import net.intelie.lognit.cli.model.FreqPoint;
 import net.intelie.lognit.cli.model.Message;
 import net.intelie.lognit.cli.model.SearchStats;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ColoredFormatter implements Formatter {
+    private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final UserConsole console;
     private final BarsFormatter bars;
     private boolean colored;
@@ -83,8 +85,16 @@ public class ColoredFormatter implements Formatter {
     public void print(Aggregated aggregated) {
         for (LinkedHashMap<String, Object> map : aggregated) {
             ANSIBuffer buffer = new ANSIBuffer();
+
             int count = 0;
+            if (map.get("timestamp") instanceof Number) {
+                buffer.cyan(format.format(new Date(((Number) map.get("timestamp")).longValue())));
+                count++;
+            }
+
             for (Map.Entry<String, Object> entry : map.entrySet()) {
+                if ("timestamp".equals(entry.getKey()) && entry.getValue() instanceof Number)
+                    continue;
                 if (count++ > 0)
                     buffer.append(" ");
                 buffer.append(entry.getKey());

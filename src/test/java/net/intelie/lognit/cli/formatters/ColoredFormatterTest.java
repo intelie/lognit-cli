@@ -109,6 +109,20 @@ public class ColoredFormatterTest {
     }
 
     @Test
+    public void testAggregatedWithTimestamp() throws Exception {
+        when(console.isTTY()).thenReturn(true);
+        AggregatedItem item1 = AggregatedItemHelper.map("timestamp", 1375384139000L, "abd", 42);
+        AggregatedItem item2 = AggregatedItemHelper.map("timestamp", 1375300000000L, "abd", "qwe");
+        AggregatedItem item3 = AggregatedItemHelper.map("timestamp", "asd", "abd", "qwe");
+        Aggregated aggr = new Aggregated(item1, item2, item3);
+
+        printer.print(aggr);
+        verify(console).printOut(colored("$c2013-08-01 16:08:59$n abd:$g42$n"));
+        verify(console).printOut(colored("$c2013-07-31 16:46:40$n abd:$gqwe$n"));
+        verify(console).printOut(colored("timestamp:$gasd$n abd:$gqwe$n"));
+    }
+
+    @Test
     public void testPrintStatus() throws Exception {
         printer.printStatus("ABC", 1, "2", 3);
         verify(console).println("ABC", 1, "2", 3);
