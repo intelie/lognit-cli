@@ -17,6 +17,7 @@ import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSession;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
+import org.cometd.client.ext.AckExtension;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -111,6 +112,7 @@ public class RestClientImpl implements RestClient {
     public <T> RestListenerHandle listen(String channel, final Class<T> type, final RestListener<T> listener) throws IOException {
         String url = prependServer("cometd");
         BayeuxClient cometd = bayeux.create(url);
+        cometd.addExtension(new AckExtension());
 
         Cookie[] cookies = getMatchingCookies(url);
         for (Cookie cookie : cookies)
