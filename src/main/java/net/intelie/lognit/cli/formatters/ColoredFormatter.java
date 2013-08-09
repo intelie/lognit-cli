@@ -15,7 +15,10 @@ public class ColoredFormatter implements Formatter {
     private final SimpleDateFormat format;
     private final UserConsole console;
     private final BarsFormatter bars;
-    private boolean colored;
+    private final boolean colored;
+    private Long lastTimestamp = null;
+    private boolean cyan = true;
+
 
     public ColoredFormatter(UserConsole console) {
         this(console, true);
@@ -88,14 +91,24 @@ public class ColoredFormatter implements Formatter {
     }
 
     @Override
-    public void print(Aggregated aggregated) {
+    public synchronized void print(Aggregated aggregated) {
         for (LinkedHashMap<String, Object> map : aggregated) {
             ANSIBuffer buffer = new ANSIBuffer();
 
             int count = 0;
             if (map.get("timestamp") instanceof Number) {
-                buffer.cyan(format.format(new Date(((Number) map.get("timestamp")).longValue())));
+                Long timestamp = ((Number) map.get("timestamp")).longValue();
+                if (!timestamp.equals(lastTimestamp))
+                    cyan = !cyan;
+
+                String formatted = format.format(new Date(timestamp));
+                if (cyan)
+                    buffer.cyan(formatted);
+                else
+                    buffer.yellow(formatted);
+
                 count++;
+                lastTimestamp = timestamp;
             }
 
             for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -105,7 +118,11 @@ public class ColoredFormatter implements Formatter {
                     buffer.append(" ");
                 buffer.append(entry.getKey());
                 buffer.append(":");
-                buffer.green("" + entry.getValue());
+
+                if (cyan)
+                    buffer.cyan("" + entry.getValue());
+                else
+                    buffer.yellow("" + entry.getValue());
             }
             console.printOut(buffer.toString(reallyColored()));
         }

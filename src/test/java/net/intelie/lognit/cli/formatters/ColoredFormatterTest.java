@@ -79,8 +79,8 @@ public class ColoredFormatterTest {
         Aggregated aggr = new Aggregated(item1, item2);
 
         printer.print(aggr);
-        verify(console).printOut(colored("abc:$g123$n abd:$g42$n"));
-        verify(console).printOut(colored("abc:$g124$n abd:$gqwe$n"));
+        verify(console).printOut(colored("abc:$c123$n abd:$c42$n"));
+        verify(console).printOut(colored("abc:$c124$n abd:$cqwe$n"));
     }
 
     @Test
@@ -117,9 +117,9 @@ public class ColoredFormatterTest {
         Aggregated aggr = new Aggregated(item1, item2, item3);
 
         printer.print(aggr);
-        verify(console).printOut(colored("$c2013-08-01 16:08:59$n abd:$g42$n"));
-        verify(console).printOut(colored("$c2013-07-31 16:46:40$n abd:$gqwe$n"));
-        verify(console).printOut(colored("timestamp:$gasd$n abd:$gqwe$n"));
+        verify(console).printOut(colored("$y2013-08-01 16:08:59$n abd:$y42$n"));
+        verify(console).printOut(colored("$c2013-07-31 16:46:40$n abd:$cqwe$n"));
+        verify(console).printOut(colored("timestamp:$casd$n abd:$cqwe$n"));
     }
 
     @Test
