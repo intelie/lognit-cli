@@ -1,3 +1,4 @@
 #!/bin/bash
+ssh intelie@files.intelie.net exit || exit 1
 mvn clean package
-scp target/lognit-cli*.sh intelie@files.intelie.net:/var/www/html/releases/lognit-cli
+scp target/lognit-cli*.sh intelie@files.intelie.net:/var/www/html/lognit-cli

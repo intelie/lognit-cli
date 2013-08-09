@@ -4,9 +4,18 @@ if [ $# -lt 2 ]; then
     echo 'release 1.0 1.1'
     exit 0
 fi
+mvn clean package || exit 1
+ssh intelie@files.intelie.net exit || exit 1
+
 mvn versions:set -DnewVersion=$1
 git commit -am "release version $1"
 git tag $1
-git push --tags
+
+mvn clean package || exit 1
+scp target/lognit-cli*.sh intelie@files.intelie.net:/var/www/html/lognit-cli || exit 1
+
 mvn versions:set -DnewVersion=$2-SNAPSHOT
 git commit -am "next version $2-SNAPSHOT"
+git push
+git push --tags
+
