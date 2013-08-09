@@ -93,6 +93,7 @@ public class ColoredFormatter implements Formatter {
     @Override
     public synchronized void print(Aggregated aggregated) {
         for (LinkedHashMap<String, Object> map : aggregated) {
+            boolean hasTimestamp = false;
             ANSIBuffer buffer = new ANSIBuffer();
 
             int count = 0;
@@ -109,20 +110,24 @@ public class ColoredFormatter implements Formatter {
 
                 count++;
                 lastTimestamp = timestamp;
+                hasTimestamp = true;
             }
 
             for (Map.Entry<String, Object> entry : map.entrySet()) {
-                if ("timestamp".equals(entry.getKey()) && entry.getValue() instanceof Number)
+                if ("timestamp".equals(entry.getKey()) && hasTimestamp)
                     continue;
                 if (count++ > 0)
                     buffer.append(" ");
                 buffer.append(entry.getKey());
                 buffer.append(":");
 
-                if (cyan)
-                    buffer.cyan("" + entry.getValue());
+                String value = "" + entry.getValue();
+                if (!hasTimestamp)
+                    buffer.green(value);
+                else if (cyan)
+                    buffer.cyan(value);
                 else
-                    buffer.yellow("" + entry.getValue());
+                    buffer.yellow(value);
             }
             console.printOut(buffer.toString(reallyColored()));
         }
