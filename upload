@@ -1,5 +1,3 @@
 #!/bin/bash
-read -p "github login: " GHUSER
-read -s -p "$GHUSER's password: " GHPASS
-echo ""
-mvn clean install ghDownloads:upload -Dgithub.global.userName=$GHUSER -Dgithub.global.password=$GHPASS
+mvn clean package
+scp target/lognit-cli*.sh intelie@files.intelie.net:/var/www/html/releases/lognit-cli
