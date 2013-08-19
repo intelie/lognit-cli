@@ -12,7 +12,7 @@ else
     fi
     echo Using version $VERSION...
         
-    FILE=https://files.intelie.net/lognit-cli/lognit-cli-$VERSION.sh
+    FILE=http://files.intelie.net/lognit-cli/lognit-cli-$VERSION.sh
     echo Downloading $FILE
     curl -L $FILE -H "Pragma: no-cache" -k > /tmp/nit
     mv /tmp/nit /usr/bin/nit
