@@ -12,9 +12,9 @@ else
     fi
     echo Using version $VERSION...
         
-    FILE=http://files.intelie.net/lognit-cli/lognit-cli-$VERSION.sh
+    FILE=https://github.com/downloads/intelie/lognit-cli/lognit-cli-$VERSION.sh
     echo Downloading $FILE
-    curl -L $FILE -H "Pragma: no-cache" -k > /tmp/nit
+    curl -L $FILE -H "Pragma: no-cache" --insecure --sslv3 > /tmp/nit
     mv /tmp/nit /usr/bin/nit
     chmod a+x /usr/bin/nit
 fi
@@ -23,7 +23,7 @@ cat << '__END__' > /tmp/nitr
 #!/bin/sh
 if [ $# -lt 2 ]; then
     echo 'nitr <verb> <resource> [<curl params>]'
-    echo 'nitr get users/welcome -v'
+    echo 'nitr get me/welcome -v'
     exit 0
 fi
 
@@ -66,7 +66,6 @@ if [ -d /usr/local/etc/bash_completion.d ]; then
     echo "Installing bash completion (mac)"
     cp /tmp/_nit /usr/local/etc/bash_completion.d/nit
 fi
-exit 0
 # -->
 
 <!DOCTYPE html>
