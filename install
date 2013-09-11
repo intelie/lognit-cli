@@ -16,9 +16,9 @@ else
     fi
     echo Using version $VERSION...
         
-    FILE=http://github.com/downloads/intelie/lognit-cli/lognit-cli-$VERSION.sh
+    FILE=https://github.com/downloads/intelie/lognit-cli/lognit-cli-$VERSION.sh
     echo Downloading $FILE
-    curl -L $FILE -H "Pragma: no-cache" -k > /tmp/nit
+    curl -L $FILE -H "Pragma: no-cache" --insecure --sslv3 > /tmp/nit
     mv /tmp/nit /usr/bin/nit
     chmod a+x /usr/bin/nit
 fi
