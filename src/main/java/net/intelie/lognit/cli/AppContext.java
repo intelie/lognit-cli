@@ -21,7 +21,7 @@ import java.io.*;
 import java.util.Timer;
 
 public class AppContext {
-    public EntryPoint resolveEntryPoint() throws IOException {
+    public EntryPoint resolveEntryPoint() throws Exception {
         File stateFile = new File(new File(System.getProperty("user.home"), ".lognit"), "state");
 
         Jsonizer jsonizer = new Jsonizer();
