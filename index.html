@@ -6,7 +6,7 @@ if [ "$1" = "--local" ]; then
 else
     if [ -z "$1" ]; then
         echo Finding default version...
-        VERSION=$(curl -s https://raw.github.com/intelie/lognit-cli/master/VERSIONS | head -n 1 | grep -E ^[0-9])
+        VERSION=$(curl -Ls https://raw.github.com/intelie/lognit-cli/master/VERSIONS | head -n 1 | grep -E ^[0-9])
     else
         VERSION=$1
     fi
