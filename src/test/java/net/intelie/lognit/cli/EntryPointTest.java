@@ -1,7 +1,9 @@
 package net.intelie.lognit.cli;
 
+import net.intelie.lognit.cli.http.UnsafeSSLSocketFactory;
 import net.intelie.lognit.cli.runners.AuthenticatorRunner;
 import net.intelie.lognit.cli.state.StateKeeper;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -43,6 +45,13 @@ public class EntryPointTest {
         orderly.verify(request).run(new UserOptions());
         orderly.verify(state).end();
         orderly.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void willRegisterProtocol() throws Exception {
+        entry.run("--no-check-certificate");
+
+        assertThat(Protocol.getProtocol("https").getSocketFactory()).isInstanceOf(UnsafeSSLSocketFactory.class);
     }
 
     @Test

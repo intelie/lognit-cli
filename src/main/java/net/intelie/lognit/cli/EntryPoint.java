@@ -1,8 +1,9 @@
 package net.intelie.lognit.cli;
 
+import net.intelie.lognit.cli.http.UnsafeSSLSocketFactory;
 import net.intelie.lognit.cli.runners.AuthenticatorRunner;
-import net.intelie.lognit.cli.runners.UsageRunner;
 import net.intelie.lognit.cli.state.StateKeeper;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -29,6 +30,11 @@ public class EntryPoint {
         try {
             options = new UserOptions(args);
             configureLogger(options);
+            if (options.isNoCheckCertificate())
+                Protocol.registerProtocol("https", new Protocol("https", new UnsafeSSLSocketFactory(), 443));
+            else
+                Protocol.unregisterProtocol("https");
+
             return request.run(options);
         } catch (Exception ex) {
             console.fixCursor();

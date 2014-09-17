@@ -36,6 +36,8 @@ public class UserOptionsTest {
         assertThat(opts.isStats()).isEqualTo(false);
         assertThat(opts.isForceLogin()).isEqualTo(false);
         assertThat(opts.isMetadata()).isEqualTo(false);
+        assertThat(opts.isNoCheckCertificate()).isEqualTo(false);
+        assertThat(opts.getSpan()).isEqualTo(null);
     }
 
     @Test
@@ -59,7 +61,7 @@ public class UserOptionsTest {
 
     @Test
     public void canConstructWithNonDefaults() {
-        UserOptions opts = new UserOptions("--purge", "--unpurge", "--pause", "--resume", "-d", "--all", "--cancel-purges", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-o", "plain", "-c", "-v", "--force-login", "-b", "--meta");
+        UserOptions opts = new UserOptions("--purge", "--unpurge", "--pause", "--resume", "-d", "--all", "--cancel-purges", "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-o", "plain", "-c", "-v", "--force-login", "-b", "--meta", "--no-check-certificate", "--span", "what");
         assertThat(opts.getServer()).isEqualTo("A");
         assertThat(opts.hasServer()).isEqualTo(true);
         assertThat(opts.getUser()).isEqualTo("B");
@@ -85,6 +87,8 @@ public class UserOptionsTest {
         assertThat(opts.isStats()).isEqualTo(true);
         assertThat(opts.isForceLogin()).isEqualTo(true);
         assertThat(opts.isMetadata()).isEqualTo(true);
+        assertThat(opts.isNoCheckCertificate()).isEqualTo(true);
+        assertThat(opts.getSpan()).isEqualTo("what");
     }
 
     @Test
@@ -107,8 +111,8 @@ public class UserOptionsTest {
 
     @Test
     public void differentOrderShouldDoTheSame() {
-        UserOptions opts1 = new UserOptions("-s", "A", "--purge", "--force-login", "-d", "--all", "--cancel-purges", "--unpurge", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-i", "-o", "-c", "-b", "-v", "--meta");
-        UserOptions opts2 = new UserOptions("--unpurge", "--force-login", "--cancel-purges", "--all", "-i", "-d", "-s", "A", "--purge", "-v", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-?", "-o", "-c", "--bars", "--metadata");
+        UserOptions opts1 = new UserOptions("-s", "A", "--purge", "--force-login", "-d", "--all", "--cancel-purges", "--unpurge", "-u", "B", "-p", "C", "D", "--no-check-certificate","-n", "43", "-t", "42", "-f", "-?", "-i", "-o", "-c", "-b", "-v", "--meta", "--span", "what");
+        UserOptions opts2 = new UserOptions("--unpurge", "--force-login", "--cancel-purges", "--all", "-i", "-d", "-s", "A", "--purge", "-v", "-u", "B", "-p", "C", "D", "-n", "43", "--no-check-certificate", "-t", "42", "-f", "-?", "-o", "-c", "--bars", "--metadata", "--span", "what");
         assertThat(opts1).isEqualTo(opts2);
         assertThat(opts1.hashCode()).isEqualTo(opts2.hashCode());
     }
@@ -117,7 +121,7 @@ public class UserOptionsTest {
     public void whenAreDifferent() {
         String[] original = {"--all", "--pause", "--resume", "--cancel-purges", "--unpurge", "--purge",
                 "-s", "A", "-u", "B", "-p", "C", "D", "-n", "43", "-t", "42", "-f", "-o", "plain", "-?",
-                "-i", "-c", "-v", "-d", "--force-login", "--bars", "--metadata"};
+                "-i", "-c", "-v", "-d", "--force-login", "--bars", "--metadata", "--no-check-certificate", "--span", "what"};
         UserOptions opts1 = new UserOptions(original);
 
         for (int i = 0; i < original.length; i++) {

@@ -42,8 +42,6 @@ public class RestClientImpl implements RestClient {
         this.jsonizer = jsonizer;
         this.server = "localhost";
         this.authenticated = false;
-        Protocol.registerProtocol("https",
-                new Protocol("https", new UnsafeSSLSocketFactory(), 443));
     }
 
     @Override

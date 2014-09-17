@@ -11,6 +11,7 @@ public class UserOptions {
     private final String query;
 
     private final String format;
+    private final String span;
     private final boolean follow;
     private final boolean info;
     private final boolean help;
@@ -28,6 +29,7 @@ public class UserOptions {
     private final boolean stats;
     private final boolean forceLogin;
     private final boolean metadata;
+    private final boolean noCheckCertificate;
 
     public UserOptions(String... args) {
         ArgsParser parser = new ArgsParser(args);
@@ -50,7 +52,9 @@ public class UserOptions {
         pause = parser.flag("--pause");
         resume = parser.flag("--resume");
         forceLogin = parser.flag("--force-login");
+        noCheckCertificate = parser.flag("--no-check-certificate");
         metadata = parser.flag("--meta", "--metadata");
+        span = parser.option(String.class, "--span");
         timeout = def(parser.option(Integer.class, "-t", "--timeout"), 30);
         query = parser.text();
 
@@ -140,6 +144,14 @@ public class UserOptions {
         return stats;
     }
 
+    public boolean isNoCheckCertificate() {
+        return noCheckCertificate;
+    }
+
+    public String getSpan() {
+        return span;
+    }
+
     public String getFormat() {
         return format;
     }
@@ -171,13 +183,15 @@ public class UserOptions {
                 Objects.equal(this.stats, that.stats) &&
                 Objects.equal(this.help, that.help) &&
                 Objects.equal(this.forceLogin, that.forceLogin) &&
+                Objects.equal(this.noCheckCertificate, that.noCheckCertificate) &&
+                Objects.equal(this.span, that.span) &&
                 Objects.equal(this.metadata, that.metadata);
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(server, user, password, query, follow, all, pause, resume, purge, unpurge, cancelPurges,
-                timeout, lines, info, format, complete, download, verbose, stats, help, forceLogin, metadata);
+                timeout, lines, info, format, complete, download, verbose, stats, help, forceLogin, metadata, noCheckCertificate, span);
     }
 
 
@@ -206,10 +220,10 @@ public class UserOptions {
     }
 
     public UserOptions realtimeOnly() {
-        return new UserOptions(server, user, password, query, format, follow, info, help, purge, unpurge, cancelPurges, all, pause, resume, timeout, 0, complete, download, verbose, forceLogin, stats, metadata);
+        return new UserOptions(server, user, password, query, format, follow, info, help, purge, unpurge, cancelPurges, all, pause, resume, timeout, 0, complete, download, verbose, forceLogin, stats, metadata, noCheckCertificate, span);
     }
 
-    public UserOptions(String server, String user, String password, String query, String format, boolean follow, boolean info, boolean help, boolean purge, boolean unpurge, boolean cancelPurges, boolean all, boolean pause, boolean resume, int timeout, int lines, boolean complete, boolean download, boolean verbose, boolean forceLogin, boolean stats, boolean metadata) {
+    public UserOptions(String server, String user, String password, String query, String format, boolean follow, boolean info, boolean help, boolean purge, boolean unpurge, boolean cancelPurges, boolean all, boolean pause, boolean resume, int timeout, int lines, boolean complete, boolean download, boolean verbose, boolean forceLogin, boolean stats, boolean metadata, boolean noCheckCertificate, String span) {
         this.server = server;
         this.user = user;
         this.password = password;
@@ -232,5 +246,7 @@ public class UserOptions {
         this.forceLogin = forceLogin;
         this.stats = stats;
         this.metadata = metadata;
+        this.noCheckCertificate = noCheckCertificate;
+        this.span = span;
     }
 }
