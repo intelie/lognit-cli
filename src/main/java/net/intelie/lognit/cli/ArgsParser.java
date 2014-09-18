@@ -2,17 +2,18 @@ package net.intelie.lognit.cli;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Collections2.filter;
 import static java.util.Arrays.asList;
 
 public class ArgsParser {
+
     private final LinkedList<String> args;
 
     public ArgsParser(String... args) {

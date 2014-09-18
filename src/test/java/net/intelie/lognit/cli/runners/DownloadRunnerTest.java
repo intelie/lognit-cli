@@ -46,7 +46,7 @@ public class DownloadRunnerTest {
         BlockingIterator<DownloadBag> iterator = bags(bag(0, 10, "A", "B"), bag(4, 10, "C", "D"), bag(10, 10, "E", "F"));
         RestStream<DownloadBag> stream = stream(iterator);
         Formatter formatter = formatters.select("someformat");
-        when(lognit.download("abc", 42)).thenReturn(stream);
+        when(lognit.download("abc", 42, null)).thenReturn(stream);
 
         UserOptions options = new UserOptions("abc", "-n", "42", "-o", "someformat");
         Thread thread = runInAnotherThread(options);
@@ -54,7 +54,7 @@ public class DownloadRunnerTest {
         iterator.waitNext();
 
         timer.assertSchedule(0L, 1000L);
-        orderly.verify(lognit).download("abc", 42);
+        orderly.verify(lognit).download("abc", 42, null);
 
         timer.runNextAt(0);
         orderly.verify(console).printStill(DownloadRunner.DOWNLOAD_STATUS, 0L, 0L, 0.0/0, 0L, 0.0);
@@ -107,7 +107,7 @@ public class DownloadRunnerTest {
         List<Message> messages = new ArrayList<Message>();
         for (String id : ids)
             messages.add(msg(id));
-        return spy(new DownloadBag(messages, current, total));
+        return spy(new DownloadBag(messages, null, current, total));
     }
 
     private Message msg(String id) {

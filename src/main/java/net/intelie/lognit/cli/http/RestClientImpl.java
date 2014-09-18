@@ -14,6 +14,7 @@ import org.apache.commons.httpclient.cookie.RFC2965Spec;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
+import org.cometd.bayeux.Channel;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSession;
 import org.cometd.bayeux.client.ClientSessionChannel;
@@ -131,6 +132,8 @@ public class RestClientImpl implements RestClient {
         });
 
         cometd.getChannel(channel).subscribe(new JsonMessageListener<T>(listener, type, jsonizer));
+
+        
         return handle;
     }
 

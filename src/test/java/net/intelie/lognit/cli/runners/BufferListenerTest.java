@@ -100,6 +100,14 @@ public class BufferListenerTest {
     }
 
     @Test(timeout = 1000)
+    public void whenWaitingForError() {
+        BufferListener listener = new BufferListener(printer, false, false);
+
+        listener.receive(ms(false, false, null, null, 0));
+        listener.waitForError(1);
+    }
+
+    @Test(timeout = 1000)
     public void afterReleasePrintsAllOthers() {
         BufferListener listener = new BufferListener(printer, false, false);
         Message mA = m("A"), mB = m("B"), mC = m("C");

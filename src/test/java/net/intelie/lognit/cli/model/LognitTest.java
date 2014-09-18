@@ -120,16 +120,16 @@ public class LognitTest {
         RestListenerHandle handle = mock(RestListenerHandle.class);
         RestListener<MessageBag> listener = mock(RestListener.class);
 
-        when(client.get("/rest/search?expression=qwe+asd&windowLength=20&realtime=false&stats=true", SearchChannel.class)).thenReturn(channel);
+        when(client.get("/rest/search?expression=qwe+asd&windowLength=20&realtime=false&stats=true&span=what", SearchChannel.class)).thenReturn(channel);
         when(client.listen("lalala", MessageBag.class, listener)).thenReturn(handle);
 
-        assertThat(lognit.search("qwe asd", 20, false, true, listener)).isEqualTo(handle);
+        assertThat(lognit.search("qwe asd", 20, false, true, "what", listener)).isEqualTo(handle);
     }
 
     @Test
     public void testDownload() throws Exception {
         RestStream<DownloadBag> stream = mock(RestStream.class);
-        when(client.getStream("/rest/search/download?expression=qwe+asd&windowLength=20", DownloadBag.class)).thenReturn(stream);
-        assertThat((Object) lognit.download("qwe asd", 20)).isEqualTo(stream);
+        when(client.getStream("/rest/search/download?expression=qwe+asd&windowLength=20&span=what", DownloadBag.class)).thenReturn(stream);
+        assertThat((Object) lognit.download("qwe asd", 20, "what")).isEqualTo(stream);
     }
 }

@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.runners;
 
+import com.google.common.base.Strings;
 import net.intelie.lognit.cli.Runner;
 import net.intelie.lognit.cli.UserConsole;
 import net.intelie.lognit.cli.UserOptions;
@@ -41,6 +42,10 @@ public class SearchRunner implements Runner {
                     handle.waitDisconnected();
                     throw new RetryConnectionException(options.realtimeOnly(), REALTIME_DISCONNECTED);
                 }
+                if (!Strings.isNullOrEmpty(options.getSpan())) {
+                    listener.releaseAll();
+                    listener.waitForError(1);
+                }
                 return 0;
             } finally {
                 handle.close();
@@ -55,7 +60,7 @@ public class SearchRunner implements Runner {
 
     private RestListenerHandle handshake(UserOptions options, BufferListener listener) throws IOException {
         long start = clock.currentMillis();
-        RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), options.isFollow(), options.isStats(), listener);
+        RestListenerHandle handle = lognit.search(options.getQuery(), options.getLines(), options.isFollow(), options.isStats(), options.getSpan(), listener);
         registerRuntime(handle);
 
         if (options.isVerbose())

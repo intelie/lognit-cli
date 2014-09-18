@@ -23,6 +23,7 @@ public class BufferListener implements RestListener<MessageBag> {
     public static final String QUERY_INFO = "(%s) INFO: %s";
     public static final String RESPONSE_RECEIVED = "(%s) response %d/%d: %,d of %,d historic results in %dms";
 
+    private final Semaphore errors;
     private final Deque<MessageBag> historic;
     private final Deque<MessageBag> other;
     private final Semaphore semaphore;
@@ -33,6 +34,7 @@ public class BufferListener implements RestListener<MessageBag> {
     private int historicCount = 0;
 
     public BufferListener(Formatter printer, boolean printStats, boolean printMeta) {
+        this.errors = new Semaphore(0);
         this.printer = printer;
         this.printStats = printStats;
         this.printMeta = printMeta;
@@ -57,14 +59,14 @@ public class BufferListener implements RestListener<MessageBag> {
         }
         if (releasing || !messages.isSuccess()) {
             printBag(messages);
-            return;
-        }
-        if (messages.isHistoric()) {
+        } else if (messages.isHistoric()) {
             historic.add(messages);
             semaphore.release();
         } else {
             other.add(messages);
         }
+        if (!messages.isSuccess())
+            errors.release();
     }
 
     public boolean waitHistoric(int timeout, int releaseMax) {
@@ -92,6 +94,10 @@ public class BufferListener implements RestListener<MessageBag> {
 
     private boolean waitForAnswer(int howMany, int timeout) throws InterruptedException {
         return semaphore.tryAcquire(howMany, timeout, TimeUnit.MILLISECONDS);
+    }
+
+    public void waitForError(int n) {
+        errors.acquireUninterruptibly(n);
     }
 
     private void releaseHistoric(int releaseMax) {

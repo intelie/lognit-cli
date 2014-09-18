@@ -30,7 +30,7 @@ public class DownloadRunner implements Runner {
 
     @Override
     public int run(UserOptions options) throws Exception {
-        RestStream<DownloadBag> stream = lognit.download(options.getQuery(), options.getLines());
+        RestStream<DownloadBag> stream = lognit.download(options.getQuery(), options.getLines(), options.getSpan());
         Formatter formatter = formatters.select(options.getFormat());
 
         final AtomicLong current = new AtomicLong(0), total = new AtomicLong(0);
@@ -41,8 +41,12 @@ public class DownloadRunner implements Runner {
         try {
             while (stream.hasNext()) {
                 DownloadBag bag = stream.next();
-                for (Message message : bag.getItems())
-                    formatter.print(message, false);
+                if (bag.getItems() != null)
+                    for (Message message : bag.getItems())
+                        formatter.print(message, false);
+                if (bag.getAggregated() != null)
+                    formatter.print(bag.getAggregated());
+
                 current.set(bag.getCurrentHit());
                 total.set(bag.getTotalHits());
             }

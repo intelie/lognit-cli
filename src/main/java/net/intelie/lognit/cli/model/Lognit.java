@@ -1,5 +1,6 @@
 package net.intelie.lognit.cli.model;
 
+import com.google.common.base.Objects;
 import net.intelie.lognit.cli.http.*;
 
 import java.io.IOException;
@@ -16,8 +17,8 @@ public class Lognit {
     public static final String URL_PURGE_CANCEL = "/rest/purge/cancel/%s";
     public static final String URL_PURGE_CANCEL_ALL = "/rest/purge/cancel-all";
     public static final String URL_STATS = "/rest/stats?timeout=%s";
-    public static final String URL_SEARCH = "/rest/search?expression=%s&windowLength=%s&realtime=%s&stats=%s";
-    public static final String URL_DOWNLOAD = "/rest/search/download?expression=%s&windowLength=%s";
+    public static final String URL_SEARCH = "/rest/search?expression=%s&windowLength=%s&realtime=%s&stats=%s&span=%s";
+    public static final String URL_DOWNLOAD = "/rest/search/download?expression=%s&windowLength=%s&span=%s";
     public static final String URL_TERMS = "/rest/terms?field=%s&term=%s&avoidColons=true&size=100";
     private final RestClient client;
 
@@ -37,13 +38,13 @@ public class Lognit {
         client.authenticate(username, password);
     }
 
-    public RestListenerHandle search(String query, int windowLength, boolean realtime, boolean stats, RestListener<MessageBag> listener) throws IOException {
-        SearchChannel channel = client.get(make(URL_SEARCH, query, windowLength, realtime, stats), SearchChannel.class);
+    public RestListenerHandle search(String query, int windowLength, boolean realtime, boolean stats, String span, RestListener<MessageBag> listener) throws IOException {
+        SearchChannel channel = client.get(make(URL_SEARCH, query, windowLength, realtime, stats, span), SearchChannel.class);
         return client.listen(channel.getChannel(), MessageBag.class, listener);
     }
 
-    public RestStream<DownloadBag> download(String query, int windowLength) throws IOException {
-        return client.getStream(make(URL_DOWNLOAD, query, windowLength), DownloadBag.class);
+    public RestStream<DownloadBag> download(String query, int windowLength, String span) throws IOException {
+        return client.getStream(make(URL_DOWNLOAD, query, windowLength, span), DownloadBag.class);
     }
     
     public Purge purge(String query, int windowLength, boolean all) throws IOException {
@@ -103,7 +104,7 @@ public class Lognit {
     private String make(String url, Object... args) throws UnsupportedEncodingException {
         Object[] encoded = new Object[args.length];
         for(int i=0; i<args.length; i++)
-            encoded[i] = encode(args[i].toString());
+            encoded[i] = encode(Objects.firstNonNull(args[i], "").toString());
         return String.format(url, encoded);
     }
 }

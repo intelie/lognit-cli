@@ -18,6 +18,8 @@ Options:
                               "iem://[user:password@]host[:port]/eventType"
   --meta, --metadata          prints message metadata info
   --force-login               forces login prompt
+  --no-check-certificate      ignores invalid certificates when using HTTPS
+  --span                      sends span configuration (Live-only)
   -v, --verbose               shows diagnostic messages
   -?, -h, --help              shows this help
 
