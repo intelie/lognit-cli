@@ -14,7 +14,7 @@ else
         
     FILE=https://files.intelie.com/lognit-cli/lognit-cli-$VERSION.sh
     echo Downloading $FILE
-    curl -L $FILE -H "Pragma: no-cache" -k -3 > /tmp/nit
+    curl -L $FILE -H "Pragma: no-cache" -k -3 > /tmp/nit || curl -L $FILE -H "Pragma: no-cache" -k > /tmp/nit
     mv /tmp/nit /usr/bin/nit
     chmod a+x /usr/bin/nit
 fi
