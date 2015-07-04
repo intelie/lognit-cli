@@ -122,7 +122,7 @@ public class RestClientImpl implements RestClient {
 
         cometd.handshake(120000);
 
-        final BayeuxHandle handle = new BayeuxHandle(cometd);
+        final BayeuxHandle handle = new BayeuxHandle(cometd, channel);
         cometd.getChannel("/meta/connect").addListener(new ClientSessionChannel.MessageListener() {
             @Override
             public void onMessage(ClientSessionChannel channel, Message message) {
