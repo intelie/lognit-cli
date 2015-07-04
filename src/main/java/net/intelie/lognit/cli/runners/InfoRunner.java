@@ -14,7 +14,7 @@ public class InfoRunner implements Runner {
     public static final String HAS_MISSING_NODES = "(%s): %d node(s) did not respond";
     public static final String NO_MISSING_NODES = "(%s): all nodes responded";
     public static final String NODE_TEXT = "node '%s':";
-    public static final String SUMMARY_TEXT = "SUMMARY:";
+    public static final String SUMMARY_TEXT = "SUMMARY (%d/%d nodes answered):";
     public static final String INFO_TEXT = "  info: %,d queries / %,d messages / %.2f MB / %,d docs";
     public static final String DOCS_TEXT = "  messages/s: %,d (3s) / %,d (15s) / %,d (60s)";
     public static final String BYTES_TEXT = "  bytes/s: %.2f MB (3s) / %.2f MB (15s) / %.2f MB (60s)";
@@ -48,7 +48,7 @@ public class InfoRunner implements Runner {
         }
 
         console.printOut("");
-        console.printOut(SUMMARY_TEXT);
+        console.printOut(SUMMARY_TEXT, summary.getNodes().size(), (summary.getNodes().size() + summary.getMissing()));
         console.printOut(INFO_TEXT, summary.getQueries().size(), summary.getTotalMessages(), summary.getTotalBytes() / MB, summary.getTotalDocs());
         printLoad(DOCS_TEXT, summary.getMessageRate(), 1);
         printLoad(BYTES_TEXT, summary.getByteRate(), 1024 * 1024);

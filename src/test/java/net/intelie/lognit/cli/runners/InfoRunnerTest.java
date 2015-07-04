@@ -53,7 +53,7 @@ public class InfoRunnerTest {
         orderly.verify(console).printOut(InfoRunner.INFO_TEXT, 3, 50L, 150L/1024.0/1024, 14L);
 
         orderly.verify(console).printOut("");
-        orderly.verify(console).printOut(InfoRunner.SUMMARY_TEXT);
+        orderly.verify(console).printOut(InfoRunner.SUMMARY_TEXT, 2, 2);
         orderly.verify(console).printOut(InfoRunner.INFO_TEXT, 4, 150L, 450L/1024.0/1024, 42L);
         orderly.verifyNoMoreInteractions();
     }
@@ -83,7 +83,7 @@ public class InfoRunnerTest {
         orderly.verify(console).printOut(InfoRunner.INFO_TEXT, 3, 50L, 150L/1024.0/1024, 14L);
 
         orderly.verify(console).printOut("");
-        orderly.verify(console).printOut(InfoRunner.SUMMARY_TEXT);
+        orderly.verify(console).printOut(InfoRunner.SUMMARY_TEXT, 2, 4);
         orderly.verify(console).printOut(InfoRunner.INFO_TEXT, 4, 150L, 450L/1024.0/1024, 42L);
         orderly.verifyNoMoreInteractions();
     }
@@ -118,7 +118,7 @@ public class InfoRunnerTest {
         orderly.verify(console).printOut(InfoRunner.BYTES_TEXT, 2.0, 8.0, 2.0);
 
         orderly.verify(console).printOut("");
-        orderly.verify(console).printOut(InfoRunner.SUMMARY_TEXT);
+        orderly.verify(console).printOut(InfoRunner.SUMMARY_TEXT, 2, 2);
         orderly.verify(console).printOut(InfoRunner.DOCS_TEXT, 4L, 16L, 4L);
         orderly.verify(console).printOut(InfoRunner.BYTES_TEXT, 4.0, 16.0, 4.0);
         orderly.verifyNoMoreInteractions();

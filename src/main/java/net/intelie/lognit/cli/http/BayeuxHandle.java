@@ -27,7 +27,8 @@ public class BayeuxHandle implements RestListenerHandle {
 
     @Override
     public void close() {
-        if (!closed.getAndSet(true))
+        if (!closed.getAndSet(true)) {
             this.client.disconnect();
+        }
     }
 }
