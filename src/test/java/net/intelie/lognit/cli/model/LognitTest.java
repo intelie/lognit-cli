@@ -2,7 +2,9 @@ package net.intelie.lognit.cli.model;
 
 import net.intelie.lognit.cli.http.*;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
 
@@ -10,6 +12,8 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class LognitTest {
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     private RestClient client;
     private Lognit lognit;
@@ -124,6 +128,19 @@ public class LognitTest {
         when(client.listen("lalala", MessageBag.class, listener)).thenReturn(handle);
 
         assertThat(lognit.search("qwe asd", 20, false, true, "what", listener)).isEqualTo(handle);
+    }
+
+    @Test
+    public void testSearchWithError() throws Exception {
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("aaaa");
+
+        SearchChannel channel = new SearchChannel(null, new QueryInfo(false, "aaaa"));
+        RestListener<MessageBag> listener = mock(RestListener.class);
+
+        when(client.get("/rest/search?expression=qwe+asd&windowLength=20&realtime=false&stats=true&span=what", SearchChannel.class)).thenReturn(channel);
+
+        lognit.search("qwe asd", 20, false, true, "what", listener);
     }
 
     @Test

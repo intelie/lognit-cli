@@ -40,6 +40,8 @@ public class Lognit {
 
     public RestListenerHandle search(String query, int windowLength, boolean realtime, boolean stats, String span, RestListener<MessageBag> listener) throws IOException {
         SearchChannel channel = client.get(make(URL_SEARCH, query, windowLength, realtime, stats, span), SearchChannel.class);
+        if (!channel.getInfo().valid())
+            throw new IllegalArgumentException(channel.getInfo().message());
         return client.listen(channel.getChannel(), MessageBag.class, listener);
     }
 
