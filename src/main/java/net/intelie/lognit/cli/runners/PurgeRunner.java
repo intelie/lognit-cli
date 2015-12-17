@@ -82,8 +82,7 @@ public class PurgeRunner implements Runner {
                 info.getFailed(),
                 (int)Math.ceil ((info.getExpected() - info.getPurged()) /
                 (info.getPurged() / (double)run)) );
-        
-        return !info.getStatus().isFinished();
+        return !info.getStatus().isFinished() | run <= 3;
     }
 
     private double getPercentage(PurgeInfo info) {
