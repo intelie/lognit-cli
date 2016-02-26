@@ -3,9 +3,13 @@
 # This is an install script. Run it!
 #
 
+if [ "$PREFIX" == ""]; then
+    PREFIX="/usr"
+fi
+
 echo "Installing Lognit command-line interface (local)..."
-cp target/lognit-cli-*.sh /usr/bin/nit
-chmod a+x /usr/bin/nit
+cp target/lognit-cli-*.sh "$PREFIX/bin/nit"
+chmod a+x "$PREFIX/bin/nit"
 
 cat << '__END__' > /tmp/nitr
 #!/bin/sh
@@ -20,8 +24,8 @@ verb=$1; shift
 resource=$1; shift
 curl -X ${verb} -s -L -H 'Content-Type:application/json' -w \\n -b ~/.lognit/state "http://${server}/rest/${resource}" $@
 __END__
-mv /tmp/nitr /usr/bin/nitr
-chmod a+x /usr/bin/nitr
+mv /tmp/nitr "$PREFIX/bin/nitr"
+chmod a+x "$PREFIX/bin/nitr"
 
 cat << '__END__' > /tmp/_nit  
 _nit()
