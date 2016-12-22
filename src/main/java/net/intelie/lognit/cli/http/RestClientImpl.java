@@ -114,7 +114,7 @@ public class RestClientImpl implements RestClient {
     public <T> RestListenerHandle listen(String channel, final Class<T> type, final RestListener<T> listener) throws IOException {
         String url = prependServer("cometd");
         BayeuxClient cometd = bayeux.create(url);
-        cometd.addExtension(new AckExtension());
+        //cometd.addExtension(new AckExtension());
 
         Cookie[] cookies = getMatchingCookies(url);
         for (Cookie cookie : cookies)
