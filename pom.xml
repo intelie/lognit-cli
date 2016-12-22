@@ -6,7 +6,7 @@
 
     <groupId>lognit-cli</groupId>
     <artifactId>lognit-cli</artifactId>
-    <version>1.7.7-SNAPSHOT</version>
+    <version>1.7.7</version>
 
     <repositories>
         <repository>
