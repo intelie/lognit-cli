@@ -1,21 +1,3 @@
-#Installation
-
-```sh
-curl -s nit.lognit.com | sudo sh
-```
-
-To install in /usr/local instead of /usr:
-
-```sh
-curl -s nit.lognit.com | PREFIX=/usr/local sudo sh
-```
-
-Installing another version:
-
-```
-curl -s nit.lognit.com | sudo sh -s 1.2
-```
-
 # Usage
 
 First, connect to a server:
